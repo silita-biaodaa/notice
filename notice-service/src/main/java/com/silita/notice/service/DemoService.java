@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class DemoService {
 
     @Autowired
-    DemoMapper demoMapper;
+    private DemoMapper demoMapper;
 
 
     public Demo getDemo(Integer id){
