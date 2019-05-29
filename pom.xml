@@ -25,6 +25,8 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <!--pagehelper,spring boot,starter-->
+        <pagehelper.springboot.starter.version>1.2.5</pagehelper.springboot.starter.version>
     </properties>
 
     <dependencies>
@@ -42,8 +44,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.32</version>
         </dependency>
-
-
 
         <!-- JDBC连接数据库，因为要用HikariCP连接池，所以需要将SpringBoot中的tomcat-jdbc排除 -->
         <dependency>
@@ -95,6 +95,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!--整合分页-->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>${pagehelper.springboot.starter.version}</version>
         </dependency>
     </dependencies>
 

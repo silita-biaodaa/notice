@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.notice.dao.TbNtMianHunanMapper">
+
+
+  <!--查询公告 中标-->
+  <select id="queryBids" resultType="java.util.Map" parameterType="Map">
+    SELECT
+      mian.pkid,
+      mian.title,
+      bids.f_candidate,
+      bids.f_quote,
+      mian.pub_date
+    FROM
+    tb_nt_mian_${proviceCode} mian
+    INNER JOIN tb_nt_bids_${proviceCode} bids
+    ON mian.`pkid` = bids.`nt_id`
+    WHERE 1 = 1
+    <if test="title != null and title != ''">
+      and title like CONCAT('%',#{title},'%')
+    </if>
+    <if test="cityCode != null and cityCode != ''">
+      and city_code=#{cityCode}
+    </if>
+    <if test="countyCode != null and countyCode != ''">
+      and county_code=#{countyCode}
+    </if>
+    <if test="projSumStart != null and projSumStart != ''">
+      and mian.f_quote &gt;= #{projSumStart}
+    </if>
+    <if test="projSumEnd != null and projSumEnd != ''">
+      and mian.f_quote &lt;= #{projSumEnd}
+    </if>
+    ORDER BY mian.pub_date DESC
+
+  </select>
+  <!--根据企业名称模糊查询 中标记录-->
+  <select id="queryCompanyName" resultType="java.lang.String" parameterType="String">
+    SELECT
+      nt_id,
+      title,
+      pub_date,
+      snatch_id,
+      f_candidate,
+      f_quote
+    FROM
+      tb_nt_bids_cand
+    WHERE f_candidate LIKE CONCAT('%',#{CompanyName},'%')
+  </select>
+
+</mapper>

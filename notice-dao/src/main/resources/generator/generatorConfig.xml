@@ -11,7 +11,7 @@
         <property name="endingDelimiter" value="`"/>
 
         <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
-            <property name="mappers" value="com.silita.data_common.utils.MyMapper"/>
+            <property name="mappers" value="com.silita.notice.utils.MyMapper"/>
         </plugin>
 
         <jdbcConnection driverClass="${spring.datasource.driver-class-name}"
@@ -20,16 +20,16 @@
                         password="${spring.datasource.password}">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.silita.data_parsing.model" targetProject="src/main/java"/>
+        <javaModelGenerator targetPackage="com.silita.notice.model" targetProject="src/main/java"/>
 
         <sqlMapGenerator targetPackage="mappers" targetProject="src/main/resources"/>
 
-        <javaClientGenerator targetPackage="com.silita.data_parsing.dao" targetProject="src/main/java"
+        <javaClientGenerator targetPackage="com.silita.notice.dao" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="tb_company">
+        <table tableName="tb_nt_mian_hunan">
             <!--mysql 配置-->
-            <generatedKey column="com_id" sqlStatement="Mysql" identity="true"/>
+            <generatedKey column="pkid" sqlStatement="Mysql" identity="true"/>
             <!--oracle 配置-->
             <!--<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>-->
         </table>
