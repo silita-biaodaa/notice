@@ -165,9 +165,20 @@ public class TbNtMianHunan {
      * 更新人
      */
     private String updateBy;
-
+    /**
+     * 金额>=
+     */
     private Double projSumStart;
-
+    /**
+     * 金额<=
+     */
     private Double projSumEnd;
+    /**
+     * 原文内容
+     */
+    private String content;
+
+
+
 
 }
