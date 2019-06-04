@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.silita.notice.dao.TbNtMianHunanMapper">
   <insert id="addClickCount">
-
+    UPDATE mishu_write.tb_click_statistics SET click_count=#{addCount} WHERE innert_id=#{id} AND source=#{source}
   </insert>
 
 
@@ -15,7 +15,9 @@
       bids.f_quote as oneOffer,
       mian.pub_date as opendate,
       mian.source,
-      mian.snatch_id as rowId,
+      mian.provice_code as provice,
+      mian.city_code as city,
+      mian.snatch_id as snatchId,
      <include refid="noticeTypeConvert"/>,
      mian.nt_category as type,
      bids.pb_mode as pbMode
@@ -24,6 +26,8 @@
     INNER JOIN tb_nt_bids_${proviceCode} bids
     ON mian.`pkid` = bids.`nt_id`
     WHERE 1 = 1
+      AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
+      AND mian.`pub_date` &lt;= NOW()
     <if test="title != null and title != ''">
       and mian.title like CONCAT('%',#{title},'%')
     </if>
@@ -53,16 +57,33 @@
   <!--根据企业名称模糊查询 中标记录-->
   <select id="queryCompanyName" resultType="java.util.Map" parameterType="Map">
     SELECT
-      nt_id,
-      title,
-      pub_date,
-      snatch_id,
-      f_candidate,
-      f_quote
-    FROM
-      tb_nt_bids_cand
-    WHERE f_candidate LIKE CONCAT('%',#{CompanyName},'%')
+  cand.nt_id AS id,
+  cand.title,
+  cand.pub_date AS opendate,
+  cand.snatch_id as snatchId,
+  cand.f_candidate AS oneName,
+  cand.f_quote AS oneOffer,
+  cand.source
+FROM
+  tb_nt_bids_cand cand
+    WHERE cand.f_candidate LIKE CONCAT('%',#{com_name},'%')
+    <if test="title != null and title != ''">
+        and cand.title like CONCAT('%',#{title},'%')
+    </if>
+    ORDER BY cand.pub_date DESC
   </select>
+
+    <!--获取企业中标数量-->
+    <select id="queryCompanyCount" resultType="java.lang.Integer">
+      select
+        count(1)
+        from tb_nt_bids_cand cand
+      where
+        cand.f_candidate LIKE CONCAT('%',#{com_name},'%')
+        <if test="title != null and title != ''">
+            and cand.title like CONCAT('%',#{title},'%')
+        </if>
+    </select>
 
   <!--查询招标信息-->
   <!--资质还没判断-->
@@ -70,9 +91,12 @@
     SELECT
       mian.pkid AS id,
       mian.`title`,
+      mian.snatch_id as snatchId,
       mian.`pub_date` AS opendate,
       tenders.qua_name AS certificate,
       mian.source,
+      mian.provice_code as provice,
+      mian.city_code as city,
       <include refid="noticeTypeConvert"/>,
       mian.nt_category AS `type`,
       (SELECT t.`name` FROM dic_common t WHERE t.`code` = tenders.`pb_mode` AND t.`type` = '${pdModeType}') AS pdmode
@@ -128,7 +152,8 @@
       <include refid="noticeTypeConvert"/>,
       mian.source,
       mian.nt_category as type,
-      mian.url
+      mian.url,
+    CONCAT((SELECT twf.name FROM mishu.`twf_dict` twf WHERE twf.code=#{provice}),(SELECT sys.area_name FROM sys_area sys WHERE sys.area_code=#{city})) AS projDq
     FROM
     tb_nt_mian_${source} mian
     left JOIN tb_nt_bids_${source} bids
@@ -136,6 +161,31 @@
     WHERE mian.pkid=#{id}
 
   </select>
+
+
+<!--获取招标详情-->
+  <select id="queryTendersNociteDetails" resultType="java.util.Map" parameterType="map">
+        SELECT
+  mian.pkid AS id,
+  mian.`title`,
+  mian.`pub_date` AS opendate,
+  mian.`city_code`,
+  common.name AS pbMode,
+  <include refid="noticeTypeConvert"/>,
+  tenders.qua_name AS zzRank,
+  mian.snatch_id AS snatchId,
+    mian.nt_category as type,
+    mian.url,
+  CONCAT((SELECT twf.name FROM mishu.`twf_dict` twf WHERE twf.code=#{provice}),(SELECT sys.area_name FROM sys_area sys WHERE sys.area_code=#{city})) AS projDq
+FROM
+  tb_nt_mian_${source} mian
+  JOIN tb_nt_tenders_${source} tenders
+    ON mian.pkid = tenders.nt_id
+  LEFT JOIN dic_common common
+    ON tenders.`pb_mode` = common.`code`
+WHERE mian.pkid = #{id}
+  </select>
+
 
   <sql id="noticeTypeConvert">
        ( case mian.biness_type
@@ -154,39 +204,51 @@
         when '13' then '招标代理'
         else '其他' end) as projectType
     </sql>
-<!--获取招标详情-->
-  <select id="queryTendersNociteDetails" resultType="java.util.Map" parameterType="map">
-        SELECT
-          mian.`title`,
-          mian.`pub_date`,
-          common.name,
-          tenders.qua_name，
-          mian.snatch_id
-        FROM
-          tb_nt_mian_hunan mian
-          JOIN tb_nt_tenders_hunan tenders
-            ON mian.pkid = tenders.nt_id
-          JOIN dic_common common
-            ON tenders.`pb_mode` = common.`code`
-        where mian.pkid=#{id}
-  </select>
+  <sql id="nociteProvince">
+    ( case mian.provice_code
+        when 'beij' then '北京'
+        when 'tianj' then '天津市'
+        when 'hebei' then '河北省'
+        when 'sanx' then '山西省'
+        when 'neimg' then '内蒙古自治区'
+        when 'liaon' then '辽宁省'
+        when 'jil' then '吉林省'
+        when 'heilj' then '黑龙江省'
+        when 'shangh' then '上海市'
+        when 'jiangs' then '江苏省'
+        when 'jiangs' then '浙江省'
+        when '12' then '安徽省'
+        when '13' then '福建省'
+        when '13' then '江西省'
+        when '13' then '江西省'
+        when '13' then '河南省'
+        when '13' then '湖北省'
+        when '13' then '广东省'
+        when '13' then '广西壮族自治区'
+        when '13' then '海南省'
+        when '13' then '重庆市'
+        when '13' then '四川省'
+        when '13' then '贵州省'
+        when '13' then '云南省'
+        when '13' then '陕西省'
+        when '13' then '甘肃省'
+        when '13' then '青海省'
+        when '13' then '宁夏回族自治区'
+        when '13' then '湖南省'
+        when '13' then '新疆维吾尔自治区'
+        when '13' then '西藏自治区'
+        else '详情见原文' end) as province
+  </sql>
   <!--获取点击量-->
   <select id="queryClickCount" resultType="java.util.Map" parameterType="map">
     select click_count as clickCount from mishu_write.tb_click_statistics where innert_id=#{id} and source=#{source}
   </select>
   <!--匹配用户是否关注-->
-  <select id="queryattention" resultType="java.util.Map" parameterType="map">
+  <select id="queryAttention" resultType="java.util.Map" parameterType="map">
     SELECT noticeId,userId FROM mishu_write.collec_notice WHERE noticeId=#{id} and userId=#{userId}
   </select>
 
-  <!--
-        System.out.println("zzdj1: "+zzdj1+"   zzdj2: "+zzdj2);
 
-
-        System.out.println("zz2dj1:"+zz2dj1+"   zz2dj2:"+zz2dj2);
-
-
-        System.out.println("zz3dj1:"+zz3dj1+"   zz3dj2:"+zz3dj2);-->
   <select id="queryQuaId" resultType="java.lang.String" parameterType="String">
     select id from rel_qua_grade where qua_code=#{zzdj1} and grade_code=#{zzdj2}
     <if test="zz2dj1 != null and zz2dj1 != '' and zz2dj2 != null and zz2dj2 !=''">
@@ -196,18 +258,7 @@
       or qua_code=#{zz3dj1} and grade_code=#{zz3dj2}
     </if>
   </select>
-<!--  <select id="queryZzgxId" resultType="java.lang.String" parameterType="String">
-    select
-      nt_id
-    from tb_nt_regex_qua WHERE 1=1
-    <if test="regexList != null and regexList.size() > 0">
-      and (
-        <foreach collection="regexList" item="regexList" separator="or">
-          qua_regex=#{regexList}
-        </foreach>
-      )
-    </if>
-  </select>-->
+
 
 
 </mapper>

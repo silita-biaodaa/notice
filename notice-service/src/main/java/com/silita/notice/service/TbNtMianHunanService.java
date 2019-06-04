@@ -28,7 +28,14 @@ public interface TbNtMianHunanService{
      * 全国
      */
 
-    List<Map<String,Object>> queryCompanyName(String companyName);
+    List<Map<String,Object>> queryCompanyName(Map<String,Object> param);
+
+    /**
+     * 获取企业中标数量
+     * @param param
+     * @return
+     */
+    Integer queryCompanyCount(Map<String,Object> param);
 
 
     /**
@@ -49,10 +56,10 @@ public interface TbNtMianHunanService{
 
     /**
      * 获取招标公告详情
-     * @param pkid
+     * @param param
      * @return
      */
-    List<Map<String,Object>> queryTendersNociteDetails(String pkid);
+    Map<String,Object> queryTendersNociteDetails(Map<String,Object> param);
 
     /**
      * 获取公告详情
@@ -62,7 +69,7 @@ public interface TbNtMianHunanService{
     public Map<String,Object> queryBidsDetailsCentend(String rowId) throws IOException;
 
 
-    public String queryBidsDetailsCentendString(String rowId) throws IOException;
+    public String queryBidsDetailsCentendString(String snatchId) throws IOException;
 
     /**
      * 获取评标办法   招标
@@ -98,7 +105,7 @@ public interface TbNtMianHunanService{
      * @param param
      * @return
      */
-    Map<String,Object> queryattention(Map<String,Object> param);
+    Map<String,Object> queryAttention(Map<String,Object> param);
 
     /**
      * 是否关注
@@ -115,20 +122,9 @@ public interface TbNtMianHunanService{
     List<String> queryQuaId(Map<String,Object> param);
 
 
-  /*  *//**
-     * 通过资质等级id  找到对应公告id
-     * @param param
-     * @return
-     *//*
-    List<String> queryZzgxId(Map<String,Object> param);*/
+    void addClickCount(Map<String,Object> param);
 
 
-   /* *//**
-     * 获取资质关系表中的公告
-     * @param param
-     * @return
-     *//*
-    List<String> queryZzPkid(Map<String,Object> param);*/
 
 
 }

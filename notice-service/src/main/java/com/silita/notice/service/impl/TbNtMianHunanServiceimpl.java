@@ -76,8 +76,14 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * 全国
      */
     @Override
-    public List<Map<String,Object>> queryCompanyName(String companyName) {
-        return tbNtMianHunanMapper.queryCompanyName(companyName);
+    public List<Map<String,Object>> queryCompanyName(Map<String,Object> param) {
+        return tbNtMianHunanMapper.queryCompanyName(param);
+    }
+
+    @Override
+    public Integer queryCompanyCount(Map<String, Object> param) {
+        Integer count = tbNtMianHunanMapper.queryCompanyCount(param);
+        return count;
     }
 
     /**
@@ -103,7 +109,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             List<String> cityCodeList = Arrays.asList(split1);
             param.put("cityCodeList",cityCodeList);
         }
-
         //获取评标法
         String pbModes = MapUtils.getString(param, "pbModes");
         if(StringUtils.isNotEmpty(pbModes)){
@@ -111,48 +116,39 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             List<String> pbModeList = Arrays.asList(split2);
             param.put("pbModeList",pbModeList);
         }
-
         String zzType = MapUtils.getString(param, "zzType");
-
         String[] zz = zzType.split("\\,");
         String zz1 = zz[0].toString();
         String zz2 = zz[1].toString();
         String zz3 = zz[2].toString();
-
         //资质 1
         String[] spdj = zz1.split("\\/");
-
-
         String zzdj1 = spdj[0].toString();
         String zzdj2 = spdj[1].toString();
-
-
         // 资质 2
         String[] zz2dj = zz2.split("\\/");
-
         String zz2dj1 = spdj[0].toString();
         String zz2dj2 = spdj[1].toString();
-
-
         // 资质 3
         String[] zz3dj = zz3.split("\\/");
-
         String zz3dj1 = spdj[0].toString();
         String zz3dj2 = spdj[1].toString();
-
         param.put("zzdj1",zzdj1);
         param.put("zzdj2",zzdj2);
         param.put("zz2dj1",zz2dj1);
         param.put("zz2dj2",zz2dj2);
         param.put("zz3dj1",zz3dj1);
         param.put("zz3dj2",zz3dj2);
-
         List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
         param.put("regexList",regexList);
-
         param.put("pdModeType",param.get("proviceCode")+"_pbmode");
-
-        PageHelper.startPage(1,20);
+        Integer pageNo = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
+        if (pageNo <= 30){
+            PageHelper.startPage(pageNo,pageSize);
+        }else if(pageNo > 30){
+            PageHelper.startPage(30,20);
+        }
         List<Map<String,Object>> list = tbNtMianHunanMapper.queryTenders(param);
         PageInfo pageInfo = new PageInfo(list);
 
@@ -166,24 +162,18 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public Map<String, Object> queryBidsNociteDetails(Map<String,Object> param) {
-       /* String regions = MapUtils.getString(param, "regions");
-        System.out.println(regions);
 
-        String[] split = regions.split("\\|\\|");
-        //获取省
-        String source = split[0].toString();
-        param.put("source",source);*/
         return tbNtMianHunanMapper.queryBidsNociteDetails(param);
     }
 
     /**
      * 获取招标详情
-     * @param pkid
+     * @param param
      * @return
      */
     @Override
-    public List<Map<String, Object>> queryTendersNociteDetails(String pkid) {
-        return tbNtMianHunanMapper.queryTendersNociteDetails(pkid);
+    public Map<String,Object> queryTendersNociteDetails(Map<String,Object> param) {
+        return tbNtMianHunanMapper.queryTendersNociteDetails(param);
     }
 
     /**
@@ -215,18 +205,18 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
 
     /**
      * 获取公告详情
-     * @param rowId  // 爬取id
+     * @param snatchId  // 爬取id
      *               返回String类型
      * @return
      * @throws IOException
      */
 
-    public String queryBidsDetailsCentendString(String rowId) throws IOException {
+    public String queryBidsDetailsCentendString(String snatchId) throws IOException {
         String content="";
         Map<String,Object> map = new HashMap<String,Object>();
         TableName tableName = TableName.valueOf(hBaseTableName);
         Table table = connection.getTable(tableName);
-        Get g = new Get(rowId.getBytes());
+        Get g = new Get(snatchId.getBytes());
         Result rs = table.get(g);
         Cell[] cells = rs.rawCells();
         String rankStr = "";
@@ -264,20 +254,11 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Map<String,Object> map = new HashMap<String,Object>();
         String[] split = regional.split("\\|\\|");
         String province = split[0].toString();
-        //System.out.println("pro:"+pro);
         try{
-            //System.out.println("split[1]="+split[1]);
             String addrs = split[1].toString();
-            //System.out.println("addrs:"+addrs);
-
             String[] split1 = addrs.split(",");
-
             List<String> list =
                     Arrays.asList(split1);
-           /* for (String s1 : list) {
-                System.out.println("s1:"+s1);
-            }*/
-
             map.put("province",province);
             map.put("city",list);
         }catch (Exception e){
@@ -298,6 +279,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public Map<String,Object> queryClickCount(Map<String,Object> param) {
         return tbNtMianHunanMapper.queryClickCount(param);
     }
+    private Integer addCount=0;
 
     /**
      * 获取点击量
@@ -309,6 +291,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Map<String, Object> map = tbNtMianHunanMapper.queryClickCount(param);
         Integer clickCount = (Integer) map.get("clickCount");
         System.out.println(clickCount);
+        addCount = clickCount+1;
+        //点击量+1
+        param.put("addCount",addCount);
+        tbNtMianHunanMapper.addClickCount(param);
         return clickCount;
     }
 
@@ -318,8 +304,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * @return
      */
     @Override
-    public Map<String, Object> queryattention(Map<String,Object> param) {
-        return tbNtMianHunanMapper.queryattention(param);
+    public Map<String, Object> queryAttention(Map<String,Object> param) {
+        return tbNtMianHunanMapper.queryAttention(param);
     }
 
     /**
@@ -330,7 +316,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Override
     public Boolean attention(Map<String,Object> param) {
         boolean collected=false;
-        Map<String, Object> queryattention = tbNtMianHunanMapper.queryattention(param);
+        Map<String, Object> queryattention = tbNtMianHunanMapper.queryAttention(param);
         if (null != queryattention){
             collected=true;
         }
@@ -344,124 +330,16 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public List<String> queryQuaId(Map<String, Object> param) {
-     /*   String zzType = MapUtils.getString(param, "zzType");
-
-        String[] zz = zzType.split("\\,");
-        String zz1 = zz[0].toString();
-        String zz2 = zz[1].toString();
-        String zz3 = zz[2].toString();
-
-        //资质 1
-        String[] spdj = zz1.split("\\/");
-
-
-        String zzdj1 = spdj[0].toString();
-        String zzdj2 = spdj[1].toString();
-
-
-        // 资质 2
-        String[] zz2dj = zz2.split("\\/");
-
-        String zz2dj1 = spdj[0].toString();
-        String zz2dj2 = spdj[1].toString();
-
-
-        // 资质 3
-        String[] zz3dj = zz3.split("\\/");
-
-        String zz3dj1 = spdj[0].toString();
-        String zz3dj2 = spdj[1].toString();
-
-        param.put("zzdj1",zzdj1);
-        param.put("zzdj2",zzdj2);
-        param.put("zz2dj1",zz2dj1);
-        param.put("zz2dj2",zz2dj2);
-        param.put("zz3dj1",zz3dj1);
-        param.put("zz3dj2",zz3dj2);*/
-
         return tbNtMianHunanMapper.queryQuaId(param);
     }
 
-   /* *//**
-     * 通过资质等级id  找到对应公告id
+    /**
+     * 变更点击量
      * @param param
-     * @return
-     *//*
+     */
     @Override
-    public List<String> queryZzgxId(Map<String, Object> param) {
-        MapUtils.getString(param,"regexList");
-        return tbNtMianHunanMapper.queryZzgxId(param);
-    }
-*/
-    /**
-     * 获取资质关系表中的公告
-     * @param param
-     * @return
-     */
-/*    @Override
-    public List<String> queryZzPkid(Map<String,Object> param){
-*//*        String zzType = MapUtils.getString(param, "zzType");
-
-        String[] zz = zzType.split("\\,");
-        String zz1 = zz[0].toString();
-        String zz2 = zz[1].toString();
-        String zz3 = zz[2].toString();
-
-        //资质 1
-        String[] spdj = zz1.split("\\/");
-
-
-        String zzdj1 = spdj[0].toString();
-        String zzdj2 = spdj[1].toString();
-
-
-        // 资质 2
-        String[] zz2dj = zz2.split("\\/");
-
-        String zz2dj1 = spdj[0].toString();
-        String zz2dj2 = spdj[1].toString();
-
-
-        // 资质 3
-        String[] zz3dj = zz3.split("\\/");
-
-        String zz3dj1 = spdj[0].toString();
-        String zz3dj2 = spdj[1].toString();
-
-        param.put("zzdj1",zzdj1);
-        param.put("zzdj2",zzdj2);
-        param.put("zz2dj1",zz2dj1);
-        param.put("zz2dj2",zz2dj2);
-        param.put("zz3dj1",zz3dj1);
-        param.put("zz3dj2",zz3dj2);
-
-        List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);*//*
-       *//* for (String s : regexList) {
-            System.out.println(s);
-        }
-
-        param.put("regexList",regexList);
-
-        List<String> pkidList = tbNtMianHunanMapper.queryZzgxId(param);
-        for (String s : pkidList) {
-            System.out.println(s);
-        }*//*
-
-        return pkidList;
-
-
-    }*/
-
-
-    /**
-     * 获取资质
-     * @param notice
-     * @return
-     */
-    public String queryNocite(String notice){
-        String notices = "";
-
-        return notice;
+    public void addClickCount(Map<String, Object> param) {
+        tbNtMianHunanMapper.addClickCount(param);
     }
 
 
@@ -471,15 +349,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * @return
      */
     public Integer getClickCount(String pkid){
-        //获取标题
-        //String title = MapUtils.getString(param, "title");
-         /*//获取金额
-        String projSumStart = MapUtils.getString(param, "projSumStart");
-        String projSumEnd = MapUtils.getString(param, "projSumStart");*/
-        //param.put("proviceCode",proviceCode);
-        /*param.put("title",title);
-        param.put("projSumStart",projSumStart);
-        param.put("projSumEnd",projSumStart);*/
+
         return 0;
 
     }

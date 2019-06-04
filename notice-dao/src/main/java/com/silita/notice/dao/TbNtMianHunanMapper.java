@@ -29,11 +29,13 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
      *通过公司名称模糊查询公司中标记录
      * bids:中标
      * cand:全国
-     * @param companyName
+     * @param param
      * @return
      */
 
-    List<Map<String,Object>> queryCompanyName(@Param("companyName") String companyName);
+    List<Map<String,Object>> queryCompanyName(Map<String,Object> param);
+
+    Integer queryCompanyCount(Map<String,Object> param);
 
     /**
      * 查询招标
@@ -52,10 +54,10 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
 
     /**
      * 获取招标公告详情
-     * @param pkid
+     * @param param
      * @return
      */
-    List<Map<String,Object>> queryTendersNociteDetails(String pkid);
+    Map<String,Object> queryTendersNociteDetails(Map<String,Object> param);
 
     /**
      * 获取点击量
@@ -65,10 +67,10 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
     Map<String,Object> queryClickCount(Map<String,Object> param);
 
     /**
-     *
+     *获取用户是否关注
      * @return
      */
-    Map<String,Object> queryattention(Map<String,Object> param);
+    Map<String,Object> queryAttention(Map<String,Object> param);
 
     /**
      *
@@ -86,12 +88,7 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
      */
     List<String> queryQuaId(Map<String,Object> param);
 
-    /**
-     * 通过资质等级id  找到对应公告id
-     * @param param
-     * @return
-     */
-   // List<String> queryZzgxId(Map<String,Object> param);
+
 
 
 
