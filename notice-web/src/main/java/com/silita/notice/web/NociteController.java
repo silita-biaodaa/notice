@@ -49,7 +49,8 @@ public class NociteController extends BaseController {
     public Map queryBids(@RequestBody Map<String,Object> param){
         Map<String,Object> resultMap = new HashMap<String,Object>();
         //分页限制 最多到30页  每页20条记录
-        pdpageNo(param);
+        checkPage(param);
+        PageHelper.startPage(MapUtils.getInteger(param,"pageNo"),MapUtils.getInteger(param,"pageSize"));
         List<Map<String, Object>> maps = tbNtMianHunanService.queryBids(param);
         PageInfo pageInfo = new PageInfo(maps);
         seccussMap(resultMap,pageInfo);
@@ -70,11 +71,10 @@ public class NociteController extends BaseController {
     public Map queryCompanyName(@RequestBody Map<String,Object> param){
         Map<String,Object> resultMap = new HashMap<String,Object>();
         //分页限制 最多到30页  每页20条记录
-        pdpageNo(param);
+        checkPage(param);
+        PageHelper.startPage(MapUtils.getInteger(param,"pageNo"),MapUtils.getInteger(param,"pageSize"));
         List<Map<String,Object>> data = tbNtMianHunanService.queryCompanyName(param);
         PageInfo pageInfo = new PageInfo(data);
-        Integer count = tbNtMianHunanService.queryCompanyCount(param);
-        resultMap.put("total",count);
         seccussMap(resultMap,pageInfo);
         return resultMap;
     }

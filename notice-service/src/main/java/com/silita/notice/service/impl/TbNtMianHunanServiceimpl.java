@@ -142,13 +142,16 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
         param.put("regexList",regexList);
         param.put("pdModeType",param.get("proviceCode")+"_pbmode");
+
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
-        if (pageNo <= 30){
-            PageHelper.startPage(pageNo,pageSize);
-        }else if(pageNo > 30){
-            PageHelper.startPage(30,20);
+        if(pageNo > 30){
+            param.put("pageNo",30);
         }
+        if (pageSize > 20){
+            param.put("pageSize",20);
+        }
+        PageHelper.startPage(MapUtils.getInteger(param,"pageNo"),MapUtils.getInteger(param,"pageSize"));
         List<Map<String,Object>> list = tbNtMianHunanMapper.queryTenders(param);
         PageInfo pageInfo = new PageInfo(list);
 

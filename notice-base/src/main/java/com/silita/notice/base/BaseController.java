@@ -30,13 +30,14 @@ public class BaseController {
         }
     }
 
-    public void pdpageNo(Map<String,Object> param){
+    public void checkPage(Map<String,Object> param){
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
-        if (pageNo <= 30){
-            PageHelper.startPage(pageNo,pageSize);
-        }else if(pageNo > 30){
-            PageHelper.startPage(30,20);
+        if(pageNo > 30){
+            param.put("pageNo",30);
+        }
+        if (pageSize > 20){
+            param.put("pageSize",20);
         }
     }
 
