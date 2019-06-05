@@ -96,7 +96,7 @@ public class NociteController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/zhongbiao/bidsDetails",method = RequestMethod.POST)
     public Map bidsDetails(@RequestBody Map<String,Object> param) throws IOException {
-        String snatchId = MapUtils.getString(param, "snatchId");
+        //String snatchId = MapUtils.getString(param, "snatchId");
         Map<String,Object> resultMap = new HashMap<String,Object>();
         //获取点击量
         Integer count = tbNtMianHunanService.count(param);//
@@ -106,7 +106,7 @@ public class NociteController extends BaseController {
         //获取中标详情
         Map<String, Object> map1 = tbNtMianHunanService.queryBidsNociteDetails(param);
         //获取中标原文
-        String content = tbNtMianHunanService.queryBidsDetailsCentendString(snatchId);
+        String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
         map1.put("content",content);
         //map1.put("clickCount",count);
         map1.put("collected",attention);
@@ -123,54 +123,26 @@ public class NociteController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/tenders/bidsDetails",method = RequestMethod.POST)   //用户是否关注  **
     public Map tendersDetails(@RequestBody Map<String,Object> param) throws IOException {
-        String snatchId = MapUtils.getString(param, "snatchId");
+        //String snatchId = MapUtils.getString(param, "snatchId");
         Map<String,Object> resultMap = new HashMap<String,Object>();
         //获取点击量
         Integer count = tbNtMianHunanService.count(param);//
         //获取是否关注
         Boolean attention = tbNtMianHunanService.attention(param);
         //获取招标原文
-        String content = tbNtMianHunanService.queryBidsDetailsCentendString(snatchId);
+        String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
         //获取招标详情
         Map<String, Object> map = tbNtMianHunanService.queryTendersNociteDetails(param);
         map.put("content",content);
         //map1.put("clickCount",count);
         map.put("collected",attention);
         resultMap.put("clickCount",count);
+        seccussMap(resultMap,map);
         return resultMap;
 
 
     }
 
-    /**
-     * 首页  -  中标
-     * @param param
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/home/zhongbiao/list",method = RequestMethod.POST)
-    public Map queryHomeBids(@RequestBody Map<String,Object> param){
-        Map<String,Object> resultMap = new HashMap<String,Object>();
-        PageHelper.startPage(1,8);
-        List<Map<String, Object>> list = tbNtMianHunanService.queryBids(param);
-        PageInfo pageInfo = new PageInfo(list);
-        seccussMap(resultMap,pageInfo);
-        return resultMap;
-    }
 
-    /**
-     * 首页  -  招标
-     * @param param
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/home/zhaobiao/list",method = RequestMethod.POST)
-    public Map queryHomeTenders(@RequestBody Map<String,Object> param){
-        Map<String,Object> resultMap = new HashMap<String,Object>();
-        PageHelper.startPage(1,8);
-        PageInfo pageInfo = tbNtMianHunanService.queryTenders(param);
-        seccussMap(resultMap,pageInfo);
-        return resultMap;
-    }
 
 }

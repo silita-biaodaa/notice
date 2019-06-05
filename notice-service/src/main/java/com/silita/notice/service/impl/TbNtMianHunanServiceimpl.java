@@ -177,13 +177,14 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
 
     /**
      * 获取公告详情
-     * @param snatchId  // 爬取id
+     * @param param  // 爬取id
      *               返回String类型
      * @return
      * @throws IOException
      */
 
-    public String queryBidsDetailsCentendString(String snatchId) throws IOException {
+    public String queryBidsDetailsCentendString(Map<String,Object> param) throws IOException {
+        String snatchId = MapUtils.getString(param, "snatchId");
         String content="";
         Map<String,Object> map = new HashMap<String,Object>();
         TableName tableName = TableName.valueOf(hBaseTableName);
@@ -262,7 +263,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public Integer count(Map<String,Object> param) {
         Map<String, Object> map = tbNtMianHunanMapper.queryClickCount(param);
         Integer clickCount = (Integer) map.get("clickCount");
-        System.out.println(clickCount);
         addCount = clickCount+1;
         //点击量+1
         param.put("addCount",addCount);

@@ -64,7 +64,7 @@ public interface TbNtMianHunanService{
 
 
 
-    public String queryBidsDetailsCentendString(String snatchId) throws IOException;
+    public String queryBidsDetailsCentendString(Map<String,Object> param) throws IOException;
 
     /**
      * 获取评标办法   招标
