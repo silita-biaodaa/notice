@@ -209,17 +209,21 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public Map<String,Object> queryRegional(String regional){
         Map<String,Object> map = new HashMap<String,Object>();
         String[] split = regional.split("\\|\\|");
-        String province = split[0].toString();
-        try{
+        if (null != split  && split.length>=2){
+            String province = split[0].toString();
             String addrs = split[1].toString();
             String[] split1 = addrs.split(",");
             List<String> list =
                     Arrays.asList(split1);
             map.put("province",province);
             map.put("city",list);
-        }catch (Exception e){
+        }else if(split.length < 2 && split.length >0){
+            String province = split[0].toString();
+            map.put("province",province);
+        }else{
 
         }
+
         return map;
     }
 
