@@ -16,6 +16,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hbase.thirdparty.org.apache.commons.collections4.map.HashedMap;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +35,8 @@ public class NociteController extends BaseController {
     @Autowired
     private TbNtMianHunanService tbNtMianHunanService;
 
-    private String hBaseTableName="notice";
+    @Value("${hbase.config.hbase.zookeeper.quorum}")
+    private String hBaseTableName;
 
     @Autowired
     private Connection connection;

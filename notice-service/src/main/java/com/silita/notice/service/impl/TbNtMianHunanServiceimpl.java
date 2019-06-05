@@ -18,6 +18,7 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,7 +30,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Autowired
     private TbNtMianHunanMapper tbNtMianHunanMapper;
 
-    private String hBaseTableName="notice";
+    @Value("${hbase.config.hbase.zookeeper.quorum}")
+    private String hBaseTableName;
 
     @Autowired
     private Connection connection;
@@ -41,31 +43,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public List<Map<String,Object>> queryBids(Map<String,Object> param) {
-        Map<String,Object> resultMap = new HashMap<String,Object>();
-
-
         //获取地区
-        String regions = MapUtils.getString(param, "regions");
-        if(null != regions && "" != regions){
-            String[] split = regions.split("\\|\\|");
-            if (null != split && split.length == 1){
-                //获取省
-                param.put("proviceCode",split[0]);
-            }else  if (split.length == 2){
-                //获取省
-                param.put("proviceCode",split[0]);
-                String addrs = split[1];
-                //获取市
-                String[] split1 = addrs.split(",");
-                List<String> cityCodeList = Arrays.asList(split1);
-                param.put("cityCodeList",cityCodeList);
-            }
-        }else{
-            //默认地区
-            param.put("proviceCode","hunan");
-        }
-
-
+        queryRegions(param);
         return tbNtMianHunanMapper.queryBids(param);
     }
 
@@ -91,27 +70,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public PageInfo queryTenders(Map<String,Object> param) {
-
         //获取地区
-        String regions = MapUtils.getString(param, "regions");
-        if(null != regions && "" != regions){
-            String[] split = regions.split("\\|\\|");
-            if (null != split && split.length == 1){
-                //获取省
-                param.put("proviceCode",split[0]);
-            }else  if (split.length == 2){
-                //获取省
-                param.put("proviceCode",split[0]);
-                String addrs = split[1];
-                //获取市
-                String[] split1 = addrs.split(",");
-                List<String> cityCodeList = Arrays.asList(split1);
-                param.put("cityCodeList",cityCodeList);
-            }
-        }else{
-            //默认地区
-            param.put("proviceCode","hunan");
-        }
+        queryRegions(param);
         //获取评标法
         String pbModes = MapUtils.getString(param, "pbModes");
         if(StringUtils.isNotEmpty(pbModes)){
@@ -135,19 +95,14 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             }
             group.add(maps);
         }
-
         param.put("groupList",group);
-
-
-
-
         List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
         param.put("regexList",regexList);
         param.put("pdModeType",param.get("proviceCode")+"_pbmode");
 
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
-        PageHelper.startPage(MapUtils.getInteger(param,"pageNo"),MapUtils.getInteger(param,"pageSize"));
+        PageHelper.startPage(pageNo,pageSize);
         List<Map<String,Object>> list = tbNtMianHunanMapper.queryTenders(param);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
@@ -192,7 +147,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Get g = new Get(snatchId.getBytes());
         Result rs = table.get(g);
         Cell[] cells = rs.rawCells();
-        String rankStr = "";
         for (Cell cell : cells) {
             String key = Bytes.toString(CellUtil.cloneQualifier(cell));
             String value = Bytes.toString(CellUtil.cloneValue(cell));
@@ -217,6 +171,35 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         return list;
     }
 
+
+    /**
+     * 公共地区
+     */
+
+    public void queryRegions(Map<String,Object> param){
+        //获取地区
+        String regions = MapUtils.getString(param, "regions");
+        if(null != regions && "" != regions){
+            String[] split = regions.split("\\|\\|");
+            if (null != split && split.length == 1){
+                //获取省
+                param.put("proviceCode",split[0]);
+            }else  if (split.length == 2){
+                //获取省
+                param.put("proviceCode",split[0]);
+                String addrs = split[1];
+                //获取市
+                String[] split1 = addrs.split(",");
+                List<String> cityCodeList = Arrays.asList(split1);
+                param.put("cityCodeList",cityCodeList);
+            }
+        }else{
+            //默认地区
+            param.put("proviceCode","hunan");
+        }
+    }
+
+
     /**
      * 获取地区
      * @param regional
@@ -235,11 +218,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             map.put("province",province);
             map.put("city",list);
         }catch (Exception e){
-            System.out.println("split[1] = null");
+
         }
-
-
-
         return map;
     }
 
@@ -252,7 +232,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public Map<String,Object> queryClickCount(Map<String,Object> param) {
         return tbNtMianHunanMapper.queryClickCount(param);
     }
-    private Integer addCount=0;
 
     /**
      * 获取点击量
@@ -263,9 +242,9 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public Integer count(Map<String,Object> param) {
         Map<String, Object> map = tbNtMianHunanMapper.queryClickCount(param);
         Integer clickCount = (Integer) map.get("clickCount");
-        addCount = clickCount+1;
+        clickCount++;
         //点击量+1
-        param.put("addCount",addCount);
+        param.put("addCount",clickCount);
         tbNtMianHunanMapper.addClickCount(param);
         return clickCount;
     }
@@ -315,16 +294,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     }
 
 
-    /**
-     * 获取点击量
-     * @param pkid
-     * @return
-     */
-    public Integer getClickCount(String pkid){
-
-        return 0;
-
-    }
 
 
 }
