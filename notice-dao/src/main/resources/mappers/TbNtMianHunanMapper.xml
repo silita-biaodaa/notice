@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.silita.notice.dao.TbNtMianHunanMapper">
-  <insert id="addClickCount">
+  <insert id="addClickCount"  parameterType="java.util.Map">
     UPDATE mishu_write.tb_click_statistics SET click_count=#{addCount} WHERE innert_id=#{id} AND source=#{source}
   </insert>
 
@@ -204,41 +204,7 @@ WHERE mian.pkid = #{id}
         when '13' then '招标代理'
         else '其他' end) as projectType
     </sql>
-  <sql id="nociteProvince">
-    ( case mian.provice_code
-        when 'beij' then '北京'
-        when 'tianj' then '天津市'
-        when 'hebei' then '河北省'
-        when 'sanx' then '山西省'
-        when 'neimg' then '内蒙古自治区'
-        when 'liaon' then '辽宁省'
-        when 'jil' then '吉林省'
-        when 'heilj' then '黑龙江省'
-        when 'shangh' then '上海市'
-        when 'jiangs' then '江苏省'
-        when 'jiangs' then '浙江省'
-        when '12' then '安徽省'
-        when '13' then '福建省'
-        when '13' then '江西省'
-        when '13' then '江西省'
-        when '13' then '河南省'
-        when '13' then '湖北省'
-        when '13' then '广东省'
-        when '13' then '广西壮族自治区'
-        when '13' then '海南省'
-        when '13' then '重庆市'
-        when '13' then '四川省'
-        when '13' then '贵州省'
-        when '13' then '云南省'
-        when '13' then '陕西省'
-        when '13' then '甘肃省'
-        when '13' then '青海省'
-        when '13' then '宁夏回族自治区'
-        when '13' then '湖南省'
-        when '13' then '新疆维吾尔自治区'
-        when '13' then '西藏自治区'
-        else '详情见原文' end) as province
-  </sql>
+  
   <!--获取点击量-->
   <select id="queryClickCount" resultType="java.util.Map" parameterType="map">
     select click_count as clickCount from mishu_write.tb_click_statistics where innert_id=#{id} and source=#{source}
@@ -249,14 +215,16 @@ WHERE mian.pkid = #{id}
   </select>
 
 
-  <select id="queryQuaId" resultType="java.lang.String" parameterType="String">
-    select id from rel_qua_grade where qua_code=#{zzdj1} and grade_code=#{zzdj2}
-    <if test="zz2dj1 != null and zz2dj1 != '' and zz2dj2 != null and zz2dj2 !=''">
-      or qua_code=#{zz2dj1} and grade_code=#{zzdj2}
-    </if>
-    <if test="zz3dj1 != null and zz3dj1 != '' and zz3dj2 != null and zz3dj2 !=''">
-      or qua_code=#{zz3dj1} and grade_code=#{zz3dj2}
-    </if>
+  <select id="queryQuaId" resultType="java.lang.String" parameterType="java.util.Map">
+    select id from rel_qua_grade where 1 = 1
+      <if test="groupList != null and groupList.size > 0">
+          <foreach collection="groupList" index="index" item="groupList">
+              or (qua_code=#{groupList.quaCode}
+              <if test="groupList.gradeCode != null and groupList.gradeCode != ''">
+                  and grade_code = #{groupList.gradeCode}
+              </if>)
+          </foreach>
+      </if>
   </select>
 
 

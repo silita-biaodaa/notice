@@ -57,10 +57,6 @@ public class NociteController extends BaseController {
         return resultMap;
     }
 
-
-
-
-
     /**
      *前端：精确企业名称
      *后台：通过获取企业名称 模糊匹配中标的公告
@@ -87,6 +83,7 @@ public class NociteController extends BaseController {
     @RequestMapping(value = "/zhaobiao/list",method = RequestMethod.POST)
     public Map queryTenders(@RequestBody Map<String,Object> param){
         Map<String,Object> resultMap = new HashMap<String,Object>();
+        checkPage(param);
         PageInfo pageInfo = tbNtMianHunanService.queryTenders(param);
         seccussMap(resultMap,pageInfo);
         return resultMap;
@@ -118,11 +115,6 @@ public class NociteController extends BaseController {
         return resultMap;
     }
 
-
-
-
-
-
     /**
      * 获取招标详情
      * @param param
@@ -150,9 +142,35 @@ public class NociteController extends BaseController {
 
     }
 
+    /**
+     * 首页  -  中标
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/home/zhongbiao/list",method = RequestMethod.POST)
+    public Map queryHomeBids(@RequestBody Map<String,Object> param){
+        Map<String,Object> resultMap = new HashMap<String,Object>();
+        PageHelper.startPage(1,8);
+        List<Map<String, Object>> list = tbNtMianHunanService.queryBids(param);
+        PageInfo pageInfo = new PageInfo(list);
+        seccussMap(resultMap,pageInfo);
+        return resultMap;
+    }
 
-
-
-
+    /**
+     * 首页  -  招标
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/home/zhaobiao/list",method = RequestMethod.POST)
+    public Map queryHomeTenders(@RequestBody Map<String,Object> param){
+        Map<String,Object> resultMap = new HashMap<String,Object>();
+        PageHelper.startPage(1,8);
+        PageInfo pageInfo = tbNtMianHunanService.queryTenders(param);
+        seccussMap(resultMap,pageInfo);
+        return resultMap;
+    }
 
 }

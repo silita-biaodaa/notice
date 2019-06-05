@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.silita.notice.dao.TbNtMianHunanMapper;
 import com.silita.notice.model.TbNtMianHunan;
 import com.silita.notice.service.TbNtMianHunanService;
+import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
@@ -42,31 +43,28 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public List<Map<String,Object>> queryBids(Map<String,Object> param) {
         Map<String,Object> resultMap = new HashMap<String,Object>();
 
+
         //获取地区
         String regions = MapUtils.getString(param, "regions");
-        System.out.println(regions);
-
-        String[] split = regions.split("\\|\\|");
-            //获取省
-        String proviceCode = split[0].toString();
-        param.put("proviceCode",proviceCode);
-        try{
-            if(null != split[1] && "" != split[1]){
-                String addrs = split[1].toString();
+        if(null != regions && "" != regions){
+            String[] split = regions.split("\\|\\|");
+            if (null != split && split.length == 1){
+                //获取省
+                param.put("proviceCode",split[0]);
+            }else  if (split.length == 2){
+                //获取省
+                param.put("proviceCode",split[0]);
+                String addrs = split[1];
                 //获取市
                 String[] split1 = addrs.split(",");
                 List<String> cityCodeList = Arrays.asList(split1);
                 param.put("cityCodeList",cityCodeList);
             }
-            else{
-                List<String> cityCodeList =null;
-                param.put("cityCodeList",cityCodeList);
-            }
+        }else{
+            //默认地区
+            param.put("proviceCode","hunan");
+        }
 
-        }
-        catch (Exception e){
-            System.out.println("split[1] = null");
-        }
 
         return tbNtMianHunanMapper.queryBids(param);
     }
@@ -93,21 +91,26 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public PageInfo queryTenders(Map<String,Object> param) {
+
         //获取地区
         String regions = MapUtils.getString(param, "regions");
-
-        String[] split = regions.split("\\|\\|");
-        if (null != split && split.length == 1){
-            //获取省
-            param.put("proviceCode",split[0]);
-        }else  if (split.length == 2){
-            //获取省
-            param.put("proviceCode",split[0]);
-            String addrs = split[1];
-            //获取市
-            String[] split1 = addrs.split(",");
-            List<String> cityCodeList = Arrays.asList(split1);
-            param.put("cityCodeList",cityCodeList);
+        if(null != regions && "" != regions){
+            String[] split = regions.split("\\|\\|");
+            if (null != split && split.length == 1){
+                //获取省
+                param.put("proviceCode",split[0]);
+            }else  if (split.length == 2){
+                //获取省
+                param.put("proviceCode",split[0]);
+                String addrs = split[1];
+                //获取市
+                String[] split1 = addrs.split(",");
+                List<String> cityCodeList = Arrays.asList(split1);
+                param.put("cityCodeList",cityCodeList);
+            }
+        }else{
+            //默认地区
+            param.put("proviceCode","hunan");
         }
         //获取评标法
         String pbModes = MapUtils.getString(param, "pbModes");
@@ -116,45 +119,37 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             List<String> pbModeList = Arrays.asList(split2);
             param.put("pbModeList",pbModeList);
         }
+
+        //获取资质
+        List<Map<String,Object>> group = new ArrayList<Map<String,Object>>();
         String zzType = MapUtils.getString(param, "zzType");
         String[] zz = zzType.split("\\,");
-        String zz1 = zz[0].toString();
-        String zz2 = zz[1].toString();
-        String zz3 = zz[2].toString();
-        //资质 1
-        String[] spdj = zz1.split("\\/");
-        String zzdj1 = spdj[0].toString();
-        String zzdj2 = spdj[1].toString();
-        // 资质 2
-        String[] zz2dj = zz2.split("\\/");
-        String zz2dj1 = spdj[0].toString();
-        String zz2dj2 = spdj[1].toString();
-        // 资质 3
-        String[] zz3dj = zz3.split("\\/");
-        String zz3dj1 = spdj[0].toString();
-        String zz3dj2 = spdj[1].toString();
-        param.put("zzdj1",zzdj1);
-        param.put("zzdj2",zzdj2);
-        param.put("zz2dj1",zz2dj1);
-        param.put("zz2dj2",zz2dj2);
-        param.put("zz3dj1",zz3dj1);
-        param.put("zz3dj2",zz3dj2);
+        for (String z : zz) {
+            Map<String,Object> maps = new HashMap<String,Object>();
+            String[] split1 = z.split("\\/");
+            if(split1.length >= 2){
+                maps.put("quaCode",split1[0]);
+                maps.put("gradeCode",split1[1]);
+            }else{
+                maps.put("quaCode",split1[0]);
+            }
+            group.add(maps);
+        }
+
+        param.put("groupList",group);
+
+
+
+
         List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
         param.put("regexList",regexList);
         param.put("pdModeType",param.get("proviceCode")+"_pbmode");
 
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
-        if(pageNo > 30){
-            param.put("pageNo",30);
-        }
-        if (pageSize > 20){
-            param.put("pageSize",20);
-        }
         PageHelper.startPage(MapUtils.getInteger(param,"pageNo"),MapUtils.getInteger(param,"pageSize"));
         List<Map<String,Object>> list = tbNtMianHunanMapper.queryTenders(param);
         PageInfo pageInfo = new PageInfo(list);
-
         return pageInfo;
     }
 
@@ -165,7 +160,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public Map<String, Object> queryBidsNociteDetails(Map<String,Object> param) {
-
         return tbNtMianHunanMapper.queryBidsNociteDetails(param);
     }
 
@@ -179,32 +173,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         return tbNtMianHunanMapper.queryTendersNociteDetails(param);
     }
 
-    /**
-     * 获取公告详情
-     * @param rowId  // 爬取id
-     *               返回Map
-     * @return
-     * @throws IOException
-     */
-    public Map<String,Object> queryBidsDetailsCentend(String rowId) throws IOException {
-        Map<String,Object> map = new HashMap<String,Object>();
-        TableName tableName = TableName.valueOf(hBaseTableName);
-        Table table = connection.getTable(tableName);
-        Get g = new Get(rowId.getBytes());
-        Result rs = table.get(g);
-        Cell[] cells = rs.rawCells();
-        String rankStr = "";
-        for (Cell cell : cells) {
-            String key = Bytes.toString(CellUtil.cloneQualifier(cell));
-            String value = Bytes.toString(CellUtil.cloneValue(cell));
-            switch (key) {
-                case "content": //获取内容
-                    map.put("content",value);
-                    break;
-            }
-        }
-        return map;
-    }
+
 
     /**
      * 获取公告详情
