@@ -90,40 +90,13 @@ public class NociteController extends BaseController {
     }
 
     /**
-     * 获取中标详情
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/zhongbiao/bidsDetails",method = RequestMethod.POST)
-    public Map bidsDetails(@RequestBody Map<String,Object> param) throws IOException {
-        //String snatchId = MapUtils.getString(param, "snatchId");
-        Map<String,Object> resultMap = new HashMap<String,Object>();
-        //获取点击量
-        Integer count = tbNtMianHunanService.count(param);//
-        //获取是否关注
-        Boolean attention = tbNtMianHunanService.attention(param);
-        //Map<String,Object> coutnt = new HashMap<String,Object>();
-        //获取中标详情
-        Map<String, Object> map1 = tbNtMianHunanService.queryBidsNociteDetails(param);
-        //获取中标原文
-        String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
-        map1.put("content",content);
-        //map1.put("clickCount",count);
-        map1.put("collected",attention);
-        resultMap.put("clickCount",count);
-        seccussMap(resultMap,map1);
-        return resultMap;
-    }
-
-    /**
-     * 获取招标详情
+     *公告详情
      * @param param
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/tenders/bidsDetails",method = RequestMethod.POST)   //用户是否关注  **
-    public Map tendersDetails(@RequestBody Map<String,Object> param) throws IOException {
-        //String snatchId = MapUtils.getString(param, "snatchId");
+    @RequestMapping(value = "/nociteDetails",method = RequestMethod.POST)
+    public Map queryNociteDetails(@RequestBody Map<String,Object> param) throws IOException {
         Map<String,Object> resultMap = new HashMap<String,Object>();
         //获取点击量
         Integer count = tbNtMianHunanService.count(param);//
@@ -131,17 +104,28 @@ public class NociteController extends BaseController {
         Boolean attention = tbNtMianHunanService.attention(param);
         //获取招标原文
         String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
-        //获取招标详情
-        Map<String, Object> map = tbNtMianHunanService.queryTendersNociteDetails(param);
-        map.put("content",content);
-        //map1.put("clickCount",count);
-        map.put("collected",attention);
-        resultMap.put("clickCount",count);
-        seccussMap(resultMap,map);
+        // type = 1  招标详情   ||  type = 2  中标详情
+        String type = MapUtils.getString(param, "type");
+        if(type.equals("1") && "" != type ){
+            //获取招标详情
+            Map<String, Object> map = tbNtMianHunanService.queryTendersNociteDetails(param);
+            map.put("content",content);
+            //map1.put("clickCount",count);
+            map.put("collected",attention);
+            resultMap.put("clickCount",count);
+            seccussMap(resultMap,map);
+        }else{
+            //获取中标详情
+            Map<String, Object> map = tbNtMianHunanService.queryBidsNociteDetails(param);
+            map.put("content",content);
+            //map1.put("clickCount",count);
+            map.put("collected",attention);
+            resultMap.put("clickCount",count);
+            seccussMap(resultMap,map);
+        }
         return resultMap;
-
-
     }
+
 
 
 

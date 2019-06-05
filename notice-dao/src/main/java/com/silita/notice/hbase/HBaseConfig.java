@@ -23,8 +23,8 @@ import java.io.IOException;
 public class HBaseConfig {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${hadoop.home.dir}")
-    private String hadoopHomeDir;
+   /* @Value("${hadoop.home.dir}")
+    private String hadoopHomeDir;*/
     @Value("${hbase.config.hbase.zookeeper.quorum}")
     private String hbaseZookeeperQuorum;
     @Value("${hbase.config.hbase.zookeeper.property.clientPort}")
