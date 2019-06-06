@@ -69,15 +69,9 @@ public class NociteController extends BaseController {
     @RequestMapping(value = "/zhaobiao/list",method = RequestMethod.POST)
     public Map queryTenders(@RequestBody Map<String,Object> param){
         Map<String,Object> resultMap = new HashMap<String,Object>();
-
-        try{
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryTenders(param);
             seccussMap(resultMap,pageInfo);
-
-        }catch (Exception e){
-            logger.info("不好意思，没有满足您要求的公告");
-        }
         return resultMap;
 
     }
