@@ -1,9 +1,6 @@
 package com.silita.notice.service;
 
 import com.github.pagehelper.PageInfo;
-import com.silita.notice.model.TbNtMianHunan;
-import org.apache.hbase.thirdparty.io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueue;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,7 +15,7 @@ public interface TbNtMianHunanService{
      * @return
      */
     //List<Map<String,Object>> queryBids(TbNtMianHunan nociteMian,List<String> list,String proviceCode);
-    List<Map<String,Object>> queryBids(Map<String,Object> param);
+    PageInfo queryBids(Map<String,Object> param);
 
 
 
@@ -28,7 +25,7 @@ public interface TbNtMianHunanService{
      * 全国
      */
 
-    List<Map<String,Object>> queryCompanyName(Map<String,Object> param);
+    PageInfo queryCompanyName(Map<String,Object> param);
 
     /**
      * 获取企业中标数量
@@ -64,21 +61,21 @@ public interface TbNtMianHunanService{
 
 
 
-    public String queryBidsDetailsCentendString(Map<String,Object> param) throws IOException;
+    String queryBidsDetailsCentendString(Map<String,Object> param) throws IOException;
 
     /**
      * 获取评标办法   招标
      * @param pbModes
      * @return
      */
-    public List<String> queryPbModes(String pbModes);
+    List<String> queryPbModes(String pbModes);
 
     /**
      * 获取地区
      * @param regional
      * @return
      */
-    public Map<String,Object> queryRegional(String regional);
+    Map<String,Object> queryRegional(String regional);
 
 
     /**

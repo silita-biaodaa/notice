@@ -38,8 +38,9 @@
       and mian.nt_category=#{type}
     </if>
     <if test="cityCodeList != null and cityCodeList.size() > 0">
-      <foreach collection="cityCodeList" item="cityCodeList">
-        or mian.city_code=#{cityCodeList}
+      and
+      <foreach collection="cityCodeList" item="cityCodeList" separator="or">
+         mian.city_code=#{cityCodeList}
       </foreach>
     </if>
     <if test="projectType != null and projectType != ''">
@@ -114,13 +115,15 @@ FROM
       and mian.provice_code=#{proviceCode}
     </if>
     <if test="cityCodeList != null and cityCodeList.size() > 0">
-      <foreach collection="cityCodeList" item="cityCodeList">
-        or mian.city_code=#{cityCodeList}
+      and
+      <foreach collection="cityCodeList" item="cityCodeList" separator="or">
+        mian.city_code=#{cityCodeList}
       </foreach>
     </if>
     <if test="pbModeList != null and pbModeList.size() > 0">
-      <foreach collection="pbModeList" item="pbModeList">
-        or mian.pb_mode=#{pbModeList}
+      and
+      <foreach collection="pbModeList" item="pbModeList" separator="or">
+        tenders.pb_mode=#{pbModeList}
       </foreach>
     </if>
     <if test="projectType != null and projectType != ''">
@@ -129,11 +132,11 @@ FROM
     <if test="type != null and type != ''">
       and mian.nt_category=#{type}
     </if>
-    <if test="pkidList != null and pkidList.size() > 0">
-      mian.pkid in (select regex.nt_id from
-      tb_nt_regex_qua regex where 1=1
-      <foreach collection="regexList" item="regexList">
-        or regex.qua_regex=#{regexList}
+    <if test="regexList != null and regexList.size() > 0">
+      and mian.pkid in (select regex.nt_id from
+      tb_nt_regex_qua regex where 1=1 and
+      <foreach collection="regexList" item="regexList" separator="or">
+        regex.qua_regex=#{regexList}
       </foreach>
       )
     </if>
@@ -223,11 +226,13 @@ WHERE mian.pkid = #{id}
   </select>
 
 
+  <!--查询资质id-->
   <select id="queryQuaId" resultType="java.lang.String" parameterType="java.util.Map">
     select id from rel_qua_grade where 1 = 1
       <if test="groupList != null and groupList.size > 0">
-          <foreach collection="groupList" index="index" item="groupList">
-              or (qua_code=#{groupList.quaCode}
+        and
+          <foreach collection="groupList" index="index" item="groupList" separator="or">
+               (qua_code=#{groupList.quaCode}
               <if test="groupList.gradeCode != null and groupList.gradeCode != ''">
                   and grade_code = #{groupList.gradeCode}
               </if>)

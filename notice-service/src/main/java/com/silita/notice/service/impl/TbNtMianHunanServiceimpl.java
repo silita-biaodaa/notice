@@ -3,11 +3,8 @@ package com.silita.notice.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.notice.dao.TbNtMianHunanMapper;
-import com.silita.notice.model.TbNtMianHunan;
 import com.silita.notice.service.TbNtMianHunanService;
-import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
@@ -20,7 +17,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
 import java.util.*;
@@ -30,7 +26,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Autowired
     private TbNtMianHunanMapper tbNtMianHunanMapper;
 
-    @Value("${hbase.config.hbase.zookeeper.quorum}")
+    @Value("${hbase.notice-table-name}")
     private String hBaseTableName;
 
     @Autowired
@@ -42,10 +38,15 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * @return
      */
     @Override
-    public List<Map<String,Object>> queryBids(Map<String,Object> param) {
+    public PageInfo queryBids(Map<String,Object> param) {
         //获取地区
         queryRegions(param);
-        return tbNtMianHunanMapper.queryBids(param);
+        Integer pageNo = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
+        PageHelper.startPage(pageNo,pageSize);
+        List<Map<String,Object>> list = tbNtMianHunanMapper.queryBids(param);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
     }
 
     /**
@@ -53,8 +54,13 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * 全国
      */
     @Override
-    public List<Map<String,Object>> queryCompanyName(Map<String,Object> param) {
-        return tbNtMianHunanMapper.queryCompanyName(param);
+    public PageInfo queryCompanyName(Map<String,Object> param) {
+        Integer pageNo = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
+        PageHelper.startPage(pageNo,pageSize);
+        List<Map<String,Object>> list = tbNtMianHunanMapper.queryCompanyName(param);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
     }
 
     @Override
@@ -72,6 +78,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public PageInfo queryTenders(Map<String,Object> param) {
         //获取地区
         queryRegions(param);
+
         //获取评标法
         String pbModes = MapUtils.getString(param, "pbModes");
         if(StringUtils.isNotEmpty(pbModes)){
@@ -179,7 +186,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public void queryRegions(Map<String,Object> param){
         //获取地区
         String regions = MapUtils.getString(param, "regions");
-        if(null != regions && "" != regions){
+        if(null != regions && !"".equals(regions)){
             String[] split = regions.split("\\|\\|");
             if (null != split && split.length == 1){
                 //获取省
@@ -190,6 +197,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 String addrs = split[1];
                 //获取市
                 String[] split1 = addrs.split(",");
+
                 List<String> cityCodeList = Arrays.asList(split1);
                 param.put("cityCodeList",cityCodeList);
             }
@@ -220,8 +228,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         }else if(split.length < 2 && split.length >0){
             String province = split[0].toString();
             map.put("province",province);
-        }else{
-
         }
 
         return map;
