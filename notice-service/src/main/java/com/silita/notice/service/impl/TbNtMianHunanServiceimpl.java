@@ -104,6 +104,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             group.add(maps);
         }
         param.put("groupList",group);
+
+        //获取资质id
         List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
         param.put("regexList",regexList);
         param.put("pdModeType",param.get("proviceCode")+"_pbmode");

@@ -35,7 +35,7 @@ public class NociteController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/zhongbiao/list",method = RequestMethod.POST)
+    @RequestMapping(value = "/zhongbiao/list",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map queryBids(@RequestBody Map<String,Object> param){
         Map<String,Object> resultMap = new HashMap<String,Object>();
         try{
@@ -43,9 +43,9 @@ public class NociteController extends BaseController {
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryBids(param);
             seccussMap(resultMap,pageInfo);
-        }catch (Exception e){
-            logger.error(e,e);
-            errorMsg(resultMap,e.getMessage());
+        }catch (NullPointerException e){
+            //logger.error(e,e);
+            errorMsg(resultMap,"亲，没有您要查询的结果");
         }
 
         return resultMap;
@@ -56,7 +56,7 @@ public class NociteController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/company/zhongbiao/list",method = RequestMethod.POST)
+    @RequestMapping(value = "/company/zhongbiao/list",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map queryCompanyName(@RequestBody Map<String,Object> param){
         Map<String,Object> resultMap = new HashMap<String,Object>();
         try{
@@ -64,9 +64,9 @@ public class NociteController extends BaseController {
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryCompanyName(param);
             seccussMap(resultMap,pageInfo);
-        }catch (Exception e){
-            logger.error(e,e);
-            errorMsg(resultMap,e.getMessage());
+        }catch (NullPointerException e){
+            //logger.error(e,e);
+            errorMsg(resultMap,"亲，没有您要查询的结果");
         }
         return resultMap;
     }
@@ -75,16 +75,16 @@ public class NociteController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/zhaobiao/list",method = RequestMethod.POST)
+    @RequestMapping(value = "/zhaobiao/list",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map queryTenders(@RequestBody Map<String,Object> param){
         Map<String,Object> resultMap = new HashMap<String,Object>();
         try{
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryTenders(param);
             seccussMap(resultMap,pageInfo);
-        }catch (Exception e){
-            logger.error(e,e);
-            errorMsg(resultMap,e.getMessage());
+        }catch (NullPointerException e){
+            //logger.error(e,e);
+            errorMsg(resultMap,"亲，没有您要查询的结果");
         }
         return resultMap;
 
@@ -95,7 +95,7 @@ public class NociteController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/nociteDetails",method = RequestMethod.POST)
+    @RequestMapping(value = "/nociteDetails",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map queryNociteDetails(@RequestBody Map<String,Object> param) throws IOException {
 
         Map<String,Object> resultMap = new HashMap<String,Object>();
@@ -104,13 +104,13 @@ public class NociteController extends BaseController {
         //获取是否关注
         Boolean attention = tbNtMianHunanService.attention(param);
         //获取招标原文
-        String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
+//        String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
         // type = 1  招标详情   ||  type = 2  中标详情
         String type = MapUtils.getString(param, "type");
         if(type.equals("1") && !"".equals(type)){
             //获取招标详情
             Map<String, Object> map = tbNtMianHunanService.queryTendersNociteDetails(param);
-            map.put("content",content);
+//            map.put("content",content);
             //map1.put("clickCount",count);
             map.put("collected",attention);
             resultMap.put("clickCount",count);
@@ -118,7 +118,7 @@ public class NociteController extends BaseController {
             return resultMap;
         }
         Map<String, Object> map = tbNtMianHunanService.queryBidsNociteDetails(param);
-        map.put("content",content);
+//        map.put("content",content);
         //map1.put("clickCount",count);
         map.put("collected",attention);
         resultMap.put("clickCount",count);

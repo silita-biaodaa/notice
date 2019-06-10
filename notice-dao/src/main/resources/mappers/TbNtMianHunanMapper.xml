@@ -87,7 +87,6 @@ FROM
     </select>
 
   <!--查询招标信息-->
-  <!--资质还没判断-->
   <select id="queryTenders" resultType="java.util.Map" parameterType="map">
     SELECT
       mian.pkid AS id,
@@ -131,6 +130,12 @@ FROM
     </if>
     <if test="type != null and type != ''">
       and mian.nt_category=#{type}
+    </if>
+    <if test="zzType != null and zzType != ''">
+      <if test="regexList == null">
+        and mian.pkid in (select regex.nt_id from
+        tb_nt_regex_qua regex where regex.qua_regex=''
+      </if>
     </if>
     <if test="regexList != null and regexList.size() > 0">
       and mian.pkid in (select regex.nt_id from
