@@ -2,6 +2,7 @@ package com.silita.notice.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.TbNtMianHunanMapper;
 import com.silita.notice.service.TbNtMianHunanService;
 import org.apache.commons.collections.MapUtils;
@@ -276,6 +277,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public Boolean attention(Map<String,Object> param) {
+        param.put("userId", VisitInfoHolder.getUserId());
         boolean collected=false;
         Map<String, Object> queryattention = tbNtMianHunanMapper.queryAttention(param);
         if (null != queryattention){

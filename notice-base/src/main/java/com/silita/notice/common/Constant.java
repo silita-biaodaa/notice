@@ -6,11 +6,11 @@ package com.silita.notice.common;
 public class Constant {
 
     /**
-     * 成功
+     * token校验
      */
-    public static Integer SUCCESS_CODE = 1;
-    public static String SUCCESS_MSG = "操作成功";
+    public static final String TOKEN_SPLIT = "\\.";
+    public static final String STR_ENCODING = "utf-8";
 
-    public static final String FAIL_CODE = "0";
+
 }
 

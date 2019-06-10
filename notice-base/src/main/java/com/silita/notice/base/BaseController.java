@@ -1,8 +1,7 @@
 package com.silita.notice.base;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.silita.notice.common.Constant;
+import com.silita.notice.common.ResponseCode;
 import org.apache.commons.collections.MapUtils;
 
 import java.util.Map;
@@ -16,17 +15,15 @@ public class BaseController {
 
     public String MSG_FLAG = "msg";
 
-    public String FAIL_CODE = Constant.FAIL_CODE;
-
     public void seccussMap(Map resultMap,Object data){
-        resultMap.put("code",Constant.SUCCESS_CODE);
-        resultMap.put("msg",Constant.SUCCESS_MSG);
+        resultMap.put("code", ResponseCode.SUCCESS_CODE);
+        resultMap.put("msg",ResponseCode.SUCCESS_MSG);
         resultMap.put("data",data);
     }
 
     public void seccussMap(Map resultMap, PageInfo pageInfo) {
-        resultMap.put("code",Constant.SUCCESS_CODE);
-        resultMap.put("msg",Constant.SUCCESS_MSG);
+        resultMap.put("code",ResponseCode.SUCCESS_CODE);
+        resultMap.put("msg",ResponseCode.SUCCESS_MSG);
         if (pageInfo != null) {
             resultMap.put("list", pageInfo.getList());
             resultMap.put("pageNo", pageInfo.getPageNum());
@@ -37,7 +34,7 @@ public class BaseController {
     }
 
     protected void errorMsg(Map resultMap, String errMsg) {
-        resultMap.put(this.CODE_FLAG, this.FAIL_CODE);
+        resultMap.put(this.CODE_FLAG, ResponseCode.ERROR_CODE);
         resultMap.put(this.MSG_FLAG, errMsg);
     }
 
