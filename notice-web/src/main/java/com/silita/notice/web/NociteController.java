@@ -5,8 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.silita.notice.base.BaseController;
 import com.silita.notice.service.TbNtMianHunanService;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hbase.client.Connection;
-import org.slf4j.Logger;
+import org.apache.commons.logging.Log;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +25,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/nocite")
 public class NociteController extends BaseController {
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    private Log logger = LogFactory.getLog(NociteController.class);
     @Autowired
     private TbNtMianHunanService tbNtMianHunanService;
     @Value("${hbase.notice-table-name}")
@@ -40,10 +41,16 @@ public class NociteController extends BaseController {
     @RequestMapping(value = "/zhongbiao/list",method = RequestMethod.POST)
     public Map queryBids(@RequestBody Map<String,Object> param){
         Map<String,Object> resultMap = new HashMap<String,Object>();
-        //分页限制 最多到30页  每页20条记录
-        checkPage(param);
-        PageInfo pageInfo = tbNtMianHunanService.queryBids(param);
-        seccussMap(resultMap,pageInfo);
+        try{
+            //分页限制 最多到30页  每页20条记录
+            checkPage(param);
+            PageInfo pageInfo = tbNtMianHunanService.queryBids(param);
+            seccussMap(resultMap,pageInfo);
+        }catch (Exception e){
+            logger.error(e,e);
+            errorMsg(resultMap,e.getMessage());
+        }
+
         return resultMap;
     }
     /**
@@ -55,10 +62,15 @@ public class NociteController extends BaseController {
     @RequestMapping(value = "/company/zhongbiao/list",method = RequestMethod.POST)
     public Map queryCompanyName(@RequestBody Map<String,Object> param){
         Map<String,Object> resultMap = new HashMap<String,Object>();
-        //分页限制 最多到30页  每页20条记录
-        checkPage(param);
-        PageInfo pageInfo = tbNtMianHunanService.queryCompanyName(param);
-        seccussMap(resultMap,pageInfo);
+        try{
+            //分页限制 最多到30页  每页20条记录
+            checkPage(param);
+            PageInfo pageInfo = tbNtMianHunanService.queryCompanyName(param);
+            seccussMap(resultMap,pageInfo);
+        }catch (Exception e){
+            logger.error(e,e);
+            errorMsg(resultMap,e.getMessage());
+        }
         return resultMap;
     }
     /**
@@ -69,9 +81,14 @@ public class NociteController extends BaseController {
     @RequestMapping(value = "/zhaobiao/list",method = RequestMethod.POST)
     public Map queryTenders(@RequestBody Map<String,Object> param){
         Map<String,Object> resultMap = new HashMap<String,Object>();
+        try{
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryTenders(param);
             seccussMap(resultMap,pageInfo);
+        }catch (Exception e){
+            logger.error(e,e);
+            errorMsg(resultMap,e.getMessage());
+        }
         return resultMap;
 
     }
@@ -83,6 +100,7 @@ public class NociteController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/nociteDetails",method = RequestMethod.POST)
     public Map queryNociteDetails(@RequestBody Map<String,Object> param) throws IOException {
+
         Map<String,Object> resultMap = new HashMap<String,Object>();
         //获取点击量
         Integer count = tbNtMianHunanService.count(param);

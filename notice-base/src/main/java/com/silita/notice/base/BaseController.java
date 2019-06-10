@@ -12,6 +12,12 @@ import java.util.Map;
  */
 public class BaseController {
 
+    public String CODE_FLAG = "code";
+
+    public String MSG_FLAG = "msg";
+
+    public String FAIL_CODE = Constant.FAIL_CODE;
+
     public void seccussMap(Map resultMap,Object data){
         resultMap.put("code",Constant.SUCCESS_CODE);
         resultMap.put("msg",Constant.SUCCESS_MSG);
@@ -28,6 +34,11 @@ public class BaseController {
             resultMap.put("total", pageInfo.getTotal());
             resultMap.put("pages", pageInfo.getPages());
         }
+    }
+
+    protected void errorMsg(Map resultMap, String errMsg) {
+        resultMap.put(this.CODE_FLAG, this.FAIL_CODE);
+        resultMap.put(this.MSG_FLAG, errMsg);
     }
 
     public void checkPage(Map<String,Object> param){
