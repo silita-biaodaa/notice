@@ -45,7 +45,7 @@ public class NociteController extends BaseController {
             seccussMap(resultMap,pageInfo);
         }catch (NullPointerException e){
             //logger.error(e,e);
-            errorMsg(resultMap,"亲，没有您要查询的结果");
+            errorMsg(resultMap,e.getMessage());
         }
 
         return resultMap;
@@ -66,7 +66,7 @@ public class NociteController extends BaseController {
             seccussMap(resultMap,pageInfo);
         }catch (NullPointerException e){
             //logger.error(e,e);
-            errorMsg(resultMap,"亲，没有您要查询的结果");
+            errorMsg(resultMap,e.getMessage());
         }
         return resultMap;
     }
@@ -84,7 +84,7 @@ public class NociteController extends BaseController {
             seccussMap(resultMap,pageInfo);
         }catch (NullPointerException e){
             //logger.error(e,e);
-            errorMsg(resultMap,"亲，没有您要查询的结果");
+            errorMsg(resultMap,e.getMessage());
         }
         return resultMap;
 
@@ -104,22 +104,20 @@ public class NociteController extends BaseController {
         //获取是否关注
         Boolean attention = tbNtMianHunanService.attention(param);
         //获取招标原文
-//        String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
+        String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
         // type = 1  招标详情   ||  type = 2  中标详情
         String type = MapUtils.getString(param, "type");
         if(type.equals("1") && !"".equals(type)){
             //获取招标详情
             Map<String, Object> map = tbNtMianHunanService.queryTendersNociteDetails(param);
-//            map.put("content",content);
-            //map1.put("clickCount",count);
+            map.put("content",content);
             map.put("collected",attention);
             resultMap.put("clickCount",count);
             seccussMap(resultMap,map);
             return resultMap;
         }
         Map<String, Object> map = tbNtMianHunanService.queryBidsNociteDetails(param);
-//        map.put("content",content);
-        //map1.put("clickCount",count);
+        map.put("content",content);
         map.put("collected",attention);
         resultMap.put("clickCount",count);
         seccussMap(resultMap,map);
