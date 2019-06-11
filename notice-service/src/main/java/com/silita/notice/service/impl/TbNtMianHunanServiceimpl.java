@@ -88,26 +88,37 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             param.put("pbModeList",pbModeList);
         }
 
+
+
+
         //获取资质
         List<Map<String,Object>> group = new ArrayList<Map<String,Object>>();
         String zzType = MapUtils.getString(param, "zzType");
-        String[] zz = zzType.split("\\,");
-        for (String z : zz) {
-            Map<String,Object> maps = new HashMap<String,Object>();
-            String[] split1 = z.split("\\/");
-            if(split1.length >= 2){
-                maps.put("quaCode",split1[0]);
-                maps.put("gradeCode",split1[1]);
-            }else{
-                maps.put("quaCode",split1[0]);
+        String rangeType = MapUtils.getString(param, "rangeType");
+            String[] zz = zzType.split("\\,");
+            for (String z : zz) {
+                Map<String,Object> maps = new HashMap<String,Object>();
+                String[] split1 = z.split("\\/");
+                if(split1.length >= 2){
+                    maps.put("quaCode",split1[0]);
+                    maps.put("gradeCode",split1[1]);
+                }else{
+                    maps.put("quaCode",split1[0]);
+                }
+                group.add(maps);
             }
-            group.add(maps);
-        }
-        param.put("groupList",group);
+            param.put("groupList",group);
 
-        //获取资质id
-        List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
-        param.put("regexList",regexList);
+            //获取资质id
+            List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
+
+            if(rangeType.equals("or")){
+                param.put("orregexList",regexList);
+                param.put("andregexList",null);
+            }else if(rangeType.equals("and")){
+                param.put("andregexList",regexList);
+                param.put("orregexList",null);
+            }
         param.put("pdModeType",param.get("proviceCode")+"_pbmode");
 
         Integer pageNo = MapUtils.getInteger(param, "pageNo");

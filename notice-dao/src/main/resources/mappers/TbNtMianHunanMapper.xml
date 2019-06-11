@@ -100,9 +100,8 @@ FROM
       <include refid="noticeTypeConvert"/>,
       mian.nt_category AS `type`,
       (SELECT t.`name` FROM dic_common t WHERE t.`code` = tenders.`pb_mode` AND t.`type` = '${pdModeType}') AS pdmode
-    FROM
-    tb_nt_mian_${proviceCode} mian
-    JOIN tb_nt_tenders_${proviceCode} tenders
+    FROM tb_nt_tenders_${proviceCode} tenders
+    JOIN tb_nt_mian_${proviceCode} mian
     ON mian.pkid = tenders.nt_id
     WHERE 1 = 1
     AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
@@ -131,19 +130,41 @@ FROM
     <if test="type != null and type != ''">
       and mian.nt_category=#{type}
     </if>
-    <if test="zzType != null and zzType != ''">
-      <if test="regexList == null">
-        and mian.pkid in (select regex.nt_id from
-        tb_nt_regex_qua regex where regex.qua_regex=''
+    <if test="zzType != null and zzType !=''">
+      <if test="andregexList != null and andregexList.size() > 0">
+        <if test="zzType != null and zzType != ''">
+          <if test="andregexList == null">
+            and mian.pkid in (select regex.nt_id from
+            tb_nt_regex_qua regex where regex.qua_regex=''
+          </if>
+        </if>
+        <if test="andregexList != null and andregexList.size() > 0">
+          and mian.pkid in (select regex.nt_id from
+          tb_nt_regex_qua regex where 1=1 and
+          <foreach collection="andregexList" item="andregexList" separator="and">
+            regex.qua_regex=#{andregexList}
+          </foreach>
+          )
+        </if>
       </if>
-    </if>
-    <if test="regexList != null and regexList.size() > 0">
-      and mian.pkid in (select regex.nt_id from
-      tb_nt_regex_qua regex where 1=1 and
-      <foreach collection="regexList" item="regexList" separator="or">
-        regex.qua_regex=#{regexList}
-      </foreach>
-      )
+
+
+      <if test="orregexList != null and orregexList.size() > 0">
+        <if test="zzType != null and zzType != ''">
+          <if test="orregexList == null">
+            and mian.pkid in (select regex.nt_id from
+            tb_nt_regex_qua regex where regex.qua_regex=''
+          </if>
+        </if>
+        <if test="orregexList != null and orregexList.size() > 0">
+          and mian.pkid in (select regex.nt_id from
+          tb_nt_regex_qua regex where 1=1 and
+          <foreach collection="orregexList" item="orregexList" separator="or">
+            regex.qua_regex=#{orregexList}
+          </foreach>
+          )
+        </if>
+      </if>
     </if>
     ORDER BY mian.`pub_date` DESC
   </select>
