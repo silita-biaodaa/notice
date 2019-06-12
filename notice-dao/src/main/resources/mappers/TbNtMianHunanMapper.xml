@@ -101,7 +101,7 @@ FROM
       mian.nt_category AS `type`,
       (SELECT t.`name` FROM dic_common t WHERE t.`code` = tenders.`pb_mode` AND t.`type` = '${pdModeType}') AS pdmode
     FROM tb_nt_tenders_${proviceCode} tenders
-    JOIN tb_nt_mian_${proviceCode} mian
+    left JOIN tb_nt_mian_${proviceCode} mian
     ON mian.pkid = tenders.nt_id
     WHERE 1 = 1
     AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
@@ -132,30 +132,19 @@ FROM
     </if>
     <if test="zzType != null and zzType !=''">
       <if test="andregexList != null and andregexList.size() > 0">
-        <if test="zzType != null and zzType != ''">
-          <if test="andregexList == null">
-            and mian.pkid in (select regex.nt_id from
-            tb_nt_regex_qua regex where regex.qua_regex=''
-          </if>
-        </if>
-        <if test="andregexList != null and andregexList.size() > 0">
           and mian.pkid in (select regex.nt_id from
           tb_nt_regex_qua regex where 1=1 and
           <foreach collection="andregexList" item="andregexList" separator="and">
             regex.qua_regex=#{andregexList}
           </foreach>
           )
-        </if>
       </if>
 
+      <if test="andregexList == null and orregexList == null">
+        and mian.pkid in (select regex.nt_id from
+        tb_nt_regex_qua regex where regex.qua_regex='')
+      </if>
 
-      <if test="orregexList != null and orregexList.size() > 0">
-        <if test="zzType != null and zzType != ''">
-          <if test="orregexList == null">
-            and mian.pkid in (select regex.nt_id from
-            tb_nt_regex_qua regex where regex.qua_regex=''
-          </if>
-        </if>
         <if test="orregexList != null and orregexList.size() > 0">
           and mian.pkid in (select regex.nt_id from
           tb_nt_regex_qua regex where 1=1 and
@@ -164,7 +153,6 @@ FROM
           </foreach>
           )
         </if>
-      </if>
     </if>
     ORDER BY mian.`pub_date` DESC
   </select>
@@ -184,8 +172,8 @@ FROM
       mian.url,
       CONCAT((SELECT twf.name FROM mishu.`twf_dict` twf WHERE twf.code='${provice}'),(SELECT sys.area_name FROM sys_area sys WHERE sys.area_code='${city}')) AS projDq
     FROM
-    tb_nt_mian_${source} mian
-    left JOIN tb_nt_bids_${source} bids
+    tb_nt_bids_${source} bids
+    left JOIN tb_nt_mian_${source} mian
     ON mian.`pkid` = bids.`nt_id`
     WHERE mian.pkid=#{id}
       <if test="type != null and type != ''">

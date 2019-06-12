@@ -113,11 +113,23 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
 
             if(rangeType.equals("or")){
-                param.put("orregexList",regexList);
-                param.put("andregexList",null);
+                if(regexList.size() <= 0){
+                    param.put("orregexList",null);
+                    param.put("andregexList",null);
+                }else if(regexList.size() > 0){
+                    param.put("orregexList",regexList);
+                    param.put("andregexList",null);
+                }
+
             }else if(rangeType.equals("and")){
-                param.put("andregexList",regexList);
-                param.put("orregexList",null);
+                if(regexList.size() > 0){
+                    param.put("andregexList",regexList);
+                    param.put("orregexList",null);
+                }else if(regexList.size() <= 0){
+                    param.put("orregexList",null);
+                    param.put("andregexList",null);
+                }
+
             }
         param.put("pdModeType",param.get("proviceCode")+"_pbmode");
 
