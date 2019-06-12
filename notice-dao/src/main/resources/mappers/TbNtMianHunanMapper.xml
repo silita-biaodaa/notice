@@ -1,215 +1,211 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.silita.notice.dao.TbNtMianHunanMapper">
-  <insert id="addClickCount"  parameterType="java.util.Map">
+    <insert id="addClickCount" parameterType="java.util.Map">
     UPDATE mishu_write.tb_click_statistics SET click_count=#{addCount},updated=NOW() WHERE innert_id=#{id} AND source=#{source}
   </insert>
 
 
-  <!--查询公告 中标-->
-  <select id="queryBids" resultType="java.util.Map" parameterType="Map">
-    SELECT
-      mian.pkid as id,
-      mian.title,
-      bids.f_candidate as oneName,
-      bids.f_quote as oneOffer,
-      mian.pub_date as opendate,
-      mian.source,
-      mian.provice_code as provice,
-      mian.city_code as city,
-      mian.snatch_id as snatchId,
-     <include refid="noticeTypeConvert"/>,
-     mian.nt_category as type,
-     bids.pb_mode as pbMode
-    FROM
-    tb_nt_mian_${proviceCode} mian
-    INNER JOIN tb_nt_bids_${proviceCode} bids
-    ON mian.`pkid` = bids.`nt_id`
-    WHERE 1 = 1
-      AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
-      AND mian.`pub_date` &lt;= NOW()
-    <if test="title != null and title != ''">
-      and mian.title like CONCAT('%',#{title},'%')
-    </if>
-    <if test="proviceCode != null and proviceCode != ''">
-      and mian.provice_code=#{proviceCode}
-    </if>
-    <if test="type != null and type != ''">
-      and mian.nt_category=#{type}
-    </if>
-    <if test="cityCodeList != null and cityCodeList.size() > 0">
-      and
-      <foreach collection="cityCodeList" item="cityCodeList" separator="or">
-         mian.city_code=#{cityCodeList}
-      </foreach>
-    </if>
-    <if test="projectType != null and projectType != ''">
-      and mian.biness_type=#{projectType}
-    </if>
-    <if test="projSumStart != null and projSumStart != ''">
-      and bids.f_quote &gt;= #{projSumStart}
-    </if>
-    <if test="projSumEnd != null and projSumEnd != ''">
-      and bids.f_quote &lt;= #{projSumEnd}
-    </if>
-    ORDER BY mian.pub_date DESC
+    <!--查询公告 中标-->
+    <select id="queryBids" resultType="java.util.Map" parameterType="Map">
+        SELECT
+        mian.pkid as id,
+        mian.title,
+        bids.f_candidate as oneName,
+        bids.f_quote as oneOffer,
+        mian.pub_date as opendate,
+        mian.source,
+        mian.provice_code as provice,
+        mian.city_code as city,
+        mian.snatch_id as snatchId,
+        <include refid="noticeTypeConvert"/>,
+        mian.nt_category as type,
+        bids.pb_mode as pbMode
+        FROM
+        tb_nt_mian_${proviceCode} mian
+        INNER JOIN tb_nt_bids_${proviceCode} bids
+        ON mian.`pkid` = bids.`nt_id`
+        WHERE 1 = 1
+        AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
+        AND mian.`pub_date` &lt;= NOW()
+        <if test="title != null and title != ''">
+            and mian.title like CONCAT('%',#{title},'%')
+        </if>
+        <if test="proviceCode != null and proviceCode != ''">
+            and mian.provice_code=#{proviceCode}
+        </if>
+        <if test="type != null and type != ''">
+            and mian.nt_category=#{type}
+        </if>
+        <if test="cityCodeList != null and cityCodeList.size() > 0">
+            and
+            <foreach collection="cityCodeList" item="cityCodeList" separator="or">
+                mian.city_code=#{cityCodeList}
+            </foreach>
+        </if>
+        <if test="projectType != null and projectType != ''">
+            and mian.biness_type=#{projectType}
+        </if>
+        <if test="projSumStart != null and projSumStart != ''">
+            and bids.f_quote &gt;= #{projSumStart}
+        </if>
+        <if test="projSumEnd != null and projSumEnd != ''">
+            and bids.f_quote &lt;= #{projSumEnd}
+        </if>
+        ORDER BY mian.pub_date DESC
 
-  </select>
-  <!--根据企业名称模糊查询 中标记录-->
-  <select id="queryCompanyName" resultType="java.util.Map" parameterType="Map">
-    SELECT
-  cand.nt_id AS id,
-  cand.title,
-  cand.pub_date AS opendate,
-  cand.snatch_id as snatchId,
-  cand.f_candidate AS oneName,
-  cand.f_quote AS oneOffer,
-  cand.source
-FROM
-  tb_nt_bids_cand cand
-    WHERE cand.f_candidate LIKE CONCAT('%',#{com_name},'%')
-    <if test="title != null and title != ''">
-        and cand.title like CONCAT('%',#{title},'%')
-    </if>
-    ORDER BY cand.pub_date DESC
-  </select>
+    </select>
+    <!--根据企业名称模糊查询 中标记录-->
+    <select id="queryCompanyName" resultType="java.util.Map" parameterType="Map">
+        SELECT
+        cand.nt_id AS id,
+        cand.title,
+        cand.pub_date AS opendate,
+        cand.snatch_id as snatchId,
+        cand.f_candidate AS oneName,
+        cand.f_quote AS oneOffer,
+        cand.source
+        FROM
+        tb_nt_bids_cand cand
+        WHERE cand.f_candidate LIKE CONCAT('%',#{com_name},'%')
+        <if test="title != null and title != ''">
+            and cand.title like CONCAT('%',#{title},'%')
+        </if>
+        ORDER BY cand.pub_date DESC
+    </select>
 
     <!--获取企业中标数量-->
     <select id="queryCompanyCount" resultType="java.lang.Integer">
-      select
+        select
         count(1)
         from tb_nt_bids_cand cand
-      where
+        where
         cand.f_candidate LIKE CONCAT('%',#{com_name},'%')
         <if test="title != null and title != ''">
             and cand.title like CONCAT('%',#{title},'%')
         </if>
     </select>
 
-  <!--查询招标信息-->
-  <select id="queryTenders" resultType="java.util.Map" parameterType="map">
-    SELECT
-      mian.pkid AS id,
-      mian.`title`,
-      mian.snatch_id as snatchId,
-      mian.`pub_date` AS opendate,
-      tenders.qua_name AS certificate,
-      mian.source,
-      mian.provice_code as provice,
-      mian.city_code as city,
-      <include refid="noticeTypeConvert"/>,
-      mian.nt_category AS `type`,
-      (SELECT t.`name` FROM dic_common t WHERE t.`code` = tenders.`pb_mode` AND t.`type` = '${pdModeType}') AS pdmode
-    FROM tb_nt_tenders_${proviceCode} tenders
-    left JOIN tb_nt_mian_${proviceCode} mian
-    ON mian.pkid = tenders.nt_id
-    WHERE 1 = 1
-    AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
-    AND mian.`pub_date` &lt;= NOW()
-    <if test="title != null and title != ''">
-      and mian.title like CONCAT('%',#{title},'%')
-    </if>
-    <if test="proviceCode != null and proviceCode != ''">
-      and mian.provice_code=#{proviceCode}
-    </if>
-    <if test="cityCodeList != null and cityCodeList.size() > 0">
-      and
-      <foreach collection="cityCodeList" item="cityCodeList" separator="or">
-        mian.city_code=#{cityCodeList}
-      </foreach>
-    </if>
-    <if test="pbModeList != null and pbModeList.size() > 0">
-      and
-      <foreach collection="pbModeList" item="pbModeList" separator="or">
-        tenders.pb_mode=#{pbModeList}
-      </foreach>
-    </if>
-    <if test="projectType != null and projectType != ''">
-      and mian.biness_type=#{projectType}
-    </if>
-    <if test="type != null and type != ''">
-      and mian.nt_category=#{type}
-    </if>
-    <if test="zzType != null and zzType !=''">
-      <if test="andregexList != null and andregexList.size() > 0">
-          and mian.pkid in (select regex.nt_id from
-          tb_nt_regex_qua regex where 1=1 and
-          <foreach collection="andregexList" item="andregexList" separator="and">
-            regex.qua_regex=#{andregexList}
-          </foreach>
-          )
-      </if>
-
-      <if test="andregexList == null and orregexList == null">
-        and mian.pkid in (select regex.nt_id from
-        tb_nt_regex_qua regex where regex.qua_regex='')
-      </if>
-
-        <if test="orregexList != null and orregexList.size() > 0">
-          and mian.pkid in (select regex.nt_id from
-          tb_nt_regex_qua regex where 1=1 and
-          <foreach collection="orregexList" item="orregexList" separator="or">
-            regex.qua_regex=#{orregexList}
-          </foreach>
-          )
-        </if>
-    </if>
-    ORDER BY mian.`pub_date` DESC
-  </select>
-
-  <!--获取中标公告详情-->
-  <select id="queryBidsNociteDetails" resultType="java.util.Map" parameterType="map">
-    SELECT
-      mian.pkid as id,
-      mian.`seg_count` as block,
-      mian.title,
-      bids.f_candidate as oneName,
-      bids.f_quote as oneOffer,
-      mian.pub_date as opendate,
-      <include refid="noticeTypeConvert"/>,
-      mian.source,
-      mian.nt_category as type,
-      mian.url,
-      CONCAT((SELECT twf.name FROM mishu.`twf_dict` twf WHERE twf.code='${provice}'),(SELECT sys.area_name FROM sys_area sys WHERE sys.area_code='${city}')) AS projDq
-    FROM
-    tb_nt_bids_${source} bids
-    left JOIN tb_nt_mian_${source} mian
-    ON mian.`pkid` = bids.`nt_id`
-    WHERE mian.pkid=#{id}
-      <if test="type != null and type != ''">
-          and mian.nt_category=#{type}
-      </if>
-  </select>
-
-
-<!--获取招标详情-->
-  <select id="queryTendersNociteDetails" resultType="java.util.Map" parameterType="map">
+    <!--查询招标信息-->
+    <select id="queryTenders" resultType="java.util.Map" parameterType="map">
         SELECT
-  mian.pkid AS id,
-  mian.`title`,
-  mian.`pub_date` AS opendate,
-  mian.`city_code`,
-  common.name AS pbMode,
-  <include refid="noticeTypeConvert"/>,
-  tenders.qua_name AS zzRank,
-  mian.snatch_id AS snatchId,
-    mian.nt_category as type,
-    mian.url,
-  CONCAT((SELECT twf.name FROM mishu.`twf_dict` twf WHERE twf.code='${provice}'),(SELECT sys.area_name FROM sys_area sys WHERE sys.area_code='${city}')) AS projDq
-FROM
-  tb_nt_mian_${source} mian
-  JOIN tb_nt_tenders_${source} tenders
-    ON mian.pkid = tenders.nt_id
-  LEFT JOIN dic_common common
-    ON tenders.`pb_mode` = common.`code`
-WHERE mian.pkid = #{id}
-      <if test="type != null and type != ''">
-          and mian.nt_category=#{type}
-      </if>
-  </select>
+        mian.pkid AS id,
+        mian.`title`,
+        mian.snatch_id as snatchId,
+        mian.`pub_date` AS opendate,
+        tenders.qua_name AS certificate,
+        mian.source,
+        mian.provice_code as provice,
+        mian.city_code as city,
+        <include refid="noticeTypeConvert"/>,
+        mian.nt_category AS `type`,
+        (SELECT t.`name` FROM dic_common t WHERE t.`code` = tenders.`pb_mode` AND t.`type` = '${pdModeType}') AS pdmode
+        FROM tb_nt_tenders_${proviceCode} tenders
+        left JOIN tb_nt_mian_${proviceCode} mian
+        ON mian.pkid = tenders.nt_id
+        WHERE 1 = 1
+        AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
+        AND mian.`pub_date` &lt;= NOW()
+        <if test="title != null and title != ''">
+            and mian.title like CONCAT('%',#{title},'%')
+        </if>
+        <if test="proviceCode != null and proviceCode != ''">
+            and mian.provice_code=#{proviceCode}
+        </if>
+        <if test="cityCodeList != null and cityCodeList.size() > 0">
+            and
+            <foreach collection="cityCodeList" item="cityCodeList" separator="or">
+                mian.city_code=#{cityCodeList}
+            </foreach>
+        </if>
+        <if test="pbModeList != null and pbModeList.size() > 0">
+            and
+            <foreach collection="pbModeList" item="pbModeList" separator="or">
+                tenders.pb_mode=#{pbModeList}
+            </foreach>
+        </if>
+        <if test="projectType != null and projectType != ''">
+            and mian.biness_type=#{projectType}
+        </if>
+        <if test="type != null and type != ''">
+            and mian.nt_category=#{type}
+        </if>
+        <if test="zzType != null and zzType !=''">
+            /*如果 rnageType == and 则进入下面的判断*/
+            <if test="rangeType == 'and'">
+                and mian.pkid in (select regex.nt_id from
+                tb_nt_regex_qua regex where
+                regex.qua_regex=#{quaRegex}
+                )
+            </if>
+            /*如果 rnageType == or 则进入下面的判断*/
+            <if test="rangeType == 'or'">
+                and mian.pkid in (select regex.nt_id from
+                tb_nt_regex_qua regex where 1=1 and
+                <foreach collection="regexList" item="regexList" separator="or">
+                    regex.qua_regex=#{regexList}
+                </foreach>
+                )
+            </if>
+        </if>
+        ORDER BY mian.`pub_date` DESC
+    </select>
+
+    <!--获取中标公告详情-->
+    <select id="queryBidsNociteDetails" resultType="java.util.Map" parameterType="map">
+        SELECT
+        mian.pkid as id,
+        mian.`seg_count` as block,
+        mian.title,
+        bids.f_candidate as oneName,
+        bids.f_quote as oneOffer,
+        mian.pub_date as opendate,
+        <include refid="noticeTypeConvert"/>,
+        mian.source,
+        mian.nt_category as type,
+        mian.url,
+        CONCAT((SELECT twf.name FROM mishu.`twf_dict` twf WHERE twf.code='${provice}'),(SELECT sys.area_name FROM
+        sys_area sys WHERE sys.area_code='${city}')) AS projDq
+        FROM
+        tb_nt_bids_${source} bids
+        left JOIN tb_nt_mian_${source} mian
+        ON mian.`pkid` = bids.`nt_id`
+        WHERE mian.pkid=#{id}
+        <if test="type != null and type != ''">
+            and mian.nt_category=#{type}
+        </if>
+    </select>
 
 
-  <sql id="noticeTypeConvert">
+    <!--获取招标详情-->
+    <select id="queryTendersNociteDetails" resultType="java.util.Map" parameterType="map">
+        SELECT
+        mian.pkid AS id,
+        mian.`title`,
+        mian.`pub_date` AS opendate,
+        mian.`city_code`,
+        common.name AS pbMode,
+        <include refid="noticeTypeConvert"/>,
+        tenders.qua_name AS zzRank,
+        mian.snatch_id AS snatchId,
+        mian.nt_category as type,
+        mian.url,
+        CONCAT((SELECT twf.name FROM mishu.`twf_dict` twf WHERE twf.code='${provice}'),(SELECT sys.area_name FROM
+        sys_area sys WHERE sys.area_code='${city}')) AS projDq
+        FROM
+        tb_nt_mian_${source} mian
+        JOIN tb_nt_tenders_${source} tenders
+        ON mian.pkid = tenders.nt_id
+        LEFT JOIN dic_common common
+        ON tenders.`pb_mode` = common.`code`
+        WHERE mian.pkid = #{id}
+        <if test="type != null and type != ''">
+            and mian.nt_category=#{type}
+        </if>
+    </select>
+
+
+    <sql id="noticeTypeConvert">
        ( case mian.biness_type
         when '01' then '施工'
         when '02' then '监理'
@@ -226,34 +222,33 @@ WHERE mian.pkid = #{id}
         when '13' then '招标代理'
         else '其他' end) as projectType
     </sql>
-  
-  <!--获取点击量-->
-  <select id="queryClickCount" resultType="java.util.Map" parameterType="map">
-    select click_count as clickCount from mishu_write.tb_click_statistics where innert_id=#{id}
-    <if test="source != null and source != ''">
-        and source=#{source}
-    </if>
-  </select>
-  <!--匹配用户是否关注-->
-  <select id="queryAttention" resultType="java.util.Map" parameterType="map">
+
+    <!--获取点击量-->
+    <select id="queryClickCount" resultType="java.util.Map" parameterType="map">
+        select click_count as clickCount from mishu_write.tb_click_statistics where innert_id=#{id}
+        <if test="source != null and source != ''">
+            and source=#{source}
+        </if>
+    </select>
+    <!--匹配用户是否关注-->
+    <select id="queryAttention" resultType="java.util.Map" parameterType="map">
     SELECT noticeId,userId FROM mishu_write.collec_notice WHERE noticeId=#{id} and userId=#{userId}
   </select>
 
 
-  <!--查询资质id-->
-  <select id="queryQuaId" resultType="java.lang.String" parameterType="java.util.Map">
-    select id from rel_qua_grade where 1 = 1
-      <if test="groupList != null and groupList.size > 0">
-        and
-          <foreach collection="groupList" index="index" item="groupList" separator="or">
-               (qua_code=#{groupList.quaCode}
-              <if test="groupList.gradeCode != null and groupList.gradeCode != ''">
-                  and grade_code = #{groupList.gradeCode}
-              </if>)
-          </foreach>
-      </if>
-  </select>
-
+    <!--查询资质id-->
+    <select id="queryQuaId" resultType="java.lang.String" parameterType="java.util.Map">
+        select id from rel_qua_grade where 1 = 1
+        <if test="groupList != null and groupList.size > 0">
+            and
+            <foreach collection="groupList" index="index" item="groupList" separator="or">
+                (qua_code=#{groupList.quaCode}
+                <if test="groupList.gradeCode != null and groupList.gradeCode != ''">
+                    and grade_code = #{groupList.gradeCode}
+                </if>)
+            </foreach>
+        </if>
+    </select>
 
 
 </mapper>

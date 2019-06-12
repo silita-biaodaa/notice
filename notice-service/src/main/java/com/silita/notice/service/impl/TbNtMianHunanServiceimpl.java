@@ -35,17 +35,18 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
 
     /**
      * 查询中标公告
+     *
      * @param
      * @return
      */
     @Override
-    public PageInfo queryBids(Map<String,Object> param) {
+    public PageInfo queryBids(Map<String, Object> param) {
         //获取地区
         queryRegions(param);
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
-        PageHelper.startPage(pageNo,pageSize);
-        List<Map<String,Object>> list = tbNtMianHunanMapper.queryBids(param);
+        PageHelper.startPage(pageNo, pageSize);
+        List<Map<String, Object>> list = tbNtMianHunanMapper.queryBids(param);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
@@ -55,11 +56,11 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * 全国
      */
     @Override
-    public PageInfo queryCompanyName(Map<String,Object> param) {
+    public PageInfo queryCompanyName(Map<String, Object> param) {
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
-        PageHelper.startPage(pageNo,pageSize);
-        List<Map<String,Object>> list = tbNtMianHunanMapper.queryCompanyName(param);
+        PageHelper.startPage(pageNo, pageSize);
+        List<Map<String, Object>> list = tbNtMianHunanMapper.queryCompanyName(param);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
@@ -72,109 +73,105 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
 
     /**
      * 查询招标
+     *
      * @param param
      * @return
      */
     @Override
-    public PageInfo queryTenders(Map<String,Object> param) {
+    public PageInfo queryTenders(Map<String, Object> param) {
         //获取地区
         queryRegions(param);
 
         //获取评标法
         String pbModes = MapUtils.getString(param, "pbModes");
-        if(StringUtils.isNotEmpty(pbModes)){
+        if (StringUtils.isNotEmpty(pbModes)) {
             String[] split2 = pbModes.split("\\|\\|");
             List<String> pbModeList = Arrays.asList(split2);
-            param.put("pbModeList",pbModeList);
+            param.put("pbModeList", pbModeList);
         }
-
-
-
-
         //获取资质
-        List<Map<String,Object>> group = new ArrayList<Map<String,Object>>();
+        List<Map<String, Object>> group = new ArrayList<Map<String, Object>>();
         String zzType = MapUtils.getString(param, "zzType");
         String rangeType = MapUtils.getString(param, "rangeType");
-            String[] zz = zzType.split("\\,");
-            for (String z : zz) {
-                Map<String,Object> maps = new HashMap<String,Object>();
-                String[] split1 = z.split("\\/");
-                if(split1.length >= 2){
-                    maps.put("quaCode",split1[0]);
-                    maps.put("gradeCode",split1[1]);
-                }else{
-                    maps.put("quaCode",split1[0]);
-                }
-                group.add(maps);
+        String[] zz = zzType.split("\\,");
+        for (String z : zz) {
+            Map<String, Object> maps = new HashMap<String, Object>();
+            String[] split1 = z.split("\\/");
+            if (split1.length >= 2) {
+                maps.put("quaCode", split1[0]);
+                maps.put("gradeCode", split1[1]);
+            } else {
+                maps.put("quaCode", split1[0]);
             }
-            param.put("groupList",group);
+            group.add(maps);
+        }
+        param.put("groupList", group);
 
-            //获取资质id
-            List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
+        //获取资质id
+        List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
+        //如果rangeType为空则给他赋默认值为or
+        if (rangeType.equals("")) {
+            param.put("resultType", "or");
+        }
 
-            if(rangeType.equals("or")){
-                if(regexList.size() <= 0){
-                    param.put("orregexList",null);
-                    param.put("andregexList",null);
-                }else if(regexList.size() > 0){
-                    param.put("orregexList",regexList);
-                    param.put("andregexList",null);
-                }
-
-            }else if(rangeType.equals("and")){
-                if(regexList.size() > 0){
-                    param.put("andregexList",regexList);
-                    param.put("orregexList",null);
-                }else if(regexList.size() <= 0){
-                    param.put("orregexList",null);
-                    param.put("andregexList",null);
-                }
-
+        if (rangeType.equals("or")) {
+            param.put("regexList", regexList);
+        } else if (rangeType.equals("and")) {
+            //如果rangeType为and 则先排序，再把regexList赋值给quaRegex
+            String quaRegex = "";
+            Collections.sort(regexList);
+            for (String id : regexList) {
+                quaRegex = quaRegex + id;
             }
-        param.put("pdModeType",param.get("proviceCode")+"_pbmode");
+            param.put("quaRegex", quaRegex);
+        }
+
+        param.put("pdModeType", param.get("proviceCode") + "_pbmode");
 
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
-        PageHelper.startPage(pageNo,pageSize);
-        List<Map<String,Object>> list = tbNtMianHunanMapper.queryTenders(param);
+        PageHelper.startPage(pageNo, pageSize);
+        List<Map<String, Object>> list = tbNtMianHunanMapper.queryTenders(param);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
 
     /**
      * 获取中标详情
+     *
      * @param param
      * @return
      */
     @Override
-    public Map<String, Object> queryBidsNociteDetails(Map<String,Object> param) {
+    public Map<String, Object> queryBidsNociteDetails(Map<String, Object> param) {
         return tbNtMianHunanMapper.queryBidsNociteDetails(param);
     }
 
     /**
      * 获取招标详情
+     *
      * @param param
      * @return
      */
     @Override
-    public Map<String,Object> queryTendersNociteDetails(Map<String,Object> param) {
+    public Map<String, Object> queryTendersNociteDetails(Map<String, Object> param) {
         return tbNtMianHunanMapper.queryTendersNociteDetails(param);
     }
 
 
-
     /**
      * 获取公告详情
-     * @param param  // 爬取id
-     *               返回String类型
+     *
+     * @param param // 爬取id
+     *              返回String类型
      * @return
      * @throws IOException
      */
 
-    public String queryBidsDetailsCentendString(Map<String,Object> param) throws IOException {
+    public String queryBidsDetailsCentendString(Map<String, Object> param) throws IOException {
         String snatchId = MapUtils.getString(param, "snatchId");
-        String content="";
-        Map<String,Object> map = new HashMap<String,Object>();
+        String content = "";
+        Map<String, Object> map = new HashMap<String, Object>();
         TableName tableName = TableName.valueOf(hBaseTableName);
         Table table = connection.getTable(tableName);
         Get g = new Get(snatchId.getBytes());
@@ -185,7 +182,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             String value = Bytes.toString(CellUtil.cloneValue(cell));
             switch (key) {
                 case "content": //获取内容
-                    content=value;
+                    content = value;
                     break;
             }
         }
@@ -194,11 +191,12 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
 
     /**
      * 获取评标办法
+     *
      * @param pbModes
      * @return
      */
     @Override
-    public List<String> queryPbModes(String pbModes){
+    public List<String> queryPbModes(String pbModes) {
         String[] split = pbModes.split("\\|\\|");
         List<String> list = Arrays.asList(split);
         return list;
@@ -209,51 +207,52 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * 公共地区
      */
 
-    public void queryRegions(Map<String,Object> param){
+    public void queryRegions(Map<String, Object> param) {
         //获取地区
         String regions = MapUtils.getString(param, "regions");
-        if(null != regions && !"".equals(regions)){
+        if (null != regions && !"".equals(regions)) {
             String[] split = regions.split("\\|\\|");
-            if (null != split && split.length == 1){
+            if (null != split && split.length == 1) {
                 //获取省
-                param.put("proviceCode",split[0]);
-            }else  if (split.length == 2){
+                param.put("proviceCode", split[0]);
+            } else if (split.length == 2) {
                 //获取省
-                param.put("proviceCode",split[0]);
+                param.put("proviceCode", split[0]);
                 String addrs = split[1];
                 //获取市
                 String[] split1 = addrs.split(",");
 
                 List<String> cityCodeList = Arrays.asList(split1);
-                param.put("cityCodeList",cityCodeList);
+                param.put("cityCodeList", cityCodeList);
             }
-        }else{
+        } else {
             //默认地区
-            param.put("proviceCode","hunan");
+            param.put("proviceCode", "hunan");
         }
     }
 
 
     /**
      * 获取地区
+     *
      * @param regional
      * @return
      */
     @Override
-    public Map<String,Object> queryRegional(String regional){
-        Map<String,Object> map = new HashMap<String,Object>();
+    public Map<String, Object> queryRegional(String regional) {
+        Map<String, Object> map = new HashMap<String, Object>();
         String[] split = regional.split("\\|\\|");
-        if (null != split  && split.length>=2){
+        if (null != split && split.length >= 2) {
             String province = split[0].toString();
             String addrs = split[1].toString();
             String[] split1 = addrs.split(",");
             List<String> list =
                     Arrays.asList(split1);
-            map.put("province",province);
-            map.put("city",list);
-        }else if(split.length < 2 && split.length >0){
+            map.put("province", province);
+            map.put("city", list);
+        } else if (split.length < 2 && split.length > 0) {
             String province = split[0].toString();
-            map.put("province",province);
+            map.put("province", province);
         }
 
         return map;
@@ -261,58 +260,63 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
 
     /**
      * 点击量
+     *
      * @param param
      * @return
      */
     @Override
-    public Map<String,Object> queryClickCount(Map<String,Object> param) {
+    public Map<String, Object> queryClickCount(Map<String, Object> param) {
         return tbNtMianHunanMapper.queryClickCount(param);
     }
 
     /**
      * 获取点击量
+     *
      * @param param
      * @return
      */
     @Override
-    public Integer count(Map<String,Object> param) {
+    public Integer count(Map<String, Object> param) {
         Map<String, Object> map = tbNtMianHunanMapper.queryClickCount(param);
         Integer clickCount = (Integer) map.get("clickCount");
         clickCount++;
         //点击量+1
-        param.put("addCount",clickCount);
+        param.put("addCount", clickCount);
         tbNtMianHunanMapper.addClickCount(param);
         return clickCount;
     }
 
     /**
      * 匹配用户是否关注
+     *
      * @param param
      * @return
      */
     @Override
-    public Map<String, Object> queryAttention(Map<String,Object> param) {
+    public Map<String, Object> queryAttention(Map<String, Object> param) {
         return tbNtMianHunanMapper.queryAttention(param);
     }
 
     /**
      * 是否关注
+     *
      * @param param
      * @return
      */
     @Override
-    public Boolean attention(Map<String,Object> param) {
+    public Boolean attention(Map<String, Object> param) {
         param.put("userId", VisitInfoHolder.getUserId());
-        boolean collected=false;
+        boolean collected = false;
         Map<String, Object> queryattention = tbNtMianHunanMapper.queryAttention(param);
-        if (null != queryattention){
-            collected=true;
+        if (null != queryattention) {
+            collected = true;
         }
         return collected;
     }
 
     /**
      * 通过资质获取资质等级表的id
+     *
      * @param param
      * @return
      */
@@ -323,14 +327,13 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
 
     /**
      * 变更点击量
+     *
      * @param param
      */
     @Override
     public void addClickCount(Map<String, Object> param) {
         tbNtMianHunanMapper.addClickCount(param);
     }
-
-
 
 
 }
