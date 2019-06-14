@@ -1,0 +1,12 @@
+package com.silita.notice.web;
+
+import com.silita.notice.NoticeWebApplication;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = {NoticeWebApplication.class})
+
+public class BaseCastTest {
+}

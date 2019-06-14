@@ -113,7 +113,7 @@ public interface TbNtMianHunanService{
      */
     List<String> queryQuaId(Map<String,Object> param);
 
-
+    //增加点击量
     void addClickCount(Map<String,Object> param);
 
 
