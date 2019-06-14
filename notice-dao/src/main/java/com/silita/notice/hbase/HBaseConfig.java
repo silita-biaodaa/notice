@@ -25,13 +25,13 @@ public class HBaseConfig {
 
    /* @Value("${hadoop.home.dir}")
     private String hadoopHomeDir;*/
-    @Value("${hbase.config.hbase.zookeeper.quorum}")
+    @Value("${hbase.zookeeper.quorum}")
     private String hbaseZookeeperQuorum;
-    @Value("${hbase.config.hbase.zookeeper.property.clientPort}")
+    @Value("${hbase.zookeeper.property.clientPort}")
     private String hbaseZookeeperclientPort;
-    @Value("${hbase.config.hbase.master}")
+    @Value("${hbase.master}")
     private String hbaseMaster;
-    @Value("${hbase.config.hbase.rootdir}")
+    @Value("${hbase.rootdir}")
     private String hbaseRootdir;
 
     @Bean
