@@ -6,11 +6,10 @@
         <groupId>com.silita</groupId>
         <artifactId>notice</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.silita</groupId>
     <artifactId>notice-web</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>notice-web</name>
@@ -19,6 +18,28 @@
     <properties>
         <java.version>1.8</java.version>
     </properties>
+
+    <!-- 私有仓库 -->
+    <repositories>
+        <repository>
+            <id>public</id>  <!--这个ID需要与你新建的组group ID一致-->
+            <name>Public Repository</name>
+            <url>http://120.78.253.169:8081/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+
+    <!-- 自动打包 -->
+    <distributionManagement>
+        <repository>
+            <id>releases</id><!--这个ID需要与你的release仓库的Repository ID一致-->
+            <url>http://120.78.253.169:8081/nexus/content/repositories/releases</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>snapshots</id><!--这个ID需要与你的snapshots仓库的Repository ID一致-->
+            <url>http://120.78.253.169:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
