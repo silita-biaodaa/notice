@@ -104,7 +104,7 @@ public class LoginFilter implements Filter {
                 resMap.put("msg", ResponseCode.WARN_MSG_502);
                 printInfo(response, resMap);
             }
-            if (StringUtils.isNotEmpty(userId)){
+            if (StringUtils.isNotEmpty(userId)) {
                 VisitInfoHolder.setUserId(userId);
             }
             //绿色通道检查
@@ -119,7 +119,7 @@ public class LoginFilter implements Filter {
                 resMap.put("msg", ResponseCode.WARN_MSG_504);
                 printInfo(response, resMap);
             }
-        } catch ( Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
 
@@ -141,9 +141,11 @@ public class LoginFilter implements Filter {
      * @return
      */
     private boolean verifyTokenVersion(String xToken) {
+        logger.info("-------------token.version:" + tokenVersion + "----------------------");
         String[] tokens = xToken.split(Constant.TOKEN_SPLIT);
         try {
             String version = Base64Decode(tokens[0]);
+            logger.info("-------------version:" + version + "----------------------");
             if (version.equals(tokenVersion)) {
                 return true;
             }
