@@ -227,7 +227,7 @@
     </sql>
 
     <!--获取点击量-->
-    <select id="queryClickCount" resultType="java.util.Map" parameterType="map">
+    <select id="queryClickCount" resultType="java.lang.Integer" parameterType="map">
         select click_count as clickCount from mishu_write.tb_click_statistics where innert_id=#{id}
         <if test="source != null and source != ''">
             and source=#{source}

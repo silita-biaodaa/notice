@@ -257,16 +257,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         return map;
     }
 
-    /**
-     * 点击量
-     *
-     * @param param
-     * @return
-     */
-    @Override
-    public Map<String, Object> queryClickCount(Map<String, Object> param) {
-        return tbNtMianHunanMapper.queryClickCount(param);
-    }
+
 
     /**
      * 获取点击量
@@ -276,16 +267,15 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public Integer count(Map<String, Object> param) {
-        Map<String, Object> map = tbNtMianHunanMapper.queryClickCount(param);
-        if(null != map){
-            Integer clickCount = (Integer) map.get("clickCount");
+        Integer clickCount = tbNtMianHunanMapper.queryClickCount(param);
+        if(null != clickCount){
             clickCount++;
             //点击量+1
             param.put("addCount", clickCount);
             tbNtMianHunanMapper.addClickCount(param);
             return clickCount;
         }
-        Integer clickCount = 1;
+        clickCount = 1;
         param.put("clickCount",clickCount);
         tbNtMianHunanMapper.createClickCount(param);
         return clickCount;

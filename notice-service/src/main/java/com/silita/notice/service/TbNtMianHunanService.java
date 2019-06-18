@@ -78,12 +78,6 @@ public interface TbNtMianHunanService{
     Map<String,Object> queryRegional(String regional);
 
 
-    /**
-     * 获取点击量
-     * @param param
-     * @return
-     */
-    Map<String,Object> queryClickCount(Map<String,Object> param);
 
     /**
      * 获取点击量
