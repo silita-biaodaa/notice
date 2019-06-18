@@ -66,6 +66,9 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
      */
     Map<String,Object> queryClickCount(Map<String,Object> param);
 
+    //创建点击量
+    void createClickCount(Map<String,Object> param);
+
     /**
      *获取用户是否关注
      * @return

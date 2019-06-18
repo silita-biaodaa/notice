@@ -101,6 +101,7 @@ public class NociteController extends BaseController {
         Map<String,Object> resultMap = new HashMap<String,Object>();
         //获取点击量
         Integer count = tbNtMianHunanService.count(param);
+        System.out.println(count);
         //获取是否关注
         Boolean attention = tbNtMianHunanService.attention(param);
         //获取招标原文

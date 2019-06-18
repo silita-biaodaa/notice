@@ -4,6 +4,9 @@
     <insert id="addClickCount" parameterType="java.util.Map">
     UPDATE mishu_write.tb_click_statistics SET click_count=#{addCount},updated=NOW() WHERE innert_id=#{id} AND source=#{source}
   </insert>
+    <insert id="createClickCount" parameterType="map">
+        insert into mishu_write.tb_click_statistics(type,innert_id,click_count,source,created,updated) values ('content',#{id},#{clickCount},#{source},NOW(),NOW())
+    </insert>
 
 
     <!--查询公告 中标-->

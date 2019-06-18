@@ -110,11 +110,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         //获取资质id
         List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
         //如果rangeType为空则给他赋默认值为or
-        if (rangeType.equals("")) {
-            param.put("resultType", "or");
-        }
-
-        if (rangeType.equals("or")) {
+        if (StringUtils.isBlank(rangeType)) {
+            param.put("rangeType", "or");
+            param.put("regexList", regexList);
+        }else if (rangeType.equals("or")) {
             param.put("regexList", regexList);
         } else if (rangeType.equals("and")) {
             //如果rangeType为and 则先排序，再把regexList赋值给quaRegex
@@ -287,6 +286,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             return clickCount;
         }
         Integer clickCount = 1;
+        param.put("clickCount",clickCount);
+        tbNtMianHunanMapper.createClickCount(param);
         return clickCount;
     }
 
