@@ -2,9 +2,12 @@ package com.silita.notice.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.silita.notice.common.RedisConstantInterface;
 import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.TbNtMianHunanMapper;
 import com.silita.notice.service.TbNtMianHunanService;
+import com.silita.notice.utils.ObjectUtils;
+import com.silita.notice.utils.RedisShardedPoolUtil;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.Cell;
@@ -18,6 +21,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import sun.security.krb5.internal.PAData;
 
 import java.io.IOException;
 import java.util.*;
@@ -47,6 +51,18 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, Object>> list = tbNtMianHunanMapper.queryBids(param);
+        if(list != null && list.size() >0){
+            String key;
+            for (Map<String, Object> map : list) {
+                if(null != map.get("oneName")){
+                    param.put("comName",map.get("oneName"));
+                    key = RedisConstantInterface.NOTIC_LAW+ObjectUtils.buildMapParamHash(param);
+                    if(RedisShardedPoolUtil.keyExist(key)){
+                        map.put("oneLaw","1");
+                    }
+                }
+            }
+        }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
@@ -143,7 +159,16 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public Map<String, Object> queryBidsNociteDetails(Map<String, Object> param) {
-        return tbNtMianHunanMapper.queryBidsNociteDetails(param);
+        Map<String, Object> map = tbNtMianHunanMapper.queryBidsNociteDetails(param);
+        String key;
+        if(null != map.get("oneName") && "" != map.get("oneName")){
+            param.put("comName",map.get("oneName"));
+            key = RedisConstantInterface.NOTIC_LAW+ObjectUtils.buildMapParamHash(param);
+            if(RedisShardedPoolUtil.keyExist(key)){
+                map.put("oneLaw","1");
+            }
+        }
+        return map;
     }
 
     /**

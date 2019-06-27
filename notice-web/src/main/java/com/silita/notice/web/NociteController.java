@@ -10,10 +10,7 @@ import org.apache.hadoop.hbase.client.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -95,8 +92,9 @@ public class NociteController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/nociteDetails",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map queryNociteDetails(@RequestBody Map<String,Object> param) throws IOException {
+    @RequestMapping(value = "/nociteDetails/{id}",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map queryNociteDetails(@PathVariable String id, @RequestBody Map<String,Object> param) throws IOException {
+        param.put("id",id);
 
         Map<String,Object> resultMap = new HashMap<String,Object>();
         //获取点击量
@@ -118,7 +116,8 @@ public class NociteController extends BaseController {
             return resultMap;
         }
         Map<String, Object> map = tbNtMianHunanService.queryBidsNociteDetails(param);
-        map.put("content",content);
+
+        //map.put("content",content);
         map.put("collected",attention);
         resultMap.put("clickCount",count);
         seccussMap(resultMap,map);

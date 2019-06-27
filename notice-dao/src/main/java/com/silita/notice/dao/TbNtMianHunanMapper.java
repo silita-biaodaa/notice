@@ -35,6 +35,11 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
 
     List<Map<String,Object>> queryCompanyName(Map<String,Object> param);
 
+    /**
+     * 获取点击量
+     * @param param
+     * @return
+     */
     Integer queryCompanyCount(Map<String,Object> param);
 
     /**
