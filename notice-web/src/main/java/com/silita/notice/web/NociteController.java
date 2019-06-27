@@ -24,8 +24,7 @@ public class NociteController extends BaseController {
     private TbNtMianHunanService tbNtMianHunanService;
     @Value("${hbase.notice-table-name}")
     private String hBaseTableName;
-    @Autowired
-    private Connection connection;
+
     /**
      * 查询公告  -  中标
      * @param param
@@ -109,7 +108,9 @@ public class NociteController extends BaseController {
         if(type.equals("1") && !"".equals(type)){
             //获取招标详情
             Map<String, Object> map = tbNtMianHunanService.queryTendersNociteDetails(param);
-            map.put("content",content);
+            if(content != null && !"".equals(content)){
+                map.put("content",content);
+            }
             map.put("collected",attention);
             resultMap.put("clickCount",count);
             seccussMap(resultMap,map);
@@ -117,7 +118,9 @@ public class NociteController extends BaseController {
         }
         Map<String, Object> map = tbNtMianHunanService.queryBidsNociteDetails(param);
 
-        //map.put("content",content);
+        if(content != null && !"".equals(content)){
+            map.put("content",content);
+        }
         map.put("collected",attention);
         resultMap.put("clickCount",count);
         seccussMap(resultMap,map);

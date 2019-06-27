@@ -23,8 +23,7 @@ import java.io.IOException;
 public class HBaseConfig {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-   /* @Value("${hadoop.home.dir}")
-    private String hadoopHomeDir;*/
+
     @Value("${hbase.zookeeper.quorum}")
     private String hbaseZookeeperQuorum;
     @Value("${hbase.zookeeper.property.clientPort}")
@@ -49,7 +48,7 @@ public class HBaseConfig {
 
     @Bean
     public org.apache.hadoop.conf.Configuration configuration() {
-//        System.getProperties().put("hadoop.home.dir", hadoopHomeDir);
+
         org.apache.hadoop.conf.Configuration configuration = HBaseConfiguration.create();
         configuration.set("hbase.zookeeper.quorum", hbaseZookeeperQuorum);
         configuration.set("hbase.zookeeper.property.clientPort", hbaseZookeeperclientPort);
