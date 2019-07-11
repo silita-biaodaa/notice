@@ -287,7 +287,8 @@
     </select>
    <!--查询省级名称-->
     <select id="queryProviceName" resultType="java.util.Map" parameterType="map">
-        SELECT twf.name as proviceCode FROM mishu.`twf_dict` twf WHERE twf.code=#{provice}
+        SELECT sys.area_name as proviceCode FROM
+        biaodaa_admin.sys_area sys WHERE sys.area_code=#{provice}
     </select>
     <!--查询市级名称-->
     <select id="queryCityName" resultType="java.util.Map" parameterType="map">

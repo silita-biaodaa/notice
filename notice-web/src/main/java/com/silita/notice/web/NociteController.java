@@ -23,8 +23,8 @@ public class NociteController extends BaseController {
     private Log logger = LogFactory.getLog(NociteController.class);
     @Autowired
     private TbNtMianHunanService tbNtMianHunanService;
-   /* @Value("${hbase.notice-table-name}")
-    private String hBaseTableName;*/
+    @Value("${hbase.notice-table-name}")
+    private String hBaseTableName;
 
     /**
      * 查询公告  -  中标
@@ -105,12 +105,27 @@ public class NociteController extends BaseController {
         param.put("snatchId",snatchId);
         param.put("provice",provice);
         param.put("city",city);
-        Map<String, Object> proviceName = tbNtMianHunanService.queryProviceName(param);
-        Map<String, Object> cityName = tbNtMianHunanService.queryCityName(param);
         //获取省级名称
-        String proviceCode = (String) proviceName.get("proviceCode");
+        String proviceCode="";
+        if(!provice.equals("") && null != provice){
+            Map<String, Object> proviceName = tbNtMianHunanService.queryProviceName(param);
+            //获取省级名称
+            proviceCode = (String) proviceName.get("proviceCode");
+        }
         //获取市级名称
-        String cityCode = (String) cityName.get("cityCode");
+        String cityCode="";
+
+        if(!city.equals("") && null != city){
+            Map<String, Object> cityName = tbNtMianHunanService.queryCityName(param);
+            //获取市级名称
+            cityCode = (String) cityName.get("cityCode");
+        }
+
+
+
+
+
+
 
         //获取userId
         String userId = VisitInfoHolder.getUserId();
@@ -122,16 +137,16 @@ public class NociteController extends BaseController {
         System.out.println(count);
         //获取是否关注
         Boolean attention = tbNtMianHunanService.attention(param);
-        /*//获取招标原文
-        String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);*/
+        //获取招标原文
+        String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
         // type = 1  招标详情   ||  type = 2  中标详情
         String type = MapUtils.getString(param, "type");
         if(type.equals("1") && !"".equals(type)){
             //获取招标详情
             Map<String, Object> map = tbNtMianHunanService.queryTendersNociteDetails(param);
-            /*if(content != null && !"".equals(content)){
+            if(content != null && !"".equals(content)){
                 map.put("content",content);
-            }*/
+            }
             map.put("projDq",proviceCode+"-"+cityCode);
             map.put("collected",attention);
             resultMap.put("clickCount",count);
@@ -140,9 +155,9 @@ public class NociteController extends BaseController {
         }
         Map<String, Object> map = tbNtMianHunanService.queryBidsNociteDetails(param);
 
-       /* if(content != null && !"".equals(content)){
+        if(content != null && !"".equals(content)){
             map.put("content",content);
-        }*/
+        }
         map.put("collected",attention);
         resultMap.put("clickCount",count);
         seccussMap(resultMap,map);
