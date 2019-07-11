@@ -97,7 +97,23 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
     List<String> queryQuaId(Map<String,Object> param);
 
 
+    /**
+     * 查省级编号和市级编号和爬取id
+     */
 
+    Map<String,Object> queryProviceCity(Map<String,Object> param);
+
+    /**
+     * 通过编号查询省级名称和市名称
+     */
+    Map<String,Object> queryProviceName(Map<String,Object> param);
+
+    /**
+     * 通过编号查询市级名称
+     * @param param
+     * @return
+     */
+    Map<String,Object> queryCityName(Map<String,Object> param);
 
 
 

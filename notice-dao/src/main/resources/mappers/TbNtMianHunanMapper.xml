@@ -16,11 +16,12 @@
         mian.title,
         bids.f_candidate as oneName,
         bids.f_quote as oneOffer,
-        mian.pub_date as opendate,
+        mian.pub_date as openDate,
         mian.source,
         mian.provice_code as provice,
         mian.city_code as city,
         mian.snatch_id as snatchId,
+        <include refid="noticeType"/>,
         <include refid="noticeTypeConvert"/>,
         mian.nt_category as type,
         bids.pb_mode as pbMode
@@ -55,6 +56,9 @@
         <if test="projSumEnd != null and projSumEnd != ''">
             and bids.f_quote &lt;= #{projSumEnd}
         </if>
+        <if test="comnName != null and comnName != ''">
+            and bids.f_candidate=#{comnName}
+        </if>
         ORDER BY mian.pub_date DESC
 
     </select>
@@ -63,14 +67,14 @@
         SELECT
         cand.nt_id AS id,
         cand.title,
-        cand.pub_date AS opendate,
+        cand.pub_date AS openDate,
         cand.snatch_id as snatchId,
         cand.f_candidate AS oneName,
         cand.f_quote AS oneOffer,
         cand.source
         FROM
         tb_nt_bids_cand cand
-        WHERE cand.f_candidate LIKE CONCAT('%',#{com_name},'%')
+        WHERE cand.f_candidate LIKE CONCAT('%',#{comnName},'%')
         <if test="title != null and title != ''">
             and cand.title like CONCAT('%',#{title},'%')
         </if>
@@ -83,7 +87,7 @@
         count(1)
         from tb_nt_bids_cand cand
         where
-        cand.f_candidate LIKE CONCAT('%',#{com_name},'%')
+        cand.f_candidate LIKE CONCAT('%',#{comnName},'%')
         <if test="title != null and title != ''">
             and cand.title like CONCAT('%',#{title},'%')
         </if>
@@ -95,14 +99,15 @@
         mian.pkid AS id,
         mian.`title`,
         mian.snatch_id as snatchId,
-        mian.`pub_date` AS opendate,
+        mian.`pub_date` AS openDate,
         tenders.qua_name AS certificate,
         mian.source,
         mian.provice_code as provice,
         mian.city_code as city,
+        <include refid="noticeType"/>,
         <include refid="noticeTypeConvert"/>,
         mian.nt_category AS `type`,
-        (SELECT t.`name` FROM dic_common t WHERE t.`code` = tenders.`pb_mode` AND t.`type` = '${pdModeType}') AS pdmode
+        (SELECT t.`name` FROM dic_common t WHERE t.`code` = tenders.`pb_mode` AND t.`type` = '${pdModeType}') AS pdMode
         FROM tb_nt_tenders_${proviceCode} tenders
         left JOIN tb_nt_mian_${proviceCode} mian
         ON mian.pkid = tenders.nt_id
@@ -116,16 +121,18 @@
             and mian.provice_code=#{proviceCode}
         </if>
         <if test="cityCodeList != null and cityCodeList.size() > 0">
-            and
+            and (
             <foreach collection="cityCodeList" item="cityCodeList" separator="or">
                 mian.city_code=#{cityCodeList}
             </foreach>
+            )
         </if>
         <if test="pbModeList != null and pbModeList.size() > 0">
-            and
+            and (
             <foreach collection="pbModeList" item="pbModeList" separator="or">
                 tenders.pb_mode=#{pbModeList}
             </foreach>
+            )
         </if>
         <if test="projectType != null and projectType != ''">
             and mian.biness_type=#{projectType}
@@ -162,7 +169,7 @@
         mian.title,
         bids.f_candidate as oneName,
         bids.f_quote as oneOffer,
-        mian.pub_date as opendate,
+        mian.pub_date as openDate,
         <include refid="noticeTypeConvert"/>,
         mian.source,
         mian.nt_category as type,
@@ -185,16 +192,14 @@
         SELECT
         mian.pkid AS id,
         mian.`title`,
-        mian.`pub_date` AS opendate,
+        mian.`pub_date` AS openDate,
         mian.`city_code`,
         common.name AS pbMode,
         <include refid="noticeTypeConvert"/>,
         tenders.qua_name AS zzRank,
         mian.snatch_id AS snatchId,
         mian.nt_category as type,
-        mian.url,
-        CONCAT((SELECT twf.name FROM mishu.`twf_dict` twf WHERE twf.code='${provice}'),(SELECT sys.area_name FROM
-        sys_area sys WHERE sys.area_code='${city}')) AS projDq
+        mian.url
         FROM
         tb_nt_mian_${source} mian
         JOIN tb_nt_tenders_${source} tenders
@@ -226,6 +231,30 @@
         else '其他' end) as projectType
     </sql>
 
+    <sql id="noticeType">
+       ( case mian.nt_type
+        when '01' then '一般公告'
+        when '02' then '磋商公告'
+        when '03' then '补充公告'
+        when '04' then '答疑公告'
+        when '05' then '流标公告'
+        when '06' then '澄清公告'
+        when '07' then '延期公告'
+        when '08' then '变更/更正/更改公告'
+        when '09' then '废标公告'
+        when '10' then '终止公告'
+        when '11' then '修改公告'
+        when '12' then '招标控制价'
+        when '13' then '资审结果'
+        when '14' then '资格预审'
+        when '15' then '入围公告'
+        when '16' then '暂停公告'
+        when '17' then '合同公告'
+        when '18' then '结果公告'
+        when '19' then '成交公告'
+        else '其他公告' end) as noticeType
+    </sql>
+
     <!--获取点击量-->
     <select id="queryClickCount" resultType="java.lang.Integer" parameterType="map">
         select click_count as clickCount from mishu_write.tb_click_statistics where innert_id=#{id}
@@ -251,6 +280,19 @@
                 </if>)
             </foreach>
         </if>
+    </select>
+    <!--查询省级编号和市级编号-->
+    <select id="queryProviceCity" resultType="java.util.Map" parameterType="map">
+        select provice_code as provice,city_code as city,snatch_id as snatchId from biaodaa_admin.tb_nt_mian_${source} where pkid=#{id}
+    </select>
+   <!--查询省级名称-->
+    <select id="queryProviceName" resultType="java.util.Map" parameterType="map">
+        SELECT twf.name as proviceCode FROM mishu.`twf_dict` twf WHERE twf.code=#{provice}
+    </select>
+    <!--查询市级名称-->
+    <select id="queryCityName" resultType="java.util.Map" parameterType="map">
+        SELECT sys.area_name as cityCode FROM
+        biaodaa_admin.sys_area sys WHERE sys.area_code=#{city}
     </select>
 
 

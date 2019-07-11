@@ -51,4 +51,9 @@ public class NoticeServiceImplTest extends BaseCastTest {
         Map<String, Object> map = tbNtMianHunanService.queryBidsNociteDetails(param);
         System.out.println(map);
     }
+
+    @Test
+    public void zhongbiaotest(){
+
+    }
 }

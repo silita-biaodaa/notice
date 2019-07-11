@@ -31,12 +31,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Autowired
     private TbNtMianHunanMapper tbNtMianHunanMapper;
 
-    @Value("${hbase.notice-table-name}")
+    /*@Value("${hbase.notice-table-name}")
     private String hBaseTableName;
-
     @Autowired
-    private Connection connection;
-
+    private Connection connection;*/
     /**
      * 查询中标公告
      *
@@ -50,10 +48,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
-        List<Map<String, Object>> list = tbNtMianHunanMapper.queryBids(param);
-        if(list != null && list.size() >0){
+        List<Map<String, Object>> data = tbNtMianHunanMapper.queryBids(param);
+        if(data != null && data.size() >0){
             String key;
-            for (Map<String, Object> map : list) {
+            for (Map<String, Object> map : data) {
                 if(null != map.get("oneName")){
                     param.put("comName",map.get("oneName"));
                     key = RedisConstantInterface.NOTIC_LAW+ObjectUtils.buildMapParamHash(param);
@@ -63,7 +61,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 }
             }
         }
-        PageInfo pageInfo = new PageInfo(list);
+        PageInfo pageInfo = new PageInfo(data);
         return pageInfo;
     }
 
@@ -192,7 +190,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * @throws IOException
      */
 
-    public String queryBidsDetailsCentendString(Map<String, Object> param) throws IOException {
+ /*   public String queryBidsDetailsCentendString(Map<String, Object> param) throws IOException {
         String snatchId = MapUtils.getString(param, "snatchId");
         String content = "";
         Map<String, Object> map = new HashMap<String, Object>();
@@ -211,7 +209,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             }
         }
         return content;
-    }
+    }*/
 
     /**
      * 获取评标办法
@@ -353,6 +351,32 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Override
     public void addClickCount(Map<String, Object> param) {
         tbNtMianHunanMapper.addClickCount(param);
+    }
+
+    /**
+     * 查省级编号和市级编号和爬取id
+     */
+    @Override
+    public Map<String, Object> queryProviceCity(Map<String, Object> param) {
+        return tbNtMianHunanMapper.queryProviceCity(param);
+    }
+
+    /**
+     * 通过编号查询省级名称和市名称
+     */
+    @Override
+    public Map<String, Object> queryProviceName(Map<String, Object> param) {
+        return tbNtMianHunanMapper.queryProviceName(param);
+    }
+
+    /**
+     * 通过编号查询市级名称
+     * @param param
+     * @return
+     */
+    @Override
+    public Map<String, Object> queryCityName(Map<String, Object> param) {
+        return tbNtMianHunanMapper.queryCityName(param);
     }
 
 

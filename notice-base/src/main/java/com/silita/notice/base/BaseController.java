@@ -25,7 +25,7 @@ public class BaseController {
         resultMap.put("code",ResponseCode.SUCCESS_CODE);
         resultMap.put("msg",ResponseCode.SUCCESS_MSG);
         if (pageInfo != null) {
-            resultMap.put("list", pageInfo.getList());
+            resultMap.put("data", pageInfo.getList());
             resultMap.put("pageNo", pageInfo.getPageNum());
             resultMap.put("pageSize", pageInfo.getPageSize());
             resultMap.put("total", pageInfo.getTotal());
