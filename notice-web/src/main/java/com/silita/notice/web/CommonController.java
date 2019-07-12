@@ -23,13 +23,20 @@ public class CommonController extends BaseController {
 
     /**
      * 获取筛选
-     * @param param
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/filter",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map  filter(@RequestBody Map<String,Object> param){
+    public Map  filter(){
+        Map<String,Object> param = new HashMap<>();
+        Map<String,Object> param1 = new HashMap<>();
+        Map<String,Object> param2 = new HashMap<>();
+        param1.put("zzType","1");
+        param2.put("zzType","2");
+
+
         Map<String,Object> resultMap = new HashMap<>();
+
 
 
         Map<String,Object> map = new HashMap<>();
@@ -37,11 +44,16 @@ public class CommonController extends BaseController {
         List<Map<String, Object>> area = commonService.getArea();
         List<Map<String, Object>> type = commonService.type();
         List<Map<String, Object>> pbMode = commonService.queryPbModes(param);
-        List<Map<String, Object>> qual = commonService.queryCompanyQual(param);
+        List<Map<String, Object>> comQual = commonService.queryCompanyQual(param2);
+        List<Map<String, Object>> nocitequal = commonService.queryCompanyQual(param1);
+
+
+
         map.put("area",area);
         map.put("type",type);
         map.put("pbMode",pbMode);
-        map.put("qual",qual);
+        map.put("comQual",comQual);
+        map.put("nociteQual",nocitequal);
 
         seccussMap(resultMap,map);
         return map;
