@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.notice.dao.DicCommonMapper">
+
+    <!--获取评标办法-->
+    <select id="queryPbModes" resultType="java.util.Map" parameterType="map">
+      SELECT common.name,common.code FROM `dic_common` common WHERE common.type=#{pbModeType}
+    </select>
+
+    <!--查询资质等级-->
+    <select id="queryQuaLevel" resultType="java.util.Map" parameterType="map">
+        SELECT c.code,c.name FROM dic_common c WHERE c.type='qua_grade' AND c.code=#{gradeCcode}
+    </select>
+</mapper>

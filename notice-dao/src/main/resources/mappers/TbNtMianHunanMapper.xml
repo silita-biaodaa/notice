@@ -56,8 +56,8 @@
         <if test="projSumEnd != null and projSumEnd != ''">
             and bids.f_quote &lt;= #{projSumEnd}
         </if>
-        <if test="comnName != null and comnName != ''">
-            and bids.f_candidate=#{comnName}
+        <if test="comName != null and comName != ''">
+            and bids.f_candidate=#{comName}
         </if>
         ORDER BY mian.pub_date DESC
 
@@ -74,7 +74,7 @@
         cand.source
         FROM
         tb_nt_bids_cand cand
-        WHERE cand.f_candidate LIKE CONCAT('%',#{comnName},'%')
+        WHERE cand.f_candidate LIKE CONCAT('%',#{comName},'%')
         <if test="title != null and title != ''">
             and cand.title like CONCAT('%',#{title},'%')
         </if>
@@ -87,7 +87,7 @@
         count(1)
         from tb_nt_bids_cand cand
         where
-        cand.f_candidate LIKE CONCAT('%',#{comnName},'%')
+        cand.f_candidate LIKE CONCAT('%',#{comName},'%')
         <if test="title != null and title != ''">
             and cand.title like CONCAT('%',#{title},'%')
         </if>

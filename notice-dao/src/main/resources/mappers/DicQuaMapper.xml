@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.notice.dao.DicQuaMapper">
+
+    <!--查询一级资质-->
+    <select id="queryQua1" resultType="java.util.Map" parameterType="map">
+        SELECT
+        d.id,
+        d.qua_name AS quaName,
+        d.qua_code AS quaCode
+        FROM
+        biaodaa_admin.dic_qua d
+        WHERE d.level = '1'
+        <if test="zzType != null and zzType != ''">
+            AND d.biz_type =#{zzType}
+        </if>
+
+    </select>
+    <!--查询子级资质-->
+    <select id="queryQua2" resultType="java.util.Map" parameterType="map">
+        SELECT
+        d.id,
+        d.qua_name AS quaName,
+        d.qua_code AS quaCode
+        FROM
+        biaodaa_admin.dic_qua d
+        WHERE d.parent_id=#{zzId}
+        <if test="zzType != null and zzType != ''">
+            AND d.biz_type =#{zzType}
+        </if>
+    </select>
+
+</mapper>

@@ -59,8 +59,12 @@ public interface TbNtMianHunanService{
     Map<String,Object> queryTendersNociteDetails(Map<String,Object> param);
 
 
-
-
+    /**
+     * 获取公告原文
+     * @param param
+     * @return
+     * @throws IOException
+     */
     String queryBidsDetailsCentendString(Map<String,Object> param) throws IOException;
 
     /**

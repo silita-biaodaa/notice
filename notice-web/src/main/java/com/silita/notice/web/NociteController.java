@@ -5,6 +5,7 @@ import com.silita.notice.base.BaseController;
 import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.service.TbNtMianHunanService;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hbase.client.Connection;
@@ -107,18 +108,21 @@ public class NociteController extends BaseController {
         param.put("city",city);
         //获取省级名称
         String proviceCode="";
-        if(!provice.equals("") && null != provice){
+        if(StringUtils.isNotEmpty(provice)){
             Map<String, Object> proviceName = tbNtMianHunanService.queryProviceName(param);
-            //获取省级名称
-            proviceCode = (String) proviceName.get("proviceCode");
+            if(null != proviceName && proviceName.size() > 0){
+                //获取省级名称
+                proviceCode = (String) proviceName.get("proviceCode");
+            }
         }
         //获取市级名称
         String cityCode="";
-
-        if(!city.equals("") && null != city){
+        if(StringUtils.isNotEmpty(city)){
             Map<String, Object> cityName = tbNtMianHunanService.queryCityName(param);
-            //获取市级名称
-            cityCode = (String) cityName.get("cityCode");
+            if(null != cityName && cityName.size() > 0){
+                //获取市级名称
+                cityCode = (String) cityName.get("cityCode");
+            }
         }
 
 
@@ -161,6 +165,7 @@ public class NociteController extends BaseController {
         map.put("collected",attention);
         resultMap.put("clickCount",count);
         seccussMap(resultMap,map);
+
         return resultMap;
     }
 }
