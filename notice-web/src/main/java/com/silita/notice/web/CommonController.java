@@ -27,36 +27,55 @@ public class CommonController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/filter",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map  filter(){
-        Map<String,Object> param = new HashMap<>();
-        Map<String,Object> param1 = new HashMap<>();
-        Map<String,Object> param2 = new HashMap<>();
-        param1.put("zzType","1");
-        param2.put("zzType","2");
-
+    public Map  filter(@RequestBody Map<String,Object> param){
 
         Map<String,Object> resultMap = new HashMap<>();
-
-
-
         Map<String,Object> map = new HashMap<>();
-
+        Map<String,Object> notice = new HashMap<>();
+        notice.put("bizType","1");
+        Map<String,Object> com = new HashMap<>();
+        com.put("bizType","2");
         List<Map<String, Object>> area = commonService.getArea();
         List<Map<String, Object>> type = commonService.type();
         List<Map<String, Object>> pbMode = commonService.queryPbModes(param);
-        List<Map<String, Object>> comQual = commonService.queryCompanyQual(param2);
-        List<Map<String, Object>> nocitequal = commonService.queryCompanyQual(param1);
-
-
-
+        List<Map<String, Object>> noticeList = commonService.queryQua(notice);
+        List<Map<String, Object>> comList = commonService.queryQua(com);
         map.put("area",area);
         map.put("type",type);
         map.put("pbMode",pbMode);
-        map.put("comQual",comQual);
-        map.put("nociteQual",nocitequal);
+        map.put("noticeQua",noticeList);
+        map.put("comQua",comList);
+        seccussMap(resultMap,map);
+        return map;
+    }
+
+
+
+    /**
+     * 获取筛选  test
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/test",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map  test(){
+
+        Map<String,Object> resultMap = new HashMap<>();
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Object> notice = new HashMap<>();
+        notice.put("bizType","1");
+        List<Map<String, Object>> noticeList = commonService.queryQua(notice);
+        Map<String,Object> com = new HashMap<>();
+        com.put("bizType","2");
+        List<Map<String, Object>> comList = commonService.queryQua(com);
+        map.put("noticeQua",noticeList);
+
+        map.put("comQua",comList);
+
 
         seccussMap(resultMap,map);
         return map;
     }
+
+
 
 }

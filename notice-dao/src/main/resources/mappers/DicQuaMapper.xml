@@ -11,9 +11,8 @@
         FROM
         biaodaa_admin.dic_qua d
         WHERE d.level = '1'
-        <if test="zzType != null and zzType != ''">
-            AND d.biz_type =#{zzType} or d.biz_type='0'
-        </if>
+            AND d.biz_type = #{zzType} or d.biz_type = '0'
+
 
     </select>
     <!--查询子级资质-->
@@ -25,9 +24,58 @@
         FROM
         biaodaa_admin.dic_qua d
         WHERE d.parent_id=#{zzId}
-        <if test="zzType != null and zzType != ''">
-            AND d.biz_type =#{zzType} or d.biz_type='0'
-        </if>
+    </select>
+
+    <!--获取一级资质-->
+    <select id="queryQuaOne" resultType="java.util.Map" parameterType="map">
+        SELECT
+        d.id,
+        d.qua_name AS quaName,
+        d.qua_code AS quaCode
+        FROM
+        biaodaa_admin.dic_qua d
+        WHERE d.level = '1'
+        and (d.biz_type = '0'
+        or d.biz_type = #{bizType})
+    </select>
+    <!--获取二级资质-->
+    <select id="queryQuaTwo" resultType="java.util.Map" parameterType="map">
+        SELECT
+        d.id,
+        d.qua_name AS quaName,
+        d.qua_code AS quaCode
+        FROM
+        biaodaa_admin.dic_qua d
+        WHERE d.level = '2'
+       /* and d.biz_type = '0'
+        or d.biz_type = '1'*/
+        and d.parent_id=#{zzIdOne}
+    </select>
+    <!--获取三级资质-->
+    <select id="queryQuaThree" resultType="java.util.Map" parameterType="map">
+        SELECT
+        d.id,
+        d.qua_name AS quaName,
+        d.qua_code AS quaCode
+        FROM
+        biaodaa_admin.dic_qua d
+        WHERE d.level = '3'
+       /* and d.biz_type = '0'
+        or d.biz_type = '1'*/
+        and d.parent_id=#{zzIdTow}
+    </select>
+    <!--获取四级资质-->
+    <select id="queryQuaFour" resultType="java.util.Map" parameterType="map">
+        SELECT
+        d.id,
+        d.qua_name AS quaName,
+        d.qua_code AS quaCode
+        FROM
+        biaodaa_admin.dic_qua d
+        WHERE d.level = '4'
+       /* and d.biz_type = '0'
+        or d.biz_type = '1'*/
+        and d.parent_id=#{zzIdThree}
     </select>
 
 </mapper>

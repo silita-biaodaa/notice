@@ -21,4 +21,28 @@ public interface DicQuaMapper extends MyMapper<DicQua> {
      * @return
      */
     List<Map<String,Object>> queryQua2(Map<String,Object> param);
+
+
+    /**
+     * 获取一级资质
+     */
+
+     List<Map<String,Object>> queryQuaOne(Map<String,Object> param);
+
+    /**
+     * 获取二级资质
+     */
+    List<Map<String,Object>> queryQuaTwo(Map<String,Object> param);
+
+    /**
+     * 获取三级资质
+     */
+
+    List<Map<String,Object>> queryQuaThree(Map<String,Object> param);
+
+    /**
+     * 获取四级资质
+     */
+    List<Map<String,Object>> queryQuaFour(Map<String,Object> param);
+
 }

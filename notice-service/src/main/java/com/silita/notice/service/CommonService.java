@@ -20,16 +20,21 @@ public interface CommonService {
      */
     List<Map<String,Object>> queryPbModes(Map<String,Object> param);
 
-    /**
-     * 获取资质
-     * @param param
-     * @return
-     */
-    List<Map<String,Object>> queryCompanyQual(Map<String,Object> param);
+
 
     /**
      * 获取公告类型
      * @return
      */
     List<Map<String,Object>> type();
+
+    /**
+     * 获取资质
+     * @param param
+     * @return
+     */
+    List<Map<String,Object>> queryQua(Map<String,Object> param);
+
+
+
 }
