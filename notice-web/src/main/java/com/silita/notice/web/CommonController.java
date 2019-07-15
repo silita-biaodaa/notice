@@ -1,7 +1,11 @@
 package com.silita.notice.web;
 
 import com.silita.notice.base.BaseController;
+import com.silita.notice.common.ObjectTranscoder;
+import com.silita.notice.common.RedisConstantInterface;
 import com.silita.notice.service.CommonService;
+import com.silita.notice.utils.RedisShardedPoolUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/newcommon")
+@RequestMapping("/new/common")
 public class CommonController extends BaseController {
 
     @Autowired
@@ -29,8 +33,17 @@ public class CommonController extends BaseController {
     @RequestMapping(value = "/filter",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map  filter(@RequestBody Map<String,Object> param){
 
+
+
         Map<String,Object> resultMap = new HashMap<>();
         Map<String,Object> map = new HashMap<>();
+        String key = "filter_company";
+        Object obj = RedisShardedPoolUtil.get(key);
+        if(null != obj){
+            map = (Map<String, Object>) obj;
+            seccussMap(resultMap,map);
+            return map;
+        }
         Map<String,Object> notice = new HashMap<>();
         notice.put("bizType","1");
         Map<String,Object> com = new HashMap<>();
@@ -45,6 +58,10 @@ public class CommonController extends BaseController {
         map.put("pbMode",pbMode);
         map.put("noticeQua",noticeList);
         map.put("comQua",comList);
+
+
+
+        RedisShardedPoolUtil.set(key,map);
         seccussMap(resultMap,map);
         return map;
     }

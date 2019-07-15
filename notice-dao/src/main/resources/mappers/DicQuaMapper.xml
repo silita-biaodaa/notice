@@ -2,29 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.silita.notice.dao.DicQuaMapper">
 
-    <!--查询一级资质-->
-    <select id="queryQua1" resultType="java.util.Map" parameterType="map">
-        SELECT
-        d.id,
-        d.qua_name AS quaName,
-        d.qua_code AS quaCode
-        FROM
-        biaodaa_admin.dic_qua d
-        WHERE d.level = '1'
-            AND d.biz_type = #{zzType} or d.biz_type = '0'
 
-
-    </select>
-    <!--查询子级资质-->
-    <select id="queryQua2" resultType="java.util.Map" parameterType="map">
-        SELECT
-        d.id,
-        d.qua_name AS quaName,
-        d.qua_code AS quaCode
-        FROM
-        biaodaa_admin.dic_qua d
-        WHERE d.parent_id=#{zzId}
-    </select>
 
     <!--获取一级资质-->
     <select id="queryQuaOne" resultType="java.util.Map" parameterType="map">
@@ -46,36 +24,9 @@
         d.qua_code AS quaCode
         FROM
         biaodaa_admin.dic_qua d
-        WHERE d.level = '2'
-       /* and d.biz_type = '0'
-        or d.biz_type = '1'*/
+        WHERE d.level = #{noticeLevel}
         and d.parent_id=#{zzIdOne}
     </select>
-    <!--获取三级资质-->
-    <select id="queryQuaThree" resultType="java.util.Map" parameterType="map">
-        SELECT
-        d.id,
-        d.qua_name AS quaName,
-        d.qua_code AS quaCode
-        FROM
-        biaodaa_admin.dic_qua d
-        WHERE d.level = '3'
-       /* and d.biz_type = '0'
-        or d.biz_type = '1'*/
-        and d.parent_id=#{zzIdTow}
-    </select>
-    <!--获取四级资质-->
-    <select id="queryQuaFour" resultType="java.util.Map" parameterType="map">
-        SELECT
-        d.id,
-        d.qua_name AS quaName,
-        d.qua_code AS quaCode
-        FROM
-        biaodaa_admin.dic_qua d
-        WHERE d.level = '4'
-       /* and d.biz_type = '0'
-        or d.biz_type = '1'*/
-        and d.parent_id=#{zzIdThree}
-    </select>
+
 
 </mapper>

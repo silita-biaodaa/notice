@@ -1,16 +1,19 @@
 package com.silita.notice.web.impl;
 
 import com.github.pagehelper.PageInfo;
+import com.silita.notice.service.CommonService;
 import com.silita.notice.service.TbNtMianHunanService;
 import com.silita.notice.utils.PropertyUtil;
-import com.silita.notice.utils.PropertyUtils;
 import com.silita.notice.utils.RedisShardedPoolUtil;
 import com.silita.notice.web.BaseCastTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
+import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NoticeServiceImplTest extends BaseCastTest {
@@ -18,13 +21,17 @@ public class NoticeServiceImplTest extends BaseCastTest {
     private TbNtMianHunanService tbNtMianHunanService;
     @Autowired
     private  Environment environment;
+    @Autowired
+    private CommonService sysAreaService;
 
     @Test
     public  void test(){
         //System.out.println(environment.getProperty("redis1.ip"));
         //System.out.println(PropertyUtil.getProperty("redis1.ip"));
         //System.out.println("获取的值："+RedisShardedPoolUtil.get("inter_company_list_-2128054673"));
-        System.out.println(PropertyUtil.getProperty("redis1.ip"));
+        //System.out.println(PropertyUtil.getProperty("redis1.ip"))
+        String key = "filter_company";
+        System.out.println("获取的值："+RedisShardedPoolUtil.get(key));
 
     }
 
@@ -56,4 +63,48 @@ public class NoticeServiceImplTest extends BaseCastTest {
     public void zhongbiaotest(){
 
     }
+
+    @Test
+    public void getArea(){
+        List<Map<String, Object>> area = sysAreaService.getArea();
+
+        for (Map<String, Object> map : area) {
+            System.out.println(map);
+        }
+    }
+
+    @Test
+    public void getQual(){
+       /* Map<String,Object> param = new HashMap<>();
+        List<Map<String, Object>> list = sysAreaService.queryCompanyQual(param);
+        for (Map<String, Object> map : list) {
+            System.out.println(map);
+        }*/
+
+
+    }
+
+    @Test
+    public void getpbMode(){
+        Map<String,Object> map = new HashMap<>();
+        List<Map<String, Object>> list = sysAreaService.queryPbModes(map);
+        for (Map<String, Object> stringObjectMap : list) {
+            System.out.println(stringObjectMap);
+        }
+
+    }
+
+    @Test
+    public void getType(){
+        List<Map<String, Object>> type = sysAreaService.type();
+        for (Map<String, Object> map : type) {
+            System.out.println(map);
+        }
+
+
+
+
+    }
+
+
 }

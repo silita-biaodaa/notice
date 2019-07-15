@@ -35,6 +35,28 @@ public class RedisShardedPoolUtil {
     }
 
     /**
+     * 设置值
+     * @param key
+     * @param value
+     * @return
+     */
+    public static void set(String key,Object value){
+        ShardedJedis jedis = null;
+        String result = null;
+
+        try {
+            jedis = RedisShardedPool.getJedis();
+            byte[] serialize = ObjectTranscoder.serialize(value);
+            jedis.set(key.getBytes(),serialize);;
+           jedis.set(key.getBytes(),serialize);
+        } catch (Exception e) {
+            log.error("set key:{} value:{} error",key,value,e);
+            RedisShardedPool.returnBrokenResource(jedis);
+        }
+        RedisShardedPool.returnResource(jedis);
+    }
+
+    /**
      * 获取
      * @param key
      * @return
@@ -53,4 +75,53 @@ public class RedisShardedPoolUtil {
             RedisShardedPool.returnResource(jedis);
         }
     }
+
+
+    /**
+     * 设置key的有效期，单位是秒
+     * @param key
+     * @param exTime
+     * @return
+     */
+    public static Long expire(String key,int exTime){
+        ShardedJedis jedis = null;
+        Long result = null;
+        try {
+            jedis = RedisShardedPool.getJedis();
+            result = jedis.expire(key,exTime);
+        } catch (Exception e) {
+            log.error("expire key:{} error",key,e);
+            RedisShardedPool.returnBrokenResource(jedis);
+            return result;
+        }
+        RedisShardedPool.returnResource(jedis);
+        return result;
+    }
+
+    /**
+     * 设置key value exTime的单位是秒
+     * @param key
+     * @param value
+     * @param exTime
+     * @return
+     */
+    public static String setEx(String key,String value,int exTime){
+        ShardedJedis jedis = null;
+        String result = null;
+        try {
+            jedis = RedisShardedPool.getJedis();
+            result = jedis.setex(key,exTime,value);
+        } catch (Exception e) {
+            log.error("setex key:{} value:{} error",key,value,e);
+            RedisShardedPool.returnBrokenResource(jedis);
+            return result;
+        }
+        RedisShardedPool.returnResource(jedis);
+        return result;
+    }
+
+
+
+
+
 }

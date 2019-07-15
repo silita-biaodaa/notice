@@ -3,8 +3,17 @@
 <mapper namespace="com.silita.notice.dao.RelQuaGradeMapper">
 
     <!--通过子级code找到对应的等级code-->
-    <select id="queryRelQuaGrade" resultType="java.lang.String">
+   <!-- <select id="queryRelQuaGrade" resultType="java.lang.String">
         select grade_code AS gradeCode FROM `rel_qua_grade` WHERE qua_code=#{quaCode}
+    </select>-->
+
+    <select id="queryRelQuaGrade" resultType="java.util.Map" parameterType="map">
+        SELECT c.name AS quaName,
+        c.code AS quaCode
+        FROM `dic_common` c
+        JOIN `rel_qua_grade` r
+        ON c.code=r.grade_code
+        WHERE r.qua_code=#{quaCode}
     </select>
 
 

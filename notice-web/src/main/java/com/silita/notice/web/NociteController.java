@@ -125,12 +125,6 @@ public class NociteController extends BaseController {
             }
         }
 
-
-
-
-
-
-
         //获取userId
         String userId = VisitInfoHolder.getUserId();
         param.put("userId",userId);
