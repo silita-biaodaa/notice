@@ -31,10 +31,10 @@ public class CommonController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/filter",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map  filter(@RequestBody Map<String,Object> param){
+    public Map  filter(){
 
 
-
+        Map<String,Object> param = new HashMap<>();
         Map<String,Object> resultMap = new HashMap<>();
         Map<String,Object> map = new HashMap<>();
         String key = "filter_company";

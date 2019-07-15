@@ -1,11 +1,9 @@
 package com.silita.notice.dao;
 
-import com.silita.notice.dao.SysAreaMapper;
 import com.silita.notice.model.SysArea;
 import com.silita.notice.utils.MyMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 @Repository

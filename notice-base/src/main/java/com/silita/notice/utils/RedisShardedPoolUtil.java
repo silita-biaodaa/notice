@@ -48,7 +48,6 @@ public class RedisShardedPoolUtil {
             jedis = RedisShardedPool.getJedis();
             byte[] serialize = ObjectTranscoder.serialize(value);
             jedis.set(key.getBytes(),serialize);;
-           jedis.set(key.getBytes(),serialize);
         } catch (Exception e) {
             log.error("set key:{} value:{} error",key,value,e);
             RedisShardedPool.returnBrokenResource(jedis);

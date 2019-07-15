@@ -1,6 +1,5 @@
 package com.silita.notice.dao;
 
-import com.silita.notice.dao.RelQuaGradeMapper;
 import com.silita.notice.model.RelQuaGrade;
 import com.silita.notice.utils.MyMapper;
 import org.springframework.stereotype.Repository;

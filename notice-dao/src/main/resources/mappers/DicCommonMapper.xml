@@ -7,8 +7,4 @@
       SELECT common.name,common.code FROM `dic_common` common WHERE common.type=#{pbModeType}
     </select>
 
-    <!--查询资质等级-->
-    <select id="queryQuaLevel" resultType="java.util.Map" parameterType="map">
-        SELECT c.code as quaCode,c.name as quaName FROM dic_common c WHERE c.type='qua_grade' AND c.code=#{gradeCcode}
-    </select>
 </mapper>
