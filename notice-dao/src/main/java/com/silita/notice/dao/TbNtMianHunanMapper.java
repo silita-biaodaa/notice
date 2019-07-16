@@ -113,6 +113,18 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
      */
     Map<String,Object> queryCityName(Map<String,Object> param);
 
+    /**
+     * 通过公告id查询公告
+     * @param regexId
+     * @return
+     */
+    List<Map<String,Object>> queryNtId(String regexId);
 
+    /**
+     * 获取公告类型和项目类型
+     * @param param
+     * @return
+     */
+    Map<String,Object> queryProjectTypeNoticeType(Map<String,Object> param);
 
 }

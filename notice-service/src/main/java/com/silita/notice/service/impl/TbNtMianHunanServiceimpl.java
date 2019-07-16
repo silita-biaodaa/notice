@@ -4,10 +4,14 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.notice.common.RedisConstantInterface;
 import com.silita.notice.common.VisitInfoHolder;
+import com.silita.notice.dao.TbCommentInfoMapper;
+import com.silita.notice.dao.TbCompanyMapper;
 import com.silita.notice.dao.TbNtMianHunanMapper;
+import com.silita.notice.service.CompanyService;
 import com.silita.notice.service.TbNtMianHunanService;
 import com.silita.notice.utils.ObjectUtils;
 import com.silita.notice.utils.RedisShardedPoolUtil;
+import com.sun.tools.corba.se.idl.StringGen;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.Cell;
@@ -30,11 +34,16 @@ import java.util.*;
 public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Autowired
     private TbNtMianHunanMapper tbNtMianHunanMapper;
+    @Autowired
+    private TbCompanyMapper tbCompanyMapper;
+    @Autowired
+    private TbCommentInfoMapper tbCommentInfoMapper;
 
     @Value("${hbase.notice-table-name}")
     private String hBaseTableName;
     @Autowired
     private Connection connection;
+
     /**
      * 查询中标公告
      *
@@ -49,17 +58,17 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, Object>> data = tbNtMianHunanMapper.queryBids(param);
-        if(data != null && data.size() >0){
-            String key;
+        if (data != null && data.size() > 0) {
+            /*String key;
             for (Map<String, Object> map : data) {
-                if(null != map.get("oneName")){
-                    param.put("comName",map.get("oneName"));
-                    key = RedisConstantInterface.NOTIC_LAW+ObjectUtils.buildMapParamHash(param);
-                    if(RedisShardedPoolUtil.keyExist(key)){
-                        map.put("oneLaw","1");
+                if (null != map.get("oneName")) {
+                    param.put("comName", map.get("oneName"));
+                    key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+                    if (RedisShardedPoolUtil.keyExist(key)) {
+                        map.put("oneLaw", "1");
                     }
                 }
-            }
+            }*/
         }
         PageInfo pageInfo = new PageInfo(data);
         return pageInfo;
@@ -71,10 +80,26 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public PageInfo queryCompanyName(Map<String, Object> param) {
+        Map<String,Object> typeMap = new HashMap<>();
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, Object>> list = tbNtMianHunanMapper.queryCompanyName(param);
+        for (Map<String, Object> map : list) {
+           /* String key;
+            if (null != map.get("oneName")) {
+                param.put("comName", map.get("oneName"));
+                key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+                if (RedisShardedPoolUtil.keyExist(key)) {
+                    map.put("oneLaw", "1");
+                }
+            }*/
+            typeMap.put("source",map.get("source"));
+            typeMap.put("ntId",map.get("id"));
+            Map<String, Object> map1 = tbNtMianHunanMapper.queryProjectTypeNoticeType(typeMap);
+            map.put("projectType",map1.get("projectType"));
+            map.put("noticeType",map1.get("noticeType"));
+        }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
@@ -127,7 +152,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         if (StringUtils.isBlank(rangeType)) {
             param.put("rangeType", "or");
             param.put("regexList", regexList);
-        }else if (rangeType.equals("or")) {
+        } else if (rangeType.equals("or")) {
             param.put("regexList", regexList);
         } else if (rangeType.equals("and")) {
             //如果rangeType为and 则先排序，再把regexList赋值给quaRegex
@@ -158,14 +183,16 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Override
     public Map<String, Object> queryBidsNociteDetails(Map<String, Object> param) {
         Map<String, Object> map = tbNtMianHunanMapper.queryBidsNociteDetails(param);
-        String key;
-        if(null != map.get("oneName") && "" != map.get("oneName")){
-            param.put("comName",map.get("oneName"));
-            key = RedisConstantInterface.NOTIC_LAW+ObjectUtils.buildMapParamHash(param);
-            if(RedisShardedPoolUtil.keyExist(key)){
-                map.put("oneLaw","1");
+        /*String key;
+        if (null != map.get("oneName") && "" != map.get("oneName")) {
+            param.put("comName", map.get("oneName"));
+            key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+            if (RedisShardedPoolUtil.keyExist(key)) {
+                map.put("oneLaw", "1");
             }
-        }
+        }*/
+        Integer commentCount = tbCommentInfoMapper.queryCountComment(param);
+        map.put("commentCount",commentCount);
         return map;
     }
 
@@ -177,7 +204,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public Map<String, Object> queryTendersNociteDetails(Map<String, Object> param) {
-        return tbNtMianHunanMapper.queryTendersNociteDetails(param);
+        Map<String, Object> map = tbNtMianHunanMapper.queryTendersNociteDetails(param);
+        Integer commentCount = tbCommentInfoMapper.queryCountComment(param);
+        map.put("commentCount",commentCount);
+        return map;
     }
 
 
@@ -189,7 +219,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * @return
      * @throws IOException
      */
-
     public String queryBidsDetailsCentendString(Map<String, Object> param) throws IOException {
         String snatchId = MapUtils.getString(param, "snatchId");
         String content = "";
@@ -281,7 +310,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     }
 
 
-
     /**
      * 获取点击量
      *
@@ -291,7 +319,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Override
     public Integer count(Map<String, Object> param) {
         Integer clickCount = tbNtMianHunanMapper.queryClickCount(param);
-        if(null != clickCount){
+        if (null != clickCount) {
             clickCount++;
             //点击量+1
             param.put("addCount", clickCount);
@@ -299,7 +327,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             return clickCount;
         }
         clickCount = 1;
-        param.put("clickCount",clickCount);
+        param.put("clickCount", clickCount);
         tbNtMianHunanMapper.createClickCount(param);
         return clickCount;
     }
@@ -371,12 +399,26 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
 
     /**
      * 通过编号查询市级名称
+     *
      * @param param
      * @return
      */
     @Override
     public Map<String, Object> queryCityName(Map<String, Object> param) {
         return tbNtMianHunanMapper.queryCityName(param);
+    }
+
+    @Override
+    public List<Map<String, Object>> queryComQuaNotice(Map<String, Object> param) {
+        List<Map<String, Object>> noticeListMap = new ArrayList<>();
+        List<Map<String, Object>> list = tbCompanyMapper.queryComQua(param);
+        for (Map<String, Object> map : list) {
+            Map<String, Object> noticeMap = new HashMap<>();
+            String range = (String) map.get("range");
+            String comId = (String) map.get("comId");
+            //tbNtMianHunanMapper.qn
+        }
+        return noticeListMap;
     }
 
 

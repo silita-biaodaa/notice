@@ -111,6 +111,7 @@ public class LoginFilter implements Filter {
             boolean greenWay = greenWayVerify(requestUrl, filterUrl, xToken);
             if (greenWay) {
                 filterChain.doFilter(servletRequest, servletResponse);
+                return;
             }
             if (tokenValid) {
                 filterChain.doFilter(servletRequest, servletResponse);

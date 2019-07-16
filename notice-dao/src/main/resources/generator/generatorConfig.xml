@@ -27,7 +27,7 @@
         <javaClientGenerator targetPackage="com.silita.notice.dao" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="tb_nt_mian_hunan">
+        <table tableName="sys_area">
             <!--mysql 配置-->
             <generatedKey column="pkid" sqlStatement="Mysql" identity="true"/>
             <!--oracle 配置-->

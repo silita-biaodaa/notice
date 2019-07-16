@@ -36,5 +36,8 @@ public interface CommonService {
     List<Map<String,Object>> queryQua(Map<String,Object> param);
 
 
+    //List<Map<String, Object>> querytestss(Map<String,Object> param);
+
+
 
 }

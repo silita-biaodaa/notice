@@ -97,6 +97,28 @@ public class RedisShardedPoolUtil {
         return result;
     }
 
+
+    /**
+     * 删除key
+     * @param key
+     * @return
+     */
+    public static Long del(String key){
+        ShardedJedis jedis = null;
+        Long result = null;
+        try {
+            jedis = RedisShardedPool.getJedis();
+            result = jedis.del(key);
+        } catch (Exception e) {
+            log.error("del key:{} error",key,e);
+            RedisShardedPool.returnBrokenResource(jedis);
+            return result;
+        }
+        RedisShardedPool.returnResource(jedis);
+        return result;
+    }
+
+
     /**
      * 设置key value exTime的单位是秒
      * @param key

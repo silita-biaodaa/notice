@@ -42,10 +42,11 @@
             and mian.nt_category=#{type}
         </if>
         <if test="cityCodeList != null and cityCodeList.size() > 0">
-            and
+            and (
             <foreach collection="cityCodeList" item="cityCodeList" separator="or">
                 mian.city_code=#{cityCodeList}
             </foreach>
+            )
         </if>
         <if test="projectType != null and projectType != ''">
             and mian.biness_type=#{projectType}
@@ -294,6 +295,19 @@
     <select id="queryCityName" resultType="java.util.Map" parameterType="map">
         SELECT sys.area_name as cityCode FROM
         biaodaa_admin.sys_area sys WHERE sys.area_code=#{city}
+    </select>
+    <!--通过公告id查询公告-->
+    <select id="queryNtId" resultType="java.util.Map" parameterType="map">
+
+    </select>
+    <!--获取公告类型和项目类型-->
+    <select id="queryProjectTypeNoticeType" resultType="java.util.Map">
+        SELECT
+          <include refid="noticeType"/>,
+          <include refid="noticeTypeConvert"/>
+        FROM
+          tb_nt_mian_${source} mian
+        WHERE pkid=#{ntId}
     </select>
 
 

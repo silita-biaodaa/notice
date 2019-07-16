@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.notice.dao.TbCompanyMapper" >
+<!--AS certNo
+  AS certDate
+  AS validDate
+  AS subsist
+  AS comRange
+  AS collected  需要展现-->
+    <!--查询符合该公告资质的企业-->
+    <select id="queryCom" resultType="java.util.Map" parameterType="map">
+        select
+          t.com_id as comId,
+          t.com_name as comName,
+          t.org_code as orgCode,
+          t.business_num as businessNum,
+          t.regis_address as regisAddress,
+          t.com_addres as comAddress,
+          t.legal_perso as legalPerson,
+          t.economic_type as economicType,
+          t.regis_capital as regisCapital,
+          t.skill_leader as skillLeader,
+          t.created,
+          t.updated,
+          t.logo
+        from mishu.`tb_company` t
+        where t.range=#{qua_regex}
+    </select>
+    <select id="queryComQua" resultType="java.util.Map" parameterType="map">
+        select t.com_id as comId,t.range from  tb_company t where t.com_name=#{comName}
+    </select>
+</mapper>

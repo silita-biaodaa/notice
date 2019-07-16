@@ -20,7 +20,7 @@
     <select id="queryQuaTwo" resultType="java.util.Map" parameterType="map">
         SELECT
         d.id,
-        d.qua_name AS quaName,
+        d.bench_name AS benchName,
         d.qua_code AS quaCode
         FROM
         biaodaa_admin.dic_qua d

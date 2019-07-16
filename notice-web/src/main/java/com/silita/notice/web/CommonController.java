@@ -1,14 +1,10 @@
 package com.silita.notice.web;
 
 import com.silita.notice.base.BaseController;
-import com.silita.notice.common.ObjectTranscoder;
-import com.silita.notice.common.RedisConstantInterface;
 import com.silita.notice.service.CommonService;
 import com.silita.notice.utils.RedisShardedPoolUtil;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,10 +26,8 @@ public class CommonController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/filter",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map  filter(){
-
-
+    @RequestMapping(value = "/condition/filter",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map  conditionFilter(){
         Map<String,Object> param = new HashMap<>();
         Map<String,Object> resultMap = new HashMap<>();
         Map<String,Object> map = new HashMap<>();
@@ -42,7 +36,7 @@ public class CommonController extends BaseController {
         if(null != obj){
             map = (Map<String, Object>) obj;
             seccussMap(resultMap,map);
-            return map;
+            return resultMap;
         }
         Map<String,Object> notice = new HashMap<>();
         notice.put("bizType","1");
@@ -60,12 +54,10 @@ public class CommonController extends BaseController {
         map.put("comQua",comList);
 
 
-
         RedisShardedPoolUtil.set(key,map);
         seccussMap(resultMap,map);
-        return map;
+        return resultMap;
     }
-
 
 
     /**
@@ -81,6 +73,7 @@ public class CommonController extends BaseController {
         Map<String,Object> notice = new HashMap<>();
         notice.put("bizType","1");
         List<Map<String, Object>> noticeList = commonService.queryQua(notice);
+
         Map<String,Object> com = new HashMap<>();
         com.put("bizType","2");
         List<Map<String, Object>> comList = commonService.queryQua(com);
@@ -90,9 +83,31 @@ public class CommonController extends BaseController {
 
 
         seccussMap(resultMap,map);
-        return map;
+        return resultMap;
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/test2",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map  test2(){
+
+        Map<String,Object> resultMap = new HashMap<>();
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Object> notice = new HashMap<>();
+        notice.put("bizType","1");
+        List<Map<String, Object>> noticeList = commonService.queryQua(notice);
+
+        Map<String,Object> com = new HashMap<>();
+        com.put("bizType","2");
+        List<Map<String, Object>> comList = commonService.queryQua(com);
+        map.put("noticeQua",noticeList);
+
+        map.put("comQua",comList);
+
+
+        seccussMap(resultMap,map);
+        return resultMap;
+    }
 
 
 }

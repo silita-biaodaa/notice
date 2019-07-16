@@ -8,7 +8,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hbase.client.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -42,7 +41,6 @@ public class NociteController extends BaseController {
             PageInfo pageInfo = tbNtMianHunanService.queryBids(param);
             seccussMap(resultMap,pageInfo);
         }catch (NullPointerException e){
-            //logger.error(e,e);
             errorMsg(resultMap,e.getMessage());
         }
 

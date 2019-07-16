@@ -30,8 +30,11 @@ public class NoticeServiceImplTest extends BaseCastTest {
         //System.out.println(PropertyUtil.getProperty("redis1.ip"));
         //System.out.println("获取的值："+RedisShardedPoolUtil.get("inter_company_list_-2128054673"));
         //System.out.println(PropertyUtil.getProperty("redis1.ip"))
+        /*String key = "filter_company";
+        System.out.println("获取的值："+RedisShardedPoolUtil.get(key));*/
         String key = "filter_company";
-        System.out.println("获取的值："+RedisShardedPoolUtil.get(key));
+        RedisShardedPoolUtil.del(key);
+
 
     }
 

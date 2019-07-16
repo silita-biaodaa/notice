@@ -136,103 +136,87 @@ public class CommonServiceImpl implements CommonService {
     public List<Map<String, Object>> queryQua(Map<String, Object> param) {
         List<Map<String, Object>> list = dicQuaMapper.queryQuaOne(param);
         List<Map<String, Object>> oneQuaListtMap = new ArrayList<>();
+        //遍历资质一级
         for (Map<String, Object> map : list) {
+            //把一级资质放入oneQuaMap中
             Map<String, Object> oneQuaMap = new HashMap<>();
             String one = (String) map.get("id");
             param.put("zzIdOne", one);
             param.put("noticeLevel", "2");
             List<Map<String, Object>> list1 = dicQuaMapper.queryQuaTwo(param);
             List<Map<String, Object>> towQuaListtMap = new ArrayList<>();
+
             for (Map<String, Object> map2 : list1) {
                 Map<String, Object> towQuaMap = new HashMap<>();
                 String tow = (String) map2.get("id");
                 param.put("zzIdOne", tow);
-                param.put("noticeLevel", "3");
-                List<Map<String, Object>> list2 = dicQuaMapper.queryQuaTwo(param);
-                List<Map<String, Object>> threeQuaListMap = new ArrayList<>();
                 String towQualevel = (String) map2.get("quaCode");
                 List<Map<String, Object>> list8 = relQuaGradeMapper.queryRelQuaGrade(towQualevel);
+                List<Map<String, Object>> levelThreeListMap = new ArrayList<>();
                 if (null == list8 || list8.size() <= 0) {
+                    param.put("noticeLevel", "3");
+                    List<Map<String, Object>> list2 = dicQuaMapper.queryQuaTwo(param);
                     for (Map<String, Object> map3 : list2) {
                         Map<String, Object> threeQuaMap = new HashMap<>();
                         String three = (String) map3.get("id");
                         param.put("zzIdOne", three);
                         param.put("noticeLevel", "4");
-                        List<Map<String, Object>> list3 = dicQuaMapper.queryQuaTwo(param);
                         String threeQualevel = (String) map3.get("quaCode");
                         List<Map<String, Object>> list9 = relQuaGradeMapper.queryRelQuaGrade(threeQualevel);
+                        List<Map<String, Object>> levelFourListMap = new ArrayList<>();
                         if (null == list9 || list9.size() <= 0) {
-                            List<Map<String, Object>> fourQuaListMap = new ArrayList<>();
+                            List<Map<String, Object>> list3 = dicQuaMapper.queryQuaTwo(param);
                             for (Map<String, Object> map4 : list3) {
                                 Map<String, Object> fourQuaMap = new HashMap<>();
                                 String quaCode = (String) map4.get("quaCode");
-
                                 List<Map<String, Object>> list5 = relQuaGradeMapper.queryRelQuaGrade(quaCode);
-                                List<Map<String, Object>> levelListMap = new ArrayList<>();
-
-
+                                List<Map<String, Object>> levelFiveListMap = new ArrayList<>();
                                 for (Map<String, Object> map5 : list5) {
                                     Map<String, Object> levelMap = new HashMap<>();
 
                                     levelMap.put("code", map5.get("quaCode"));
                                     levelMap.put("name", map5.get("quaName"));
-                                    levelListMap.add(levelMap);
-
+                                    levelFiveListMap.add(levelMap);
                                 }
-
-
                                 fourQuaMap.put("code", map4.get("quaCode"));
-                                fourQuaMap.put("name", map4.get("quaName"));
-                                fourQuaMap.put("data", levelListMap);
-                                fourQuaListMap.add(fourQuaMap);
-
+                                fourQuaMap.put("name",map4.get("benchName"));
+                                fourQuaMap.put("data", levelFiveListMap);
+                                towQuaListtMap.add(fourQuaMap);
                             }
-                            threeQuaMap.put("code", map3.get("quaCode"));
-                            threeQuaMap.put("name", map3.get("quaName"));
-                            threeQuaMap.put("data", fourQuaListMap);
-                            threeQuaListMap.add(threeQuaMap);
+
                         } else {
                             String quaCode = (String) map3.get("quaCode");
                             List<Map<String, Object>> list10 = relQuaGradeMapper.queryRelQuaGrade(quaCode);
-                            List<Map<String, Object>> levelListMap4 = new ArrayList<>();
-
                             for (Map<String, Object> map7 : list10) {
                                 Map<String, Object> levelMap3 = new HashMap<>();
                                 String b;
                                 levelMap3.put("code", map7.get("quaCode"));
                                 levelMap3.put("name", map7.get("quaName"));
-                                levelListMap4.add(levelMap3);
+                                levelFourListMap.add(levelMap3);
                             }
-                            threeQuaMap.put("code", map2.get("quaCode"));
-                            threeQuaMap.put("name", map2.get("quaName"));
-                            threeQuaMap.put("data", levelListMap4);
-                            towQuaListtMap.add(threeQuaMap);
                         }
+                        threeQuaMap.put("code", map3.get("quaCode"));
+                        threeQuaMap.put("name",map3.get("benchName"));
+                        threeQuaMap.put("data", levelFourListMap);
+                        towQuaListtMap.add(threeQuaMap);
                     }
-                    towQuaMap.put("code", map2.get("quaCode"));
-                    towQuaMap.put("name", map2.get("quaName"));
-                    towQuaMap.put("data", threeQuaListMap);
-                    towQuaListtMap.add(towQuaMap);
+
                 } else {
                     String quaCode = (String) map2.get("quaCode");
                     List<Map<String, Object>> list5 = relQuaGradeMapper.queryRelQuaGrade(quaCode);
-                    List<Map<String, Object>> levelListMap = new ArrayList<>();
                     for (Map<String, Object> map6 : list5) {
                         Map<String, Object> levelMap2 = new HashMap<>();
                         levelMap2.put("code", map6.get("quaCode"));
                         levelMap2.put("name", map6.get("quaName"));
-                        levelListMap.add(levelMap2);
+                        levelThreeListMap.add(levelMap2);
                         String a;
-
-
                     }
 
-                    towQuaMap.put("code", map2.get("quaCode"));
-                    towQuaMap.put("name", map2.get("quaName"));
-                    towQuaMap.put("data", levelListMap);
-                    towQuaListtMap.add(towQuaMap);
                 }
-
+                towQuaMap.put("code", map2.get("quaCode"));
+                towQuaMap.put("name", map2.get("benchName"));
+                towQuaMap.put("data", levelThreeListMap);
+                towQuaListtMap.add(towQuaMap);
 
             }
             oneQuaMap.put("code", map.get("quaCode"));
@@ -244,4 +228,5 @@ public class CommonServiceImpl implements CommonService {
 
         return oneQuaListtMap;
     }
+
 }

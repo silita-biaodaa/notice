@@ -15,4 +15,12 @@ public interface RelQuaGradeMapper extends MyMapper<RelQuaGrade> {
      * @return
      */
     List<Map<String,Object>> queryRelQuaGrade(String quaCode);
+
+    /**
+     * 通过资质id找到公告id
+     * @param id
+     * @return
+     */
+    List<String> queryNoticeId(String id);
+
 }
