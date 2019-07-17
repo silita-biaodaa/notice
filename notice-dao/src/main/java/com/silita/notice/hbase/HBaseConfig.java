@@ -23,7 +23,6 @@ import java.io.IOException;
 public class HBaseConfig {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-/*
     @Value("${hbase.zookeeper.quorum}")
     private String hbaseZookeeperQuorum;
     @Value("${hbase.zookeeper.property.clientPort}")
@@ -55,7 +54,7 @@ public class HBaseConfig {
         configuration.set("hbase.master", hbaseMaster);
         configuration.set("hbase.rootdir", hbaseRootdir);
         return configuration;
-    }*/
+    }
 
 
 }

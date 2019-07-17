@@ -83,7 +83,8 @@ public class CommonServiceImpl implements CommonService {
             Map<String, Object> map = new HashMap<>();
             param.put("pbModeType", s + "_pbmode");
             list1 = dicCommonMapper.queryPbModes(param);
-            map.put(s, list1);
+            map.put("provice", s);
+            map.put("list",list1);
             pbModeList.add(map);
         }
 
