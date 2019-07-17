@@ -91,30 +91,33 @@ public class LoginFilter implements Filter {
                     resMap.put("msg", ResponseCode.WARN_MSG_504);
                     printInfo(response, resMap);
                 }
+                //是否疑似爬虫
+                if (null != blacklist && null != phone && blacklist.contains(phone)) {
+                    resMap.put("code", ResponseCode.WARN_CODE_502);
+                    resMap.put("msg", ResponseCode.WARN_MSG_502);
+                    printInfo(response, resMap);
+                    return;
+                }
             } else {
+                //绿色通道检查
+                boolean greenWay = greenWayVerify(requestUrl, filterUrl, xToken);
+                if (greenWay) {
+                    filterChain.doFilter(servletRequest, servletResponse);
+                    return;
+                }
+                //非法token
                 logger.warn("非法token![token:" + xToken + "][ip:" + ipAddr + "]");
                 resMap.put("code", ResponseCode.WARN_CODE_504);
                 resMap.put("msg", ResponseCode.WARN_MSG_504);
                 printInfo(response, resMap);
-            }
-
-            //是否疑似爬虫
-            if (null != blacklist && null != phone && blacklist.contains(phone)) {
-                resMap.put("code", ResponseCode.WARN_CODE_502);
-                resMap.put("msg", ResponseCode.WARN_MSG_502);
-                printInfo(response, resMap);
-            }
-            if (StringUtils.isNotEmpty(userId)) {
-                VisitInfoHolder.setUserId(userId);
-            }
-            //绿色通道检查
-            boolean greenWay = greenWayVerify(requestUrl, filterUrl, xToken);
-            if (greenWay) {
-                filterChain.doFilter(servletRequest, servletResponse);
                 return;
             }
             if (tokenValid) {
                 filterChain.doFilter(servletRequest, servletResponse);
+                //设置userid
+                if (StringUtils.isNotEmpty(userId)) {
+                    VisitInfoHolder.setUserId(userId);
+                }
             } else {
                 resMap.put("code", ResponseCode.WARN_CODE_504);
                 resMap.put("msg", ResponseCode.WARN_MSG_504);

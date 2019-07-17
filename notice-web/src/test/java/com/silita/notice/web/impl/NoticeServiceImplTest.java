@@ -24,6 +24,8 @@ public class NoticeServiceImplTest extends BaseCastTest {
     @Autowired
     private CommonService sysAreaService;
 
+
+
     @Test
     public  void test(){
         //System.out.println(environment.getProperty("redis1.ip"));
@@ -104,9 +106,11 @@ public class NoticeServiceImplTest extends BaseCastTest {
             System.out.println(map);
         }
 
+    }
 
-
-
+    @Test
+    public void qx(){
+        sysAreaService.updRelatedId();
     }
 
 

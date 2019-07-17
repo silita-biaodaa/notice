@@ -23,8 +23,8 @@ public class NociteController extends BaseController {
     private Log logger = LogFactory.getLog(NociteController.class);
     @Autowired
     private TbNtMianHunanService tbNtMianHunanService;
-    @Value("${hbase.notice-table-name}")
-    private String hBaseTableName;
+    /*@Value("${hbase.notice-table-name}")
+    private String hBaseTableName;*/
 
     /**
      * 查询公告  -  中标
@@ -133,16 +133,16 @@ public class NociteController extends BaseController {
         System.out.println(count);
         //获取是否关注
         Boolean attention = tbNtMianHunanService.attention(param);
-        //获取招标原文
-        String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
+        /*//获取招标原文
+        String content = tbNtMianHunanService.queryBidsDetailsCentendString(param);*/
         // type = 1  招标详情   ||  type = 2  中标详情
         String type = MapUtils.getString(param, "type");
         if(type.equals("1") && !"".equals(type)){
             //获取招标详情
             Map<String, Object> map = tbNtMianHunanService.queryTendersNociteDetails(param);
-            if(content != null && !"".equals(content)){
+            /*if(content != null && !"".equals(content)){
                 map.put("content",content);
-            }
+            }*/
             map.put("projDq",proviceCode+"-"+cityCode);
             map.put("collected",attention);
             resultMap.put("clickCount",count);
@@ -151,9 +151,9 @@ public class NociteController extends BaseController {
         }
         Map<String, Object> map = tbNtMianHunanService.queryBidsNociteDetails(param);
 
-        if(content != null && !"".equals(content)){
+       /* if(content != null && !"".equals(content)){
             map.put("content",content);
-        }
+        }*/
         map.put("collected",attention);
         resultMap.put("clickCount",count);
         seccussMap(resultMap,map);

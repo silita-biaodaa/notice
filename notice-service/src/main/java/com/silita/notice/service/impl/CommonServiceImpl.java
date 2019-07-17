@@ -1,10 +1,8 @@
 package com.silita.notice.service.impl;
 
-import com.silita.notice.dao.DicCommonMapper;
-import com.silita.notice.dao.DicQuaMapper;
-import com.silita.notice.dao.RelQuaGradeMapper;
-import com.silita.notice.dao.SysAreaMapper;
+import com.silita.notice.dao.*;
 import com.silita.notice.service.CommonService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +24,12 @@ public class CommonServiceImpl implements CommonService {
 
     @Autowired
     private RelQuaGradeMapper relQuaGradeMapper;
+
+    @Autowired
+    private TbCommentInfoMapper tbCommentInfoMapper;
+
+    @Autowired
+    private SnatchurlMapper snatchurlMapper;
 
 
     /**
@@ -178,16 +182,19 @@ public class CommonServiceImpl implements CommonService {
                                     levelMap.put("name", map5.get("quaName"));
                                     levelFiveListMap.add(levelMap);
                                 }
-                                fourQuaMap.put("code", map4.get("quaCode"));
-                                fourQuaMap.put("name",map4.get("benchName"));
-                                fourQuaMap.put("data", levelFiveListMap);
-                                towQuaListtMap.add(fourQuaMap);
+                                String benchName = (String) map4.get("benchName");
+                                if (StringUtils.isNotEmpty(benchName)) {
+                                    fourQuaMap.put("code", map4.get("quaCode"));
+                                    fourQuaMap.put("name", map4.get("benchName"));
+                                    fourQuaMap.put("data", levelFiveListMap);
+                                    towQuaListtMap.add(fourQuaMap);
+                                }
                             }
 
                         } else {
                             String quaCode = (String) map3.get("quaCode");
-                            List<Map<String, Object>> list10 = relQuaGradeMapper.queryRelQuaGrade(quaCode);
-                            for (Map<String, Object> map7 : list10) {
+                            /*List<Map<String, Object>> list10 = relQuaGradeMapper.queryRelQuaGrade(quaCode);*/
+                            for (Map<String, Object> map7 : list9) {
                                 Map<String, Object> levelMap3 = new HashMap<>();
                                 String b;
                                 levelMap3.put("code", map7.get("quaCode"));
@@ -195,16 +202,19 @@ public class CommonServiceImpl implements CommonService {
                                 levelFourListMap.add(levelMap3);
                             }
                         }
-                        threeQuaMap.put("code", map3.get("quaCode"));
-                        threeQuaMap.put("name",map3.get("benchName"));
-                        threeQuaMap.put("data", levelFourListMap);
-                        towQuaListtMap.add(threeQuaMap);
+                        String benchName = (String) map3.get("benchName");
+                        if (StringUtils.isNotEmpty(benchName)) {
+                            threeQuaMap.put("code", map3.get("quaCode"));
+                            threeQuaMap.put("name", map3.get("benchName"));
+                            threeQuaMap.put("data", levelFourListMap);
+                            towQuaListtMap.add(threeQuaMap);
+                        }
                     }
 
                 } else {
                     String quaCode = (String) map2.get("quaCode");
-                    List<Map<String, Object>> list5 = relQuaGradeMapper.queryRelQuaGrade(quaCode);
-                    for (Map<String, Object> map6 : list5) {
+                    /* List<Map<String, Object>> list5 = relQuaGradeMapper.queryRelQuaGrade(quaCode);*/
+                    for (Map<String, Object> map6 : list8) {
                         Map<String, Object> levelMap2 = new HashMap<>();
                         levelMap2.put("code", map6.get("quaCode"));
                         levelMap2.put("name", map6.get("quaName"));
@@ -213,10 +223,13 @@ public class CommonServiceImpl implements CommonService {
                     }
 
                 }
-                towQuaMap.put("code", map2.get("quaCode"));
-                towQuaMap.put("name", map2.get("benchName"));
-                towQuaMap.put("data", levelThreeListMap);
-                towQuaListtMap.add(towQuaMap);
+                String benchName = (String) map2.get("benchName");
+                if (StringUtils.isNotEmpty(benchName)) {
+                    towQuaMap.put("code", map2.get("quaCode"));
+                    towQuaMap.put("name", map2.get("benchName"));
+                    towQuaMap.put("data", levelThreeListMap);
+                    towQuaListtMap.add(towQuaMap);
+                }
 
             }
             oneQuaMap.put("code", map.get("quaCode"));
@@ -227,6 +240,43 @@ public class CommonServiceImpl implements CommonService {
 
 
         return oneQuaListtMap;
+    }
+
+    @Override
+    public void updRelatedId() {
+        Map<String, Object> param = new HashMap<>();
+        List<String> list = tbCommentInfoMapper.querySource();
+        /*for (String s : list) {
+            param.put("source",s);*/
+        List<Map<String, Object>> commentListMap = new ArrayList<>();
+        List<Map<String, Object>> list1 = snatchurlMapper.queryNtid();
+        for (Map<String, Object> map : list1) {
+            Map<String, Object> map1 = new HashMap<>();
+            map1.put("ntId", map.get("ntId"));
+            map1.put("id", map.get("id"));
+            commentListMap.add(map1);
+        }
+        param.put("commentList",commentListMap);
+        tbCommentInfoMapper.updateRelatedId(param);
+
+
+        //}
+
+
+  /*      Map<String, Object> param = new HashMap<>();
+        List<String> list = tbCommentInfoMapper.querySource();
+       *//* for (String s : list) {
+            param.put("source",s);*//*
+        List<Map<String, Object>> commentListMap = new ArrayList<>();
+        List<Map<String, Object>> list1 = snatchurlMapper.queryNtid();
+        for (Map<String, Object> map : list1) {
+            Map<String, Object> map1 = new HashMap<>();
+            param.put("ntId", map.get("ntId"));
+            param.put("id", map.get("id"));
+            tbCommentInfoMapper.updateRelatedId(param);
+        }*/
+
+
     }
 
 }

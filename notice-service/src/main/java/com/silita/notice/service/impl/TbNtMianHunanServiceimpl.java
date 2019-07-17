@@ -39,10 +39,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Autowired
     private TbCommentInfoMapper tbCommentInfoMapper;
 
-    @Value("${hbase.notice-table-name}")
+    /*@Value("${hbase.notice-table-name}")
     private String hBaseTableName;
     @Autowired
-    private Connection connection;
+    private Connection connection;*/
 
     /**
      * 查询中标公告
@@ -219,7 +219,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * @return
      * @throws IOException
      */
-    public String queryBidsDetailsCentendString(Map<String, Object> param) throws IOException {
+/*    public String queryBidsDetailsCentendString(Map<String, Object> param) throws IOException {
         String snatchId = MapUtils.getString(param, "snatchId");
         String content = "";
         Map<String, Object> map = new HashMap<String, Object>();
@@ -238,7 +238,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             }
         }
         return content;
-    }
+    }*/
 
     /**
      * 获取评标办法

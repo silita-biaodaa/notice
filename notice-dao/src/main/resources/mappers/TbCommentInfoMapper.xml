@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.silita.notice.dao.TbCommentInfoMapper" >
+    <!-- update mishu.`tb_comment_info` set related_id=#{ntId} where related_id=#{id}-->
+    <update id="updateRelatedId" parameterType="map">
 
-  <select id="queryCountComment" resultType="java.lang.Integer" parameterType="map">
+         <foreach collection="commentList" item="list" index="index">
+              update mishu.`tb_comment_info` set related_id=#{list.ntId} where related_id=#{list.id}
+         </foreach>
+    </update>
+
+    <select id="queryCountComment" resultType="java.lang.Integer" parameterType="map">
     select count(0) from mishu.`tb_comment_info` where related_id=#{id}
   </select>
+    <select id="querySource" resultType="java.lang.String" parameterType="map">
+        select source from mishu.`tb_comment_info` group by source
+    </select>
 </mapper>

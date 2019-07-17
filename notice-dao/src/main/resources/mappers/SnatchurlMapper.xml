@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.notice.dao.SnatchurlMapper" >
+
+ <!-- <select id="queryNtid" resultType="java.util.Map" parameterType="map">
+    SELECT m.pkid AS ntId,s.redisId FROM biaodaa_admin.tb_nt_mian_${source} m
+    JOIN mishu.`snatchurl` s
+    ON m.title=s.title
+  </select>-->
+  <select id="queryNtid" resultType="java.util.Map" parameterType="map">
+    SELECT m.pkid AS ntId,s.id FROM biaodaa_admin.tb_nt_mian_hunan m
+    JOIN mishu.`snatchurl` s
+    ON m.title=s.title
+/*    JOIN mishu.tb_comment_info c
+    ON s.id=c.related_id*/
+  </select>
+</mapper>
