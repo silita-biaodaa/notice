@@ -112,12 +112,13 @@ public class LoginFilter implements Filter {
                 printInfo(response, resMap);
                 return;
             }
+
+            //设置userid
+            if (StringUtils.isNotEmpty(userId)) {
+                VisitInfoHolder.setUserId(userId);
+            }
             if (tokenValid) {
                 filterChain.doFilter(servletRequest, servletResponse);
-                //设置userid
-                if (StringUtils.isNotEmpty(userId)) {
-                    VisitInfoHolder.setUserId(userId);
-                }
             } else {
                 resMap.put("code", ResponseCode.WARN_CODE_504);
                 resMap.put("msg", ResponseCode.WARN_MSG_504);
