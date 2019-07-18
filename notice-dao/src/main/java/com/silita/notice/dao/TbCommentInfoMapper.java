@@ -16,7 +16,15 @@ public interface TbCommentInfoMapper extends MyMapper<TbCommentInfo> {
      * @param param
      */
     void updateRelatedId(Map<String,Object> param);
+    void updateRelatedId2(Map<String,Object> param);
 
     List<String> querySource();
+
+
+
+    List<Map<String,Object>> queryRelatedId();
+
+
+    List<Map<String,Object>> queryRelatedId2();
 
 }

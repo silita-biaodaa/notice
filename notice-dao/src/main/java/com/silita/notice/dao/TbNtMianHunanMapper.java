@@ -127,4 +127,7 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
      */
     Map<String,Object> queryProjectTypeNoticeType(Map<String,Object> param);
 
+
+    List<String> queryPkid(Map<String,Object> param);
+
 }

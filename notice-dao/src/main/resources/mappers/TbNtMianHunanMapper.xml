@@ -311,6 +311,9 @@
           tb_nt_mian_${source} mian
         WHERE pkid=#{ntId}
     </select>
+    <select id="queryPkid" resultType="java.lang.String" parameterType="map">
+        SELECT pkid FROM `tb_nt_mian_hubei` WHERE title=#{title}
+    </select>
 
 
 </mapper>

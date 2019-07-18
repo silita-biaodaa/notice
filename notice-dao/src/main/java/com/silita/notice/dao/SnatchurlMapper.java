@@ -13,4 +13,6 @@ import java.util.Map;
 public interface SnatchurlMapper extends MyMapper<Snatchurl> {
 
     List<Map<String,Object>> queryNtid();
+
+    List<String> queryTitle(Map<String,Object> param);
 }

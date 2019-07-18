@@ -197,7 +197,7 @@ public class LoginFilter implements Filter {
             if (filterUrl != null) {
                 String[] urls = filterUrl.split(",");
                 for (String url : urls) {
-                    if (requestUri.contains(url)) {
+                    if (requestUri.indexOf(url.trim()) > -1) {
                         greenWay = true;
                         break;
                     }
@@ -220,5 +220,10 @@ public class LoginFilter implements Filter {
         PrintWriter out = response.getWriter();
         out.print(JSONObject.toJSONString(map));
         out.close();
+    }
+
+    public static void main(String[] args) {
+        String requerUrl = "/newnocite/zhaobiao/list";
+        System.out.println(requerUrl.indexOf("/newnocite") > -1);
     }
 }

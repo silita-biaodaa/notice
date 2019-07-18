@@ -25,7 +25,6 @@ public class NociteController extends BaseController {
     private TbNtMianHunanService tbNtMianHunanService;
     @Value("${hbase.notice-table-name}")
     private String hBaseTableName;
-
     /**
      * 查询公告  -  中标
      * @param param

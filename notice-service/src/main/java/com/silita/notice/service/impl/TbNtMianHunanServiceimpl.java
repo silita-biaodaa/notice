@@ -43,7 +43,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     private String hBaseTableName;
     @Autowired
     private Connection connection;
-
     /**
      * 查询中标公告
      *

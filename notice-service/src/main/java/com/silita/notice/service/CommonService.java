@@ -40,7 +40,6 @@ public interface CommonService {
 
 
 
-    void updRelatedId();
 
 
 

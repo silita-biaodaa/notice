@@ -243,41 +243,7 @@ public class CommonServiceImpl implements CommonService {
         return oneQuaListtMap;
     }
 
-    @Override
-    public void updRelatedId() {
-        Map<String, Object> param = new HashMap<>();
-        List<String> list = tbCommentInfoMapper.querySource();
-        /*for (String s : list) {
-            param.put("source",s);*/
-        List<Map<String, Object>> commentListMap = new ArrayList<>();
-        List<Map<String, Object>> list1 = snatchurlMapper.queryNtid();
-        for (Map<String, Object> map : list1) {
-            Map<String, Object> map1 = new HashMap<>();
-            map1.put("ntId", map.get("ntId"));
-            map1.put("id", map.get("id"));
-            commentListMap.add(map1);
-        }
-        param.put("commentList",commentListMap);
-        tbCommentInfoMapper.updateRelatedId(param);
 
 
-        //}
-
-
-  /*      Map<String, Object> param = new HashMap<>();
-        List<String> list = tbCommentInfoMapper.querySource();
-       *//* for (String s : list) {
-            param.put("source",s);*//*
-        List<Map<String, Object>> commentListMap = new ArrayList<>();
-        List<Map<String, Object>> list1 = snatchurlMapper.queryNtid();
-        for (Map<String, Object> map : list1) {
-            Map<String, Object> map1 = new HashMap<>();
-            param.put("ntId", map.get("ntId"));
-            param.put("id", map.get("id"));
-            tbCommentInfoMapper.updateRelatedId(param);
-        }*/
-
-
-    }
 
 }

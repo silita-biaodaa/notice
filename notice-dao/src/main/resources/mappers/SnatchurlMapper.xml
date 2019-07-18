@@ -8,10 +8,13 @@
     ON m.title=s.title
   </select>-->
   <select id="queryNtid" resultType="java.util.Map" parameterType="map">
-    SELECT m.pkid AS ntId,s.id FROM biaodaa_admin.tb_nt_mian_hunan m
+       SELECT m.pkid AS ntId,s.id FROM tb_nt_mian_hunan m
     JOIN mishu.`snatchurl` s
     ON m.title=s.title
-/*    JOIN mishu.tb_comment_info c
-    ON s.id=c.related_id*/
   </select>
+    <select id="queryTitle" resultType="java.lang.String" parameterType="map">
+        SELECT title FROM  mishu.`snatchurl` WHERE id=#{relatedId}
+    </select>
+    <!--JOIN mishu.tb_comment_info c
+    ON s.id=c.related_id-->
 </mapper>
