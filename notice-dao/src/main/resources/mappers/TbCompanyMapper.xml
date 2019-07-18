@@ -8,25 +8,34 @@
   AS comRange
   AS collected  需要展现-->
     <!--查询符合该公告资质的企业-->
-    <select id="queryCom" resultType="java.util.Map" parameterType="map">
-        select
-          t.com_id as comId,
-          t.com_name as comName,
-          t.org_code as orgCode,
-          t.business_num as businessNum,
-          t.regis_address as regisAddress,
-          t.com_addres as comAddress,
-          t.legal_perso as legalPerson,
-          t.economic_type as economicType,
-          t.regis_capital as regisCapital,
-          t.skill_leader as skillLeader,
-          t.created,
-          t.updated,
-          t.logo
-        from mishu.`tb_company` t
-        where t.range=#{qua_regex}
+    <select id="queryQualCom" resultType="java.util.Map" parameterType="map">
+        SELECT
+        t.com_id AS comId,
+        t.com_name AS comName,
+        t.org_code AS orgCode,
+        t.business_num AS businessNum,
+        t.regis_address AS regisAddress,
+        t.com_address AS comAddress,
+        t.legal_person AS legalPerson,
+        t.economic_type AS economicType,
+        t.regis_capital AS regisCapital,
+        t.skill_leader AS skillLeader,
+        t.created,
+        t.updated,
+        t.logo
+        FROM
+        mishu.`tb_company` t
+        where t.regis_address = #{regisAddress} and (
+        <foreach collection="list" item="list" separator="or">
+            t.range=#{list}
+        </foreach>
+        )
     </select>
     <select id="queryComQua" resultType="java.util.Map" parameterType="map">
         select t.com_id as comId,t.range from  tb_company t where t.com_name=#{comName}
+    </select>
+    <select id="queryRelCompanySize" resultType="java.lang.Integer">
+        select count(0) from mishu.`tb_company` t
+        where t.range=#{quaRegex} and t.regis_address=#{regisAddress}
     </select>
 </mapper>

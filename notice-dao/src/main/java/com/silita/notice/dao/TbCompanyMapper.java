@@ -14,14 +14,21 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
     /**
      *
      * 查询附和该公告资质的建筑企业
-     * @param id
+     * @param param
      * @return
      */
-    List<Map<String,Object>> queryCom(String id);
+    List<Map<String,Object>> queryQualCom(Map<String,Object> param);
 
     /*
      * 根据企业名称获取企业资质
      */
     List<Map<String,Object>> queryComQua(Map<String,Object> param);
+
+    /**
+     * 获取符合该资质的企业数量
+     * @param param
+     * @return
+     */
+    Integer queryRelCompanySize(Map<String,Object> param);
 
 }

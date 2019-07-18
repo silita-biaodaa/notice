@@ -56,5 +56,4 @@ public class HBaseConfig {
         return configuration;
     }
 
-
 }

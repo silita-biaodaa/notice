@@ -118,9 +118,9 @@
         <if test="title != null and title != ''">
             and mian.title like CONCAT('%',#{title},'%')
         </if>
-        <if test="proviceCode != null and proviceCode != ''">
-            and mian.provice_code=#{proviceCode}
-        </if>
+        <!-- <if test="type != null and type != ''">
+             and mian.nt_category=#{type}
+         </if>-->
         <if test="cityCodeList != null and cityCodeList.size() > 0">
             and (
             <foreach collection="cityCodeList" item="cityCodeList" separator="or">
@@ -138,9 +138,6 @@
         <if test="projectType != null and projectType != ''">
             and mian.biness_type=#{projectType}
         </if>
-        <if test="type != null and type != ''">
-            and mian.nt_category=#{type}
-        </if>
         <if test="zzType != null and zzType !=''">
             /*如果 rnageType == and 则进入下面的判断*/
             <if test="rangeType == 'and'">
@@ -152,10 +149,17 @@
             /*如果 rnageType == or 则进入下面的判断*/
             <if test="rangeType == 'or'">
                 and mian.pkid in (select regex.nt_id from
-                tb_nt_regex_qua regex where 1=1 and
-                <foreach collection="regexList" item="regexList" separator="or">
-                    regex.qua_regex=#{regexList}
-                </foreach>
+                tb_nt_regex_qua regex where 1=1
+                <if test="regexList != null and regexList.size() >0">
+                    and (
+                    <foreach collection="regexList" item="regexList" separator="or">
+                        regex.qua_regex=#{regexList}
+                    </foreach>
+                    )
+                </if>
+                <if test="regexList == null or regexList.size() == 0">
+                   and regex.qua_regex=#{regexList}
+                </if>
                 )
             </if>
         </if>
@@ -288,7 +292,7 @@
     <select id="queryProviceCity" resultType="java.util.Map" parameterType="map">
         select provice_code as provice,city_code as city,snatch_id as snatchId from biaodaa_admin.tb_nt_mian_${source} where pkid=#{id}
     </select>
-   <!--查询省级名称-->
+    <!--查询省级名称-->
     <select id="queryProviceName" resultType="java.util.Map" parameterType="map">
         SELECT sys.area_name as proviceCode FROM
         biaodaa_admin.sys_area sys WHERE sys.area_code=#{provice}
@@ -305,10 +309,10 @@
     <!--获取公告类型和项目类型-->
     <select id="queryProjectTypeNoticeType" resultType="java.util.Map">
         SELECT
-          <include refid="noticeType"/>,
-          <include refid="noticeTypeConvert"/>
+        <include refid="noticeType"/>,
+        <include refid="noticeTypeConvert"/>
         FROM
-          tb_nt_mian_${source} mian
+        tb_nt_mian_${source} mian
         WHERE pkid=#{ntId}
     </select>
     <select id="queryPkid" resultType="java.lang.String" parameterType="map">

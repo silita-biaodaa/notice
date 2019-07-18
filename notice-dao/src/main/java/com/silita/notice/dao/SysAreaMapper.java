@@ -31,6 +31,12 @@ public interface SysAreaMapper extends MyMapper<SysArea> {
      */
     List<String> queryCode();
 
+    /**
+     * 根据省份code找到省份name
+     * @return
+     */
+    String queryName(Map<String,Object> param);
+
 
 
 }

@@ -185,10 +185,12 @@ public class CommonServiceImpl implements CommonService {
                                 }
                                 String benchName = (String) map4.get("benchName");
                                 if (StringUtils.isNotEmpty(benchName)) {
-                                    fourQuaMap.put("code", map4.get("quaCode"));
-                                    fourQuaMap.put("name", map4.get("benchName"));
-                                    fourQuaMap.put("data", levelFiveListMap);
-                                    towQuaListtMap.add(fourQuaMap);
+                                    //if (null != levelFiveListMap && levelFiveListMap.size() >0) {
+                                        fourQuaMap.put("code", map4.get("quaCode"));
+                                        fourQuaMap.put("name", map4.get("benchName"));
+                                        fourQuaMap.put("data", levelFiveListMap);
+                                        towQuaListtMap.add(fourQuaMap);
+                                    //}
                                 }
                             }
 
@@ -205,10 +207,12 @@ public class CommonServiceImpl implements CommonService {
                         }
                         String benchName = (String) map3.get("benchName");
                         if (StringUtils.isNotEmpty(benchName)) {
-                            threeQuaMap.put("code", map3.get("quaCode"));
-                            threeQuaMap.put("name", map3.get("benchName"));
-                            threeQuaMap.put("data", levelFourListMap);
-                            towQuaListtMap.add(threeQuaMap);
+                            //if (null != levelFourListMap && levelFourListMap.size() >0) {
+                                threeQuaMap.put("code", map3.get("quaCode"));
+                                threeQuaMap.put("name", map3.get("benchName"));
+                                threeQuaMap.put("data", levelFourListMap);
+                                towQuaListtMap.add(threeQuaMap);
+                            //}
                         }
                     }
 
@@ -226,10 +230,13 @@ public class CommonServiceImpl implements CommonService {
                 }
                 String benchName = (String) map2.get("benchName");
                 if (StringUtils.isNotEmpty(benchName)) {
-                    towQuaMap.put("code", map2.get("quaCode"));
-                    towQuaMap.put("name", map2.get("benchName"));
-                    towQuaMap.put("data", levelThreeListMap);
-                    towQuaListtMap.add(towQuaMap);
+                    //if (null != levelThreeListMap && levelThreeListMap.size() >0){
+                        towQuaMap.put("code", map2.get("quaCode"));
+                        towQuaMap.put("name", map2.get("benchName"));
+                        towQuaMap.put("data", levelThreeListMap);
+                        towQuaListtMap.add(towQuaMap);
+                    //}
+
                 }
 
             }

@@ -3,11 +3,11 @@ package com.silita.notice.web;
 import com.github.pagehelper.PageInfo;
 import com.silita.notice.base.BaseController;
 import com.silita.notice.common.VisitInfoHolder;
+import com.silita.notice.service.CompanyService;
 import com.silita.notice.service.TbNtMianHunanService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -20,9 +20,13 @@ import java.util.Map;
 @Controller
 @RequestMapping("/newnocite")
 public class NociteController extends BaseController {
-    private Log logger = LogFactory.getLog(NociteController.class);
+    private org.slf4j.Logger logger = LoggerFactory.getLogger(NociteController.class);
     @Autowired
     private TbNtMianHunanService tbNtMianHunanService;
+
+    @Autowired
+    private CompanyService companyService;
+
     @Value("${hbase.notice-table-name}")
     private String hBaseTableName;
     /**
@@ -33,16 +37,17 @@ public class NociteController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/zhongbiao/list",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map queryBids(@RequestBody Map<String,Object> param){
+        logger.info("-------------------进入该方法:zhongbiao----------------------");
         Map<String,Object> resultMap = new HashMap<String,Object>();
         try{
             //分页限制 最多到30页  每页20条记录
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryBids(param);
+            logger.info("-------------------查询成功----------------------");
             seccussMap(resultMap,pageInfo);
         }catch (NullPointerException e){
             errorMsg(resultMap,e.getMessage());
         }
-
         return resultMap;
     }
     /**
@@ -72,10 +77,12 @@ public class NociteController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/zhaobiao/list",method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map queryTenders(@RequestBody Map<String,Object> param){
+        logger.info("-------------------进入该方法:zhaobiao----------------------");
         Map<String,Object> resultMap = new HashMap<String,Object>();
         try{
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryTenders(param);
+            logger.info("-------------------查询成功----------------------");
             seccussMap(resultMap,pageInfo);
         }catch (NullPointerException e){
             //logger.error(e,e);
@@ -145,6 +152,8 @@ public class NociteController extends BaseController {
             map.put("projDq",proviceCode+"-"+cityCode);
             map.put("collected",attention);
             resultMap.put("clickCount",count);
+            Integer relCompanySize = companyService.relCompanySize(param);
+            resultMap.put("relCompanySize",relCompanySize);
             seccussMap(resultMap,map);
             return resultMap;
         }

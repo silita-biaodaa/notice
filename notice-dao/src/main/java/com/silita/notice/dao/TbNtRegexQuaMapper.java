@@ -5,6 +5,7 @@ import com.silita.notice.utils.MyMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface TbNtRegexQuaMapper extends MyMapper<TbNtRegexQua> {
@@ -15,4 +16,11 @@ public interface TbNtRegexQuaMapper extends MyMapper<TbNtRegexQua> {
      * @return
      */
     String queryNoticeId(String noticeId);
+
+    /**
+     * 获取quaRegex 用来匹配企业的regex
+     * @param param
+     * @return
+     */
+    List<String> queryQuaRegex(Map<String,Object> param);
 }

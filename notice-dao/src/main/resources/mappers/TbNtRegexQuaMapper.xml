@@ -9,4 +9,11 @@
       tb_nt_regex_qua
     WHERE nt_id = #{id}
   </select>
+  <select id="queryQuaRegex" resultType="java.lang.String">
+    SELECT
+      qua_regex AS quaRegex
+    FROM
+      tb_nt_regex_qua
+    WHERE nt_id = #{id}
+  </select>
 </mapper>

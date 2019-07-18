@@ -45,7 +45,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     private Connection connection;
     /**
      * 查询中标公告
-     *
      * @param
      * @return
      */
@@ -140,6 +139,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 maps.put("gradeCode", split1[1]);
             } else {
                 maps.put("quaCode", split1[0]);
+                maps.put("gradeCode","");
             }
             group.add(maps);
         }

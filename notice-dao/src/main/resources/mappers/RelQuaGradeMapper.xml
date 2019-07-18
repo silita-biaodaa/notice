@@ -12,9 +12,7 @@
         ON c.code=r.grade_code
         WHERE r.qua_code=#{quaCode}
     </select>
-    <select id="queryNoticeId" resultType="java.lang.String" parameterType="map">
-        select r.nt_id from rel_qua_grade r where id=#{regexId}
-    </select>
+
 
 
 </mapper>

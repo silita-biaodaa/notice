@@ -1,6 +1,9 @@
 package com.silita.notice.web.impl;
 
 import com.github.pagehelper.PageInfo;
+import com.silita.notice.dao.SnatchurlMapper;
+import com.silita.notice.dao.TbCommentInfoMapper;
+import com.silita.notice.dao.TbNtMianHunanMapper;
 import com.silita.notice.service.CommonService;
 import com.silita.notice.service.TbNtMianHunanService;
 import com.silita.notice.utils.PropertyUtil;
@@ -23,6 +26,13 @@ public class NoticeServiceImplTest extends BaseCastTest {
     private  Environment environment;
     @Autowired
     private CommonService sysAreaService;
+
+    @Autowired
+    private TbCommentInfoMapper tbCommentInfoMapper;
+    @Autowired
+    private SnatchurlMapper snatchurlMapper;
+    @Autowired
+    private TbNtMianHunanMapper tbNtMianHunanMapper;
 
 
 
@@ -110,7 +120,49 @@ public class NoticeServiceImplTest extends BaseCastTest {
 
     @Test
     public void qx(){
-        sysAreaService.updRelatedId();
+        //sysAreaService.updRelatedId();
+    }
+
+    @Test
+    public void qx2(){
+  /*      List<Map<String, Object>> list = tbCommentInfoMapper.queryRelatedId();
+        Map<String,Object> param = new HashMap<>();
+        for (Map<String, Object> map : list) {
+            param.put("relatedId",map.get("relatedId"));
+            param.put("pkid",map.get("pkid"));
+
+            List<String> titleList = snatchurlMapper.queryTitle(param);
+            for (String s : titleList) {
+                param.put("title",s);
+                List<String> listPkid = tbNtMianHunanMapper.queryPkid(param);
+                for (String s1 : listPkid) {
+                    param.put("relatedId",s1);
+                    tbCommentInfoMapper.updateRelatedId(param);
+                }
+
+            }
+
+        }*/
+
+
+        List<Map<String, Object>> list = tbCommentInfoMapper.queryRelatedId2();
+        Map<String,Object> param = new HashMap<>();
+        for (Map<String, Object> map : list) {
+            param.put("relatedId",map.get("relatedId"));
+            param.put("pkid",map.get("pkid"));
+
+            List<String> titleList = snatchurlMapper.queryTitle(param);
+            for (String s : titleList) {
+                param.put("title",s);
+                List<String> listPkid = tbNtMianHunanMapper.queryPkid(param);
+                for (String s1 : listPkid) {
+                    param.put("relatedId",s1);
+                    tbCommentInfoMapper.updateRelatedId2(param);
+                }
+
+            }
+
+        }
     }
 
 
