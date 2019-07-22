@@ -2,17 +2,12 @@ package com.silita.notice.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.silita.notice.common.RedisConstantInterface;
 import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.TbCommentInfoMapper;
 import com.silita.notice.dao.TbCompanyMapper;
 import com.silita.notice.dao.TbNtMianHunanMapper;
 import com.silita.notice.dao.TbNtRegexQuaMapper;
-import com.silita.notice.service.CompanyService;
 import com.silita.notice.service.TbNtMianHunanService;
-import com.silita.notice.utils.ObjectUtils;
-import com.silita.notice.utils.RedisShardedPoolUtil;
-import com.sun.tools.corba.se.idl.StringGen;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.Cell;
@@ -26,7 +21,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import sun.security.krb5.internal.PAData;
 
 import java.io.IOException;
 import java.util.*;
@@ -47,6 +41,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     private String hBaseTableName;
     @Autowired
     private Connection connection;
+
     /**
      * 查询中标公告
      *
@@ -220,11 +215,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public Map<String, Object> queryTendersNociteDetails(Map<String, Object> param) {
         Map<String, Object> map = tbNtMianHunanMapper.queryTendersNociteDetails(param);
         Integer commentCount = tbCommentInfoMapper.queryCountComment(param);
-        if(commentCount != 0 || commentCount != null){
-            map.put("commentCount", commentCount);
-            return map;
-        }
-        map.put("commentCount", "0");
+        map.put("commentCount", commentCount);
         return map;
     }
 
@@ -425,8 +416,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public Map<String, Object> queryCityName(Map<String, Object> param) {
         return tbNtMianHunanMapper.queryCityName(param);
     }
-
-
 
 
 }
