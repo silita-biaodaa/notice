@@ -47,7 +47,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     private String hBaseTableName;
     @Autowired
     private Connection connection;
-
     /**
      * 查询中标公告
      *
@@ -221,7 +220,11 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public Map<String, Object> queryTendersNociteDetails(Map<String, Object> param) {
         Map<String, Object> map = tbNtMianHunanMapper.queryTendersNociteDetails(param);
         Integer commentCount = tbCommentInfoMapper.queryCountComment(param);
-        map.put("commentCount", commentCount);
+        if(commentCount != 0 || commentCount != null){
+            map.put("commentCount", commentCount);
+            return map;
+        }
+        map.put("commentCount", "0");
         return map;
     }
 

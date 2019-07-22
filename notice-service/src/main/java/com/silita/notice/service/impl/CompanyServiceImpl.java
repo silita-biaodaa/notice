@@ -52,12 +52,15 @@ public class CompanyServiceImpl implements CompanyService {
         param.put("regisAddress", name);
         //获取资质关系表达式的列quaRegex
         List<String> list = tbNtRegexQuaMapper.queryQuaRegex(param);
-        for (String s1 : list) {
-            param.put("quaRegex", s1);
-            //获取符合数量
-            Integer relCompanySize = tbCompanyMapper.queryRelCompanySize(param);
-            count = count + relCompanySize;
+        if(list.size() >= 0 || null != list){
+            for (String s1 : list) {
+                param.put("quaRegex", s1);
+                //获取符合数量
+                Integer relCompanySize = tbCompanyMapper.queryRelCompanySize(param);
+                count = count + relCompanySize;
+            }
         }
+
 
         return count;
     }
@@ -75,9 +78,15 @@ public class CompanyServiceImpl implements CompanyService {
         List<String> list = tbNtRegexQuaMapper.queryQuaRegex(param);
 
         param.put("list", list);
+        Integer pageNo = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
+        PageHelper.startPage(pageNo, pageSize);
+
 
         List<Map<String, Object>> listMap = tbCompanyMapper.queryQualCom(param);
         param.put("userId", VisitInfoHolder.getUserId());
+
+
         for (Map<String, Object> stringObjectMap : listMap) {
             param.put("comId",stringObjectMap.get("comId"));
             List<String> list1 = colleCompanyNewMapper.queryYesOrNo(param);
@@ -89,9 +98,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         }
 
-        Integer pageNo = MapUtils.getInteger(param, "pageNo");
-        Integer pageSize = MapUtils.getInteger(param, "pageSize");
-        PageHelper.startPage(pageNo, pageSize);
+
 
         PageInfo pageInfo = new PageInfo(listMap);
         return pageInfo;

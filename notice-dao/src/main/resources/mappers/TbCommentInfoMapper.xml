@@ -10,8 +10,8 @@
     </update>
 
     <select id="queryCountComment" resultType="java.lang.Integer" parameterType="map">
-    select count(0) from mishu.`tb_comment_info` where related_id=#{id} and source=#{source}
-  </select>
+      select count(0) from mishu.`tb_comment_info` where related_id=#{id} and source=#{source}
+    </select>
     <select id="querySource" resultType="java.lang.String" parameterType="map">
         select source from mishu.`tb_comment_info` group by source
     </select>
