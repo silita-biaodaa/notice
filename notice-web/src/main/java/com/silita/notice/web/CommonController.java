@@ -61,4 +61,39 @@ public class CommonController extends BaseController {
 
 
 
+
+    /**
+     * 获取筛选
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/filter/qual", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map conditionFilterQyal() {
+        Map<String, Object> param = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        String key = "filter_company";
+        Object obj = RedisShardedPoolUtil.get(key);
+        if (null != obj) {
+            map = (Map<String, Object>) obj;
+            seccussMap(resultMap, map);
+            return resultMap;
+        }
+        Map<String, Object> notice = new HashMap<>();
+        notice.put("bizType", "1");
+        Map<String, Object> com = new HashMap<>();
+        com.put("bizType", "2");
+        List<Map<String, Object>> noticeList = commonService.queryQua(notice);
+        List<Map<String, Object>> comList = commonService.queryQua(com);
+        map.put("noticeQua", noticeList);
+        map.put("comQua", comList);
+
+        RedisShardedPoolUtil.set(key, map);
+        seccussMap(resultMap, map);
+        return resultMap;
+    }
+
+
+
 }

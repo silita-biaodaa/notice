@@ -138,7 +138,7 @@ public interface TbNtMianHunanService{
      * @param param
      * @return
      */
-    List<Map<String,Object>> queryComQuaNotice(Map<String,Object> param);
+   /* List<Map<String,Object>> queryComQuaNotice(Map<String,Object> param);*/
 
 
 

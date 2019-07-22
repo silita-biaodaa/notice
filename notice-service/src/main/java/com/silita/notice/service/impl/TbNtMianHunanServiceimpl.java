@@ -7,6 +7,7 @@ import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.TbCommentInfoMapper;
 import com.silita.notice.dao.TbCompanyMapper;
 import com.silita.notice.dao.TbNtMianHunanMapper;
+import com.silita.notice.dao.TbNtRegexQuaMapper;
 import com.silita.notice.service.CompanyService;
 import com.silita.notice.service.TbNtMianHunanService;
 import com.silita.notice.utils.ObjectUtils;
@@ -39,12 +40,17 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Autowired
     private TbCommentInfoMapper tbCommentInfoMapper;
 
+    @Autowired
+    private TbNtRegexQuaMapper tbNtRegexQuaMapper;
+
     @Value("${hbase.notice-table-name}")
     private String hBaseTableName;
     @Autowired
     private Connection connection;
+
     /**
      * 查询中标公告
+     *
      * @param
      * @return
      */
@@ -78,7 +84,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public PageInfo queryCompanyName(Map<String, Object> param) {
-        Map<String,Object> typeMap = new HashMap<>();
+        Map<String, Object> typeMap = new HashMap<>();
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
@@ -92,11 +98,11 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                     map.put("oneLaw", "1");
                 }
             }*/
-            typeMap.put("source",map.get("source"));
-            typeMap.put("ntId",map.get("id"));
+            typeMap.put("source", map.get("source"));
+            typeMap.put("ntId", map.get("id"));
             Map<String, Object> map1 = tbNtMianHunanMapper.queryProjectTypeNoticeType(typeMap);
-            map.put("projectType",map1.get("projectType"));
-            map.put("noticeType",map1.get("noticeType"));
+            map.put("projectType", map1.get("projectType"));
+            map.put("noticeType", map1.get("noticeType"));
         }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
@@ -139,7 +145,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 maps.put("gradeCode", split1[1]);
             } else {
                 maps.put("quaCode", split1[0]);
-                maps.put("gradeCode","");
+                maps.put("gradeCode", "");
             }
             group.add(maps);
         }
@@ -168,6 +174,16 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
+        String comName = MapUtils.getString(param, "comName");
+
+        if (StringUtils.isNotEmpty(comName)) {
+            String s1 = tbCompanyMapper.queryComNameQual(param);
+            param.put("range", s1);
+           /* List<String> listNtId = tbNtRegexQuaMapper.queryListNoticeId(param);
+            param.put("listNtId", listNtId);*/
+
+        }
+
         List<Map<String, Object>> list = tbNtMianHunanMapper.queryTenders(param);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
@@ -191,7 +207,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             }
         }*/
         Integer commentCount = tbCommentInfoMapper.queryCountComment(param);
-        map.put("commentCount",commentCount);
+        map.put("commentCount", commentCount);
         return map;
     }
 
@@ -205,7 +221,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public Map<String, Object> queryTendersNociteDetails(Map<String, Object> param) {
         Map<String, Object> map = tbNtMianHunanMapper.queryTendersNociteDetails(param);
         Integer commentCount = tbCommentInfoMapper.queryCountComment(param);
-        map.put("commentCount",commentCount);
+        map.put("commentCount", commentCount);
         return map;
     }
 
@@ -407,18 +423,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         return tbNtMianHunanMapper.queryCityName(param);
     }
 
-    @Override
-    public List<Map<String, Object>> queryComQuaNotice(Map<String, Object> param) {
-        List<Map<String, Object>> noticeListMap = new ArrayList<>();
-        List<Map<String, Object>> list = tbCompanyMapper.queryComQua(param);
-        for (Map<String, Object> map : list) {
-            Map<String, Object> noticeMap = new HashMap<>();
-            String range = (String) map.get("range");
-            String comId = (String) map.get("comId");
-            //tbNtMianHunanMapper.qn
-        }
-        return noticeListMap;
-    }
+
 
 
 }

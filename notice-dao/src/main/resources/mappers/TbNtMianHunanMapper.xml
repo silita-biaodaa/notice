@@ -112,7 +112,14 @@
         FROM tb_nt_tenders_${proviceCode} tenders
         left JOIN tb_nt_mian_${proviceCode} mian
         ON mian.pkid = tenders.nt_id
+        <if test="comName != null and comName != ''">
+            join  tb_nt_regex_qua r
+            on mian.pkid=r.nt_id
+        </if>
         WHERE 1 = 1
+        <if test="comName != null and comName != ''">
+            and r.qua_regex=#{range}
+        </if>
         AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
         AND mian.`pub_date` &lt;= NOW()
         <if test="title != null and title != ''">
@@ -163,6 +170,18 @@
                 )
             </if>
         </if>
+ <!--       <if test="comName != null and comName != ''">
+            <if test="listNtId != null and listNtId.size() >0">
+                and(
+                <foreach collection="listNtId" item="list" separator="or">
+                    mian.pkid=#{list}
+                </foreach>
+                )
+            </if>
+            <if test="listNtId == null or listNtId.size() == 0">
+                and mian.pkid=''
+            </if>
+        </if>-->
         ORDER BY mian.`pub_date` DESC
     </select>
 

@@ -31,11 +31,14 @@
         </foreach>
         )
     </select>
-    <select id="queryComQua" resultType="java.util.Map" parameterType="map">
-        select t.com_id as comId,t.range from  tb_company t where t.com_name=#{comName}
-    </select>
+    <!--获取符合该公告资质的企业数量-->
     <select id="queryRelCompanySize" resultType="java.lang.Integer">
         select count(0) from mishu.`tb_company` t
         where t.range=#{quaRegex} and t.regis_address=#{regisAddress}
     </select>
+    <!--根据企业名称获取到企业的资质-->
+    <select id="queryComNameQual" resultType="java.lang.String" parameterType="map">
+        select t.range from  mishu.`tb_company` t where t.com_name=#{comName}
+    </select>
+
 </mapper>
