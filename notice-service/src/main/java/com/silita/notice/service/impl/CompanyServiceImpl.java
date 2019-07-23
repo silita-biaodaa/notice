@@ -102,12 +102,12 @@ public class CompanyServiceImpl implements CompanyService {
             while(matcherPhone.find()){
                 if(isVip != null && isVip == 1){
 
+                    a=matcherPhone.group()+";"+a;
+
+                }else{
                     String phoneGroup = matcherPhone.group();
                     String s = phoneGroup.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
                     a=s+";"+a;
-
-                }else{
-                    a=matcherPhone.group()+";"+a;
                 }
 
             }
@@ -115,11 +115,12 @@ public class CompanyServiceImpl implements CompanyService {
             //查找字符串中是否有符合的子字符串
             while(matcherFixed.find()){
                 if(isVip != null && isVip == 1){
+                    b=matcherFixed.group()+";"+b;
+                }else{
                     String fixedGroup = matcherFixed.group();
                     String fixed = fixedGroup.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
                     b=fixed+";"+b;
-                }else{
-                    b=matcherFixed.group()+";"+b;
+
                 }
 
             }
