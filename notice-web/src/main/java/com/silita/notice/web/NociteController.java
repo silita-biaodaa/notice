@@ -65,7 +65,6 @@ public class NociteController extends BaseController {
             PageInfo pageInfo = tbNtMianHunanService.queryCompanyName(param);
             seccussMap(resultMap,pageInfo);
         }catch (NullPointerException e){
-            //logger.error(e,e);
             errorMsg(resultMap,e.getMessage());
         }
         return resultMap;
@@ -85,7 +84,6 @@ public class NociteController extends BaseController {
             logger.info("-------------------查询成功----------------------");
             seccussMap(resultMap,pageInfo);
         }catch (NullPointerException e){
-            //logger.error(e,e);
             errorMsg(resultMap,e.getMessage());
         }
         return resultMap;
@@ -165,7 +163,6 @@ public class NociteController extends BaseController {
         map.put("collected",attention);
         resultMap.put("clickCount",count);
         seccussMap(resultMap,map);
-
         return resultMap;
     }
 }

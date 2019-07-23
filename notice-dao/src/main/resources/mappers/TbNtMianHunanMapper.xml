@@ -32,14 +32,12 @@
         WHERE 1 = 1
         AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
         AND mian.`pub_date` &lt;= NOW()
+        and mian.nt_category='2'
         <if test="title != null and title != ''">
             and mian.title like CONCAT('%',#{title},'%')
         </if>
         <if test="proviceCode != null and proviceCode != ''">
             and mian.provice_code=#{proviceCode}
-        </if>
-        <if test="type != null and type != ''">
-            and mian.nt_category=#{type}
         </if>
         <if test="cityCodeList != null and cityCodeList.size() > 0">
             and (
@@ -122,12 +120,10 @@
         </if>
         AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
         AND mian.`pub_date` &lt;= NOW()
+        and mian.nt_category='1'
         <if test="title != null and title != ''">
             and mian.title like CONCAT('%',#{title},'%')
         </if>
-        <!-- <if test="type != null and type != ''">
-             and mian.nt_category=#{type}
-         </if>-->
         <if test="cityCodeList != null and cityCodeList.size() > 0">
             and (
             <foreach collection="cityCodeList" item="cityCodeList" separator="or">

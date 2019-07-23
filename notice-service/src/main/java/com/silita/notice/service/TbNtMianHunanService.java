@@ -133,12 +133,18 @@ public interface TbNtMianHunanService{
      */
     Map<String,Object> queryCityName(Map<String,Object> param);
 
+
+    void isNull(Map<String,Object> param);
+
     /**
      * 根据企业资质查询附和该资质的公告
      * @param param
      * @return
      */
    /* List<Map<String,Object>> queryComQuaNotice(Map<String,Object> param);*/
+
+
+
 
 
 

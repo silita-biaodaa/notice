@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -84,6 +86,45 @@ public class CompanyServiceImpl implements CompanyService {
 
 
         List<Map<String, Object>> listMap = tbCompanyMapper.queryQualCom(param);
+        for (Map<String, Object> map : listMap) {
+            String phones =(String) map.get("phone");
+            Pattern patternPhone = Pattern.compile("((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\\d{8}");
+            Pattern patternFixed = Pattern.compile("(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)");
+            // 创建匹配给定输入与此模式的匹配器。
+            Matcher matcherPhone = patternPhone.matcher(phones);
+            Matcher matcherFixed = patternFixed.matcher(phones);
+
+            String a = "";
+            String b = "";
+
+            //查找字符串中是否有符合的子字符串
+            Integer isVip = MapUtils.getInteger(param, "isVip");
+            while(matcherPhone.find()){
+                if(isVip != null && isVip == 1){
+
+                    String phoneGroup = matcherPhone.group();
+                    String s = phoneGroup.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+                    a=s+";"+a;
+
+                }else{
+                    a=matcherPhone.group()+";"+a;
+                }
+
+            }
+
+            //查找字符串中是否有符合的子字符串
+            while(matcherFixed.find()){
+                if(isVip != null && isVip == 1){
+                    String fixedGroup = matcherFixed.group();
+                    String fixed = fixedGroup.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+                    b=fixed+";"+b;
+                }else{
+                    b=matcherFixed.group()+";"+b;
+                }
+
+            }
+            map.put("phone",a+b);
+        }
         param.put("userId", VisitInfoHolder.getUserId());
 
 

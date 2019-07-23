@@ -32,4 +32,7 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
      */
     String queryComNameQual(Map<String,Object> param);
 
+
+
+
 }

@@ -22,9 +22,18 @@
         t.skill_leader AS skillLeader,
         t.created,
         t.updated,
+        c.phone,
         t.logo
         FROM
         mishu.`tb_company` t
+        <if test="source == 'hunan' or source == 'chongq' or source == 'liaon'">
+            join mishu.tb_company_info c
+            on t.com_name=c.com_name
+        </if>
+        <if test="source != null and source != '' and source != 'hunan' and source != 'chongq' and source != 'liaon'">
+            join mishu.tb_company_info_${source} c
+            on t.com_name=c.com_name
+        </if>
         where t.regis_address = #{regisAddress} and (
         <foreach collection="list" item="list" separator="or">
             t.range=#{list}

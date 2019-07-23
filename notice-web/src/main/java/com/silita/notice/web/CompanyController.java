@@ -32,19 +32,6 @@ public class CompanyController extends BaseController {
         return resultMap;
     }
 
-    /**
-     * 查询符合该公告资质的企业
-     * @param param
-     * @return
-     */
-   /* @ResponseBody
-    @RequestMapping(value = "/qual/list",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
-    public Map<String,Object> queryCom(@RequestBody Map<String,Object> param){
-        Map<String,Object> resultMap = new HashMap<>();
-        checkPage(param);
-        PageInfo pageInfo = companyService.queryCom(param);
-        seccussMap(resultMap,pageInfo);
-        return resultMap;
-    }*/
+
 
 }
