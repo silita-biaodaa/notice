@@ -15,22 +15,12 @@ import java.util.Map;
 public class CommonServiceImpl implements CommonService {
     @Autowired
     private SysAreaMapper sysAreaMapper;
-
     @Autowired
     private DicCommonMapper dicCommonMapper;
-
     @Autowired
     private DicQuaMapper dicQuaMapper;
-
     @Autowired
     private RelQuaGradeMapper relQuaGradeMapper;
-
-    @Autowired
-    private TbCommentInfoMapper tbCommentInfoMapper;
-
-    @Autowired
-    private SnatchurlMapper snatchurlMapper;
-
 
     /**
      * 获取省市
@@ -43,22 +33,16 @@ public class CommonServiceImpl implements CommonService {
         for (Map<String, Object> map : list) {
             Map<String, Object> area = new HashMap<>();
             String pkid = (String) map.get("pkid");
-
             List<Map<String, Object>> cityListT = sysAreaMapper.queryCityList(pkid);
-
             List<Map<String, Object>> cityListMap = new ArrayList<>();
             for (Map<String, Object> stringObjectMap : cityListT) {
                 Map<String, Object> cityMap = new HashMap<>();
                 String areaName = (String) stringObjectMap.get("areaName");
                 String areaCode = (String) stringObjectMap.get("areaCode");
-
                 cityMap.put("name", areaName);
                 cityMap.put("code", areaCode);
                 cityListMap.add(cityMap);
-
             }
-
-
             area.put("name", map.get("areaName"));
             area.put("code", map.get("areaCode"));
             area.put("data", cityListMap);
@@ -84,7 +68,7 @@ public class CommonServiceImpl implements CommonService {
             param.put("pbModeType", s + "_pbmode");
             list1 = dicCommonMapper.queryPbModes(param);
             map.put("provice", s);
-            map.put("list",list1);
+            map.put("list", list1);
             pbModeList.add(map);
         }
 
@@ -178,7 +162,6 @@ public class CommonServiceImpl implements CommonService {
                                 List<Map<String, Object>> levelFiveListMap = new ArrayList<>();
                                 for (Map<String, Object> map5 : list5) {
                                     Map<String, Object> levelMap = new HashMap<>();
-
                                     levelMap.put("code", map5.get("quaCode"));
                                     levelMap.put("name", map5.get("quaName"));
                                     levelFiveListMap.add(levelMap);
@@ -186,10 +169,10 @@ public class CommonServiceImpl implements CommonService {
                                 String benchName = (String) map4.get("benchName");
                                 if (StringUtils.isNotEmpty(benchName)) {
                                     //if (null != levelFiveListMap && levelFiveListMap.size() >0) {
-                                        fourQuaMap.put("code", map4.get("quaCode"));
-                                        fourQuaMap.put("name", map4.get("benchName"));
-                                        fourQuaMap.put("data", levelFiveListMap);
-                                        towQuaListtMap.add(fourQuaMap);
+                                    fourQuaMap.put("code", map4.get("quaCode"));
+                                    fourQuaMap.put("name", map4.get("benchName"));
+                                    fourQuaMap.put("data", levelFiveListMap);
+                                    towQuaListtMap.add(fourQuaMap);
                                     //}
                                 }
                             }
@@ -208,10 +191,10 @@ public class CommonServiceImpl implements CommonService {
                         String benchName = (String) map3.get("benchName");
                         if (StringUtils.isNotEmpty(benchName)) {
                             //if (null != levelFourListMap && levelFourListMap.size() >0) {
-                                threeQuaMap.put("code", map3.get("quaCode"));
-                                threeQuaMap.put("name", map3.get("benchName"));
-                                threeQuaMap.put("data", levelFourListMap);
-                                towQuaListtMap.add(threeQuaMap);
+                            threeQuaMap.put("code", map3.get("quaCode"));
+                            threeQuaMap.put("name", map3.get("benchName"));
+                            threeQuaMap.put("data", levelFourListMap);
+                            towQuaListtMap.add(threeQuaMap);
                             //}
                         }
                     }
@@ -231,26 +214,20 @@ public class CommonServiceImpl implements CommonService {
                 String benchName = (String) map2.get("benchName");
                 if (StringUtils.isNotEmpty(benchName)) {
                     //if (null != levelThreeListMap && levelThreeListMap.size() >0){
-                        towQuaMap.put("code", map2.get("quaCode"));
-                        towQuaMap.put("name", map2.get("benchName"));
-                        towQuaMap.put("data", levelThreeListMap);
-                        towQuaListtMap.add(towQuaMap);
+                    towQuaMap.put("code", map2.get("quaCode"));
+                    towQuaMap.put("name", map2.get("benchName"));
+                    towQuaMap.put("data", levelThreeListMap);
+                    towQuaListtMap.add(towQuaMap);
                     //}
-
                 }
-
             }
             oneQuaMap.put("code", map.get("quaCode"));
             oneQuaMap.put("name", map.get("quaName"));
             oneQuaMap.put("data", towQuaListtMap);
             oneQuaListtMap.add(oneQuaMap);
         }
-
-
         return oneQuaListtMap;
     }
-
-
 
 
 }

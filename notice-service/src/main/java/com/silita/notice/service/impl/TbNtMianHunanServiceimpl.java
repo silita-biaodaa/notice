@@ -2,17 +2,11 @@ package com.silita.notice.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.silita.notice.common.RedisConstantInterface;
 import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.TbCommentInfoMapper;
 import com.silita.notice.dao.TbCompanyMapper;
 import com.silita.notice.dao.TbNtMianHunanMapper;
-import com.silita.notice.dao.TbNtRegexQuaMapper;
-import com.silita.notice.service.CompanyService;
 import com.silita.notice.service.TbNtMianHunanService;
-import com.silita.notice.utils.ObjectUtils;
-import com.silita.notice.utils.RedisShardedPoolUtil;
-import com.sun.tools.corba.se.idl.StringGen;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.Cell;
@@ -26,7 +20,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import sun.security.krb5.internal.PAData;
 
 import java.io.IOException;
 import java.util.*;
@@ -39,14 +32,11 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     private TbCompanyMapper tbCompanyMapper;
     @Autowired
     private TbCommentInfoMapper tbCommentInfoMapper;
-
-    @Autowired
-    private TbNtRegexQuaMapper tbNtRegexQuaMapper;
-
     @Value("${hbase.notice-table-name}")
     private String hBaseTableName;
     @Autowired
     private Connection connection;
+
     /**
      * 查询中标公告
      *
@@ -124,12 +114,9 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public PageInfo queryTenders(Map<String, Object> param) {
-
         isNull(param);
-
         //获取地区
         queryRegions(param);
-
         //获取评标法
         String pbModes = MapUtils.getString(param, "pbModes");
         if (StringUtils.isNotEmpty(pbModes)) {
@@ -173,7 +160,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             }
             param.put("quaRegex", quaRegex);
         }
-
         param.put("pdModeType", param.get("proviceCode") + "_pbmode");
 
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
@@ -186,9 +172,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             param.put("range", s1);
            /* List<String> listNtId = tbNtRegexQuaMapper.queryListNoticeId(param);
             param.put("listNtId", listNtId);*/
-
         }
-
         List<Map<String, Object>> list = tbNtMianHunanMapper.queryTenders(param);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
@@ -325,7 +309,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             String province = split[0].toString();
             map.put("province", province);
         }
-
         return map;
     }
 
@@ -429,37 +412,33 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     }
 
     @Override
-    public void isNull(Map<String,Object> param) {
-
-        if(StringUtils.isEmpty(MapUtils.getString(param, "projectType"))){
-            param.put("title","");
+    public void isNull(Map<String, Object> param) {
+        if (StringUtils.isEmpty(MapUtils.getString(param, "projectType"))) {
+            param.put("title", "");
         }
-        if(StringUtils.isEmpty(MapUtils.getString(param, "projectType"))){
-            param.put("projectType","");
+        if (StringUtils.isEmpty(MapUtils.getString(param, "projectType"))) {
+            param.put("projectType", "");
         }
-        if(StringUtils.isEmpty(MapUtils.getString(param, "comName"))){
-            param.put("comName","");
+        if (StringUtils.isEmpty(MapUtils.getString(param, "comName"))) {
+            param.put("comName", "");
         }
-        if(StringUtils.isEmpty(MapUtils.getString(param, "rangeType"))){
-            param.put("rangeType","");
+        if (StringUtils.isEmpty(MapUtils.getString(param, "rangeType"))) {
+            param.put("rangeType", "");
         }
-        if(StringUtils.isEmpty(MapUtils.getString(param, "pbModes"))){
-            param.put("pbModes","");
+        if (StringUtils.isEmpty(MapUtils.getString(param, "pbModes"))) {
+            param.put("pbModes", "");
         }
-        if(StringUtils.isEmpty(MapUtils.getString(param, "zzType"))){
-            param.put("zzType","");
+        if (StringUtils.isEmpty(MapUtils.getString(param, "zzType"))) {
+            param.put("zzType", "");
         }
-        if(StringUtils.isEmpty(MapUtils.getString(param, "type"))){
-            param.put("type","");
+        if (StringUtils.isEmpty(MapUtils.getString(param, "type"))) {
+            param.put("type", "");
         }
-        if(StringUtils.isEmpty(MapUtils.getString(param, "projSumStart"))){
-            param.put("projSumStart","");
+        if (StringUtils.isEmpty(MapUtils.getString(param, "projSumStart"))) {
+            param.put("projSumStart", "");
         }
-        if(StringUtils.isEmpty(MapUtils.getString(param, "projSumEnd"))){
-            param.put("projSumEnd","");
+        if (StringUtils.isEmpty(MapUtils.getString(param, "projSumEnd"))) {
+            param.put("projSumEnd", "");
         }
-
     }
-
-
 }
