@@ -125,54 +125,50 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             param.put("pbModeList", pbModeList);
         }
         //获取资质
-        List<Map<String, Object>> group = new ArrayList<Map<String, Object>>();
-        String zzType = MapUtils.getString(param, "zzType");
-        String rangeType = MapUtils.getString(param, "rangeType");
-        String[] zz = zzType.split("\\,");
-        for (String z : zz) {
-            Map<String, Object> maps = new HashMap<String, Object>();
-            String[] split1 = z.split("\\/");
-            if (split1.length >= 2) {
-                maps.put("quaCode", split1[0]);
-                maps.put("gradeCode", split1[1]);
-            } else {
-                maps.put("quaCode", split1[0]);
-                maps.put("gradeCode", "");
+        if (null != param && StringUtils.isNotEmpty(MapUtils.getString(param, "zzType"))) {
+            List<Map<String, Object>> group = new ArrayList<Map<String, Object>>();
+            String zzType = MapUtils.getString(param, "zzType");
+            String rangeType = MapUtils.getString(param, "rangeType") == null ? "or" : MapUtils.getString(param, "rangeType");
+            String[] zz = zzType.split("\\,");
+            for (String z : zz) {
+                Map<String, Object> maps = new HashMap<String, Object>();
+                String[] split1 = z.split("\\/");
+                if (split1.length >= 2) {
+                    maps.put("quaCode", split1[0]);
+                    maps.put("gradeCode", split1[1]);
+                } else {
+                    maps.put("quaCode", split1[0]);
+                    maps.put("gradeCode", "");
+                }
+                group.add(maps);
             }
-            group.add(maps);
-        }
-        param.put("groupList", group);
+            param.put("groupList", group);
 
-        //获取资质id
-        List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
-        //如果rangeType为空则给他赋默认值为or
-        if (StringUtils.isBlank(rangeType)) {
-            param.put("rangeType", "or");
-            param.put("regexList", regexList);
-        } else if (rangeType.equals("or")) {
-            param.put("regexList", regexList);
-        } else if (rangeType.equals("and")) {
-            //如果rangeType为and 则先排序，再把regexList赋值给quaRegex
-            String quaRegex = "";
-            Collections.sort(regexList);
-            for (String id : regexList) {
-                quaRegex = quaRegex + id;
+            //获取资质id
+            List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
+            //如果rangeType为空则给他赋默认值为or
+            if (rangeType.equals("or")) {
+                param.put("regexList", regexList);
+            } else if (rangeType.equals("and")) {
+                //如果rangeType为and 则先排序，再把regexList赋值给quaRegex
+                String quaRegex = "";
+                Collections.sort(regexList);
+                for (String id : regexList) {
+                    quaRegex = quaRegex + id;
+                }
+                param.put("quaRegex", quaRegex);
             }
-            param.put("quaRegex", quaRegex);
         }
         param.put("pdModeType", param.get("proviceCode") + "_pbmode");
 
-        Integer pageNo = MapUtils.getInteger(param, "pageNo");
-        Integer pageSize = MapUtils.getInteger(param, "pageSize");
-        PageHelper.startPage(pageNo, pageSize);
         String comName = MapUtils.getString(param, "comName");
-
         if (StringUtils.isNotEmpty(comName)) {
             String s1 = tbCompanyMapper.queryComNameQual(param);
             param.put("range", s1);
-           /* List<String> listNtId = tbNtRegexQuaMapper.queryListNoticeId(param);
-            param.put("listNtId", listNtId);*/
         }
+        Integer pageNo = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
+        PageHelper.startPage(pageNo, pageSize);
         List<Map<String, Object>> list = tbNtMianHunanMapper.queryTenders(param);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
