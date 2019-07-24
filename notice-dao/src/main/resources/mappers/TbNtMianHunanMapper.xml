@@ -106,7 +106,7 @@
         <include refid="noticeType"/>,
         <include refid="noticeTypeConvert"/>,
         mian.nt_category AS `type`,
-        (SELECT t.`name` FROM dic_common t WHERE t.`code` = tenders.`pb_mode` AND t.`type` = '${pdModeType}') AS pdMode
+        (SELECT t.`name` FROM dic_common t WHERE t.`code` = tenders.`pb_mode` AND t.`type` = '${pdModeType}') AS pbMode
         FROM tb_nt_tenders_${proviceCode} tenders
         left JOIN tb_nt_mian_${proviceCode} mian
         ON mian.pkid = tenders.nt_id
@@ -116,7 +116,13 @@
         </if>
         WHERE 1 = 1
         <if test="comName != null and comName != ''">
-            and r.qua_regex=#{range}
+            <if test="aptitudeUuidList != null and aptitudeUuidList.size > 0">
+                and(
+                <foreach collection="aptitudeUuidList" item="list" separator="or">
+                    r.qua_regex like CONCAT('%',#{list},'%')
+                </foreach>
+                )
+            </if>
         </if>
         AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
         AND mian.`pub_date` &lt;= NOW()
@@ -166,18 +172,7 @@
                 )
             </if>
         </if>
- <!--       <if test="comName != null and comName != ''">
-            <if test="listNtId != null and listNtId.size() >0">
-                and(
-                <foreach collection="listNtId" item="list" separator="or">
-                    mian.pkid=#{list}
-                </foreach>
-                )
-            </if>
-            <if test="listNtId == null or listNtId.size() == 0">
-                and mian.pkid=''
-            </if>
-        </if>-->
+
         ORDER BY mian.`pub_date` DESC
     </select>
 

@@ -27,10 +27,12 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
      */
     Integer queryRelCompanySize(Map<String,Object> param);
 
+
+
     /*
      * 根据企业名称获取企业资质
      */
-    String queryComNameQual(Map<String,Object> param);
+    List<String> queryComNameRangeQual(Map<String,Object> param);
 
 
 

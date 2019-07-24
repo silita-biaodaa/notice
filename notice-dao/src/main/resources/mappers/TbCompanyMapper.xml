@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.silita.notice.dao.TbCompanyMapper" >
-<!--AS certNo
-  AS certDate
-  AS validDate
-  AS subsist
-  AS comRange
-  AS collected  需要展现-->
+<mapper namespace="com.silita.notice.dao.TbCompanyMapper">
+    <!--AS certNo
+      AS certDate
+      AS validDate
+      AS subsist
+      AS comRange
+      AS collected  需要展现-->
     <!--查询符合该公告资质的企业-->
     <select id="queryQualCom" resultType="java.util.Map" parameterType="map">
         SELECT
@@ -34,20 +34,35 @@
             join mishu.tb_company_info_${source} c
             on t.com_name=c.com_name
         </if>
-        where t.regis_address = #{regisAddress} and (
-        <foreach collection="list" item="list" separator="or">
-            t.range=#{list}
-        </foreach>
-        )
+        where t.regis_address = #{regisAddress}
+        <if test="list != null and list.size > 0">
+            and (
+            <foreach collection="list" item="list" separator="or">
+                t.range like CONCAT('%',#{list},'%')
+            </foreach>
+            )
+
+        </if>
+        <if test="list == null or list.size == 0">
+            and t.range = null
+        </if>
+        order by t.px desc
+
     </select>
     <!--获取符合该公告资质的企业数量-->
     <select id="queryRelCompanySize" resultType="java.lang.Integer">
         select count(0) from mishu.`tb_company` t
-        where t.range=#{quaRegex} and t.regis_address=#{regisAddress}
+        where t.range like CONCAT('%',#{quaRegex},'%') and t.regis_address=#{regisAddress}
     </select>
-    <!--根据企业名称获取到企业的资质-->
-    <select id="queryComNameQual" resultType="java.lang.String" parameterType="map">
-        select t.range from  mishu.`tb_company` t where t.com_name=#{comName}
+
+    <select id="queryComNameRangeQual" resultType="java.lang.String" parameterType="map">
+        SELECT
+          b.aptitude_uuid AS aptitudeUuid
+        FROM
+          mishu.`tb_company` a
+          JOIN mishu.`tb_company_aptitude` b
+            ON a.`com_id` = b.com_id
+        WHERE a.com_name = #{comName}
     </select>
 
 </mapper>

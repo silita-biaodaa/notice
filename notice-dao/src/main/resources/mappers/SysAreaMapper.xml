@@ -13,9 +13,7 @@
     <select id="queryCode" resultType="java.lang.String" parameterType="map">
         SELECT area_code AS areaCode FROM sys_area WHERE area_level='1' GROUP BY areaCode
     </select>
-    <select id="queryName" resultType="java.lang.String" parameterType="map">
-        select area_name as areaName from `sys_area` where area_code=#{source}
-    </select>
+
 
 
 </mapper>

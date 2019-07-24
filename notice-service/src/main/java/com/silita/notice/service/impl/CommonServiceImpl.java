@@ -229,5 +229,10 @@ public class CommonServiceImpl implements CommonService {
         return oneQuaListtMap;
     }
 
+    @Override
+    public void proviceCitySid(Map<String, Object> proviceCity) {
+
+    }
+
 
 }

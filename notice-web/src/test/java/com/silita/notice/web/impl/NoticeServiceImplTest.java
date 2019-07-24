@@ -169,16 +169,16 @@ public class NoticeServiceImplTest extends BaseCastTest {
     @Test
     public  void query() {
 
-        String phones = "0734-8236666\\t;\\t0734-8436666\\t;\\t13875655412\\t;\\t13875792101\\t;";
-        String phone = phones.trim();
+        String phones = "0734-8236666\\t;\\t0734-8436666\\t;\\t17875655412\\t;\\t13875792101\\t;";
+       /* String phone = phones.trim();
         System.out.println(phone);
         String[] split = phone.split(";");
         String s1 = split[0].toString();
         String s2 = s1.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
-        System.out.println(s2);
+        System.out.println(s2);*/
 
 
-        Pattern patternPhone = Pattern.compile("((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\\d{8}");
+        Pattern patternPhone = Pattern.compile("((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0-9])|(18[0,5-9]))\\d{8}");
 
         Pattern patternFixed = Pattern.compile("(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)");
         // 创建匹配给定输入与此模式的匹配器。

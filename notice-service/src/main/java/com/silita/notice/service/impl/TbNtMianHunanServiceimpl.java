@@ -125,10 +125,14 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             param.put("pbModeList", pbModeList);
         }
         //获取资质
-        if (null != param && StringUtils.isNotEmpty(MapUtils.getString(param, "zzType"))) {
-            List<Map<String, Object>> group = new ArrayList<Map<String, Object>>();
-            String zzType = MapUtils.getString(param, "zzType");
-            String rangeType = MapUtils.getString(param, "rangeType") == null ? "or" : MapUtils.getString(param, "rangeType");
+        List<Map<String, Object>> group = new ArrayList<Map<String, Object>>();
+        String zzType = MapUtils.getString(param, "zzType");
+        if (StringUtils.isNotEmpty(zzType)) {
+            String rangeType = MapUtils.getString(param, "rangeType");
+            if (StringUtils.isEmpty(rangeType)){
+                rangeType = "or";
+                param.put("rangeType",rangeType);
+            }
             String[] zz = zzType.split("\\,");
             for (String z : zz) {
                 Map<String, Object> maps = new HashMap<String, Object>();
@@ -159,13 +163,21 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 param.put("quaRegex", quaRegex);
             }
         }
+
         param.put("pdModeType", param.get("proviceCode") + "_pbmode");
 
         String comName = MapUtils.getString(param, "comName");
         if (StringUtils.isNotEmpty(comName)) {
-            String s1 = tbCompanyMapper.queryComNameQual(param);
-            param.put("range", s1);
+            List<String> comNameRangeQual = tbCompanyMapper.queryComNameRangeQual(param);
+            if (comNameRangeQual != null && comNameRangeQual.size() > 0) {
+                param.put("aptitudeUuidList", comNameRangeQual);
+            } else {
+                List<Map<String, Object>> list = new ArrayList<>();
+                PageInfo pageInfo = new PageInfo(list);
+                return pageInfo;
+            }
         }
+
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
@@ -409,7 +421,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
 
     @Override
     public void isNull(Map<String, Object> param) {
-        if (StringUtils.isEmpty(MapUtils.getString(param, "projectType"))) {
+        if (StringUtils.isEmpty(MapUtils.getString(param, "title"))) {
             param.put("title", "");
         }
         if (StringUtils.isEmpty(MapUtils.getString(param, "projectType"))) {

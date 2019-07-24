@@ -18,20 +18,20 @@ public class CompanyController extends BaseController {
 
     /**
      * 查询符合该公告资质的企业
+     *
      * @param param
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/qual/list/{id}",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
-    public Map<String,Object> list(@PathVariable String id,@RequestBody Map<String,Object> param){
-        param.put("id",id);
-        Map<String,Object> resultMap = new HashMap<>();
+    @RequestMapping(value = "/qual/list/{id}", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> list(@PathVariable String id, @RequestBody Map<String, Object> param) {
+        param.put("id", id);
+        Map<String, Object> resultMap = new HashMap<>();
         checkPage(param);
         PageInfo pageInfo = companyService.queryQualCom(param);
-        seccussMap(resultMap,pageInfo);
+        seccussMap(resultMap, pageInfo);
         return resultMap;
     }
-
 
 
 }

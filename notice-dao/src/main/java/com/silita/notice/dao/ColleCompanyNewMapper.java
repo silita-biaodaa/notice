@@ -14,5 +14,5 @@ public interface ColleCompanyNewMapper extends MyMapper<ColleCompanyNew> {
      * @param param
      * @return
      */
-    List<String> queryYesOrNo(Map<String,Object> param);
+    List<String> queryTrueFalse(Map<String,Object> param);
 }

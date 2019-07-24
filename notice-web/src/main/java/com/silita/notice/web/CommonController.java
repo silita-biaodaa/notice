@@ -16,11 +16,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/new/common")
 public class CommonController extends BaseController {
-
     @Autowired
     private CommonService commonService;
-
-
     /**
      * 获取筛选
      *
@@ -53,13 +50,10 @@ public class CommonController extends BaseController {
         map.put("pbMode", pbMode);
         map.put("noticeQua", noticeList);
         map.put("comQua", comList);
-
         RedisShardedPoolUtil.set(key, map);
         seccussMap(resultMap, map);
         return resultMap;
     }
-
-
 
 
     /**
@@ -70,7 +64,6 @@ public class CommonController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/filter/qual", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map conditionFilterQyal() {
-        Map<String, Object> param = new HashMap<>();
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Object> map = new HashMap<>();
         String key = "filter_company";
@@ -88,12 +81,10 @@ public class CommonController extends BaseController {
         List<Map<String, Object>> comList = commonService.queryQua(com);
         map.put("noticeQua", noticeList);
         map.put("comQua", comList);
-
         RedisShardedPoolUtil.set(key, map);
         seccussMap(resultMap, map);
         return resultMap;
     }
-
 
 
 }

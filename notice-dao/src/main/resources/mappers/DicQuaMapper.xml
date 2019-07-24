@@ -26,6 +26,7 @@
         biaodaa_admin.dic_qua d
         WHERE d.level = #{noticeLevel}
         and d.parent_id=#{zzIdOne}
+        and d.qua_name &lt;&gt; '地质灾害防治工程'
     </select>
 
 

@@ -28,4 +28,6 @@ public interface CompanyService {
      * @return
      */
     PageInfo queryQualCom(Map<String,Object> param);
+
+
 }
