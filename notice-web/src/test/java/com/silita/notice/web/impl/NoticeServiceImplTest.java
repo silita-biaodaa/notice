@@ -1,6 +1,7 @@
 package com.silita.notice.web.impl;
 
 import com.github.pagehelper.PageInfo;
+import com.silita.notice.common.RegionCommon;
 import com.silita.notice.dao.SnatchurlMapper;
 import com.silita.notice.dao.TbCommentInfoMapper;
 import com.silita.notice.dao.TbNtMianHunanMapper;
@@ -223,6 +224,14 @@ public class NoticeServiceImplTest extends BaseCastTest {
 
 
 
+    }
+
+    @Test
+    public void quhanzi(){
+     /*   Map<String, Object> region = RegionCommon.region();
+        for (String s : region.keySet()) {
+            System.out.println(s);
+        }*/
     }
 
 

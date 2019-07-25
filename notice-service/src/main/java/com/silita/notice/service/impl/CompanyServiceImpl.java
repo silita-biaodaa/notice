@@ -50,15 +50,9 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Integer relCompanySize(Map<String, Object> param) {
         Integer count = 0;
-        //获取省份的name
-        List<Map<String, Object>> region = RegionCommon.region();
         String source = MapUtils.getString(param, "source");
-        for (Map<String, Object> map : region) {
-            if (map.get("code").equals(source)) {
-                param.put("regisAddress", map.get("name"));
-                break;
-            }
-        }
+        //获取省份的name
+        param.put("regisAddress", RegionCommon.regionSource.get(source));
         //获取资质关系表达式的列quaRegex
         List<String> list = tbNtRegexQuaMapper.queryQuaRegex(param);
         if (list.size() >= 0 || null != list) {
@@ -80,14 +74,9 @@ public class CompanyServiceImpl implements CompanyService {
      */
     @Override
     public PageInfo queryQualCom(Map<String, Object> param) {
-        List<Map<String, Object>> region = RegionCommon.region();
         String source = MapUtils.getString(param, "source");
-        for (Map<String, Object> map : region) {
-            if (map.get("code").equals(source)) {
-                param.put("regisAddress", map.get("name"));
-                break;
-            }
-        }
+        //获取省份名称
+        param.put("regisAddress", RegionCommon.regionSource.get(source));
         List<String> list = tbNtRegexQuaMapper.queryQuaRegex(param);
         param.put("list", list);
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
