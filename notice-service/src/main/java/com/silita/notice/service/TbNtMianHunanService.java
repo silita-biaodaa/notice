@@ -143,9 +143,6 @@ public interface TbNtMianHunanService {
     Map<String, Object> queryCityName(Map<String, Object> param);
 
 
-    void isNull(Map<String, Object> param);
-
-
 
 
 }

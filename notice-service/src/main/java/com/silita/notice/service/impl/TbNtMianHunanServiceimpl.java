@@ -2,6 +2,7 @@ package com.silita.notice.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.silita.notice.common.IsNullCommon;
 import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.TbCommentInfoMapper;
 import com.silita.notice.dao.TbCompanyMapper;
@@ -45,7 +46,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public PageInfo queryBids(Map<String, Object> param) {
-        isNull(param);
+        IsNullCommon.isNull(param);
         //获取地区
         queryRegions(param);
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
@@ -75,7 +76,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Override
     public PageInfo queryCompanyName(Map<String, Object> param) {
         //判断传参是否为空
-        isNull(param);
+        IsNullCommon.isNull(param);
         Map<String, Object> typeMap = new HashMap<>();
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
@@ -114,7 +115,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public PageInfo queryTenders(Map<String, Object> param) {
-        isNull(param);
+        IsNullCommon.isNull(param);
         //获取地区
         queryRegions(param);
         //获取评标法
@@ -129,9 +130,9 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         String zzType = MapUtils.getString(param, "zzType");
         if (StringUtils.isNotEmpty(zzType)) {
             String rangeType = MapUtils.getString(param, "rangeType");
-            if (StringUtils.isEmpty(rangeType)){
+            if (StringUtils.isEmpty(rangeType)) {
                 rangeType = "or";
-                param.put("rangeType",rangeType);
+                param.put("rangeType", rangeType);
             }
             String[] zz = zzType.split("\\,");
             for (String z : zz) {
@@ -419,34 +420,5 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         return tbNtMianHunanMapper.queryCityName(param);
     }
 
-    @Override
-    public void isNull(Map<String, Object> param) {
-        if (StringUtils.isEmpty(MapUtils.getString(param, "title"))) {
-            param.put("title", "");
-        }
-        if (StringUtils.isEmpty(MapUtils.getString(param, "projectType"))) {
-            param.put("projectType", "");
-        }
-        if (StringUtils.isEmpty(MapUtils.getString(param, "comName"))) {
-            param.put("comName", "");
-        }
-        if (StringUtils.isEmpty(MapUtils.getString(param, "rangeType"))) {
-            param.put("rangeType", "");
-        }
-        if (StringUtils.isEmpty(MapUtils.getString(param, "pbModes"))) {
-            param.put("pbModes", "");
-        }
-        if (StringUtils.isEmpty(MapUtils.getString(param, "zzType"))) {
-            param.put("zzType", "");
-        }
-        if (StringUtils.isEmpty(MapUtils.getString(param, "type"))) {
-            param.put("type", "");
-        }
-        if (StringUtils.isEmpty(MapUtils.getString(param, "projSumStart"))) {
-            param.put("projSumStart", "");
-        }
-        if (StringUtils.isEmpty(MapUtils.getString(param, "projSumEnd"))) {
-            param.put("projSumEnd", "");
-        }
-    }
+
 }

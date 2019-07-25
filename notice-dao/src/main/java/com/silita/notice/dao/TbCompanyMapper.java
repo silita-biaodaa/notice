@@ -19,6 +19,13 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
      */
     List<Map<String,Object>> queryQualCom(Map<String,Object> param);
 
+    /**
+     * 获取电话号码
+     * @param param
+     * @return
+     */
+    String queryQualComPhone(Map<String,Object> param);
+
 
     /**
      * 获取符合该资质的企业数量
