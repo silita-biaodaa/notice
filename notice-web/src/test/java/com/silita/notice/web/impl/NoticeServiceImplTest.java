@@ -169,13 +169,25 @@ public class NoticeServiceImplTest extends BaseCastTest {
     @Test
     public  void query() {
 
-        String phones = "0734-8236666\\t;\\t0734-8436666\\t;\\t17875655412\\t;\\t13875792101\\t;";
-       /* String phone = phones.trim();
+        String phones = "0734-8236666";
+        System.out.println("ssss1:"+phones.substring(0, 4));
+        System.out.println("ssss2:"+phones.substring(5));
+
+        String substring = phones.substring(0, 4);
+        String substring1 = phones.substring(5);
+        String r = substring+substring1;
+
+
+        String phone = phones.trim();
         System.out.println(phone);
         String[] split = phone.split(";");
         String s1 = split[0].toString();
-        String s2 = s1.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
-        System.out.println(s2);*/
+        String s2 = r.replaceAll("(\\d{4})\\d{4}(\\d{3})", "$1****$2");
+
+        String substring2 = s2.substring(0, 4);
+        String substring3 = s2.substring(4);
+        System.out.println(substring2+"-"+substring3);
+        System.out.println("s2:"+s2);
 
 
         Pattern patternPhone = Pattern.compile("((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0-9])|(18[0,5-9]))\\d{8}");

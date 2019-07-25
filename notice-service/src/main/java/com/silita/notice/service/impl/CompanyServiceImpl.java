@@ -125,8 +125,16 @@ public class CompanyServiceImpl implements CompanyService {
                         b = matcherFixed.group() + ";" + b;
                     } else {
                         String fixedGroup = matcherFixed.group();
-                        String fixed = fixedGroup.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
-                        b = fixed + ";" + b;
+                        String substring = fixedGroup.substring(0, 4);
+                        String substring1 = fixedGroup.substring(5);
+                        String r = substring+substring1;
+                        String fixed = r.replaceAll("(\\d{4})\\d{4}(\\d{3})", "$1****$2");
+                        String substring2 = fixed.substring(0, 4);
+                        String substring3 = fixed.substring(4);
+                        String fix=substring2+"-"+substring3;
+
+
+                        b = fix + ";" + b;
                     }
                 }
                 map.put("phone", a + b);
