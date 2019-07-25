@@ -5,7 +5,6 @@ import com.silita.notice.model.ColleCompanyNew;
 import com.silita.notice.utils.MyMapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Map;
 @Repository
 public interface ColleCompanyNewMapper extends MyMapper<ColleCompanyNew> {
@@ -14,5 +13,5 @@ public interface ColleCompanyNewMapper extends MyMapper<ColleCompanyNew> {
      * @param param
      * @return
      */
-    List<String> queryTrueFalse(Map<String,Object> param);
+    Integer queryTrueFalse(Map<String,Object> param);
 }

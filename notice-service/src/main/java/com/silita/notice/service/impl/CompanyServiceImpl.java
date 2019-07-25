@@ -31,7 +31,6 @@ public class CompanyServiceImpl implements CompanyService {
     @Autowired
     private ColleCompanyNewMapper colleCompanyNewMapper;
 
-
     @Override
     public PageInfo queryCom(Map<String, Object> param) {
         String noticeId = MapUtils.getString(param, "id");
@@ -55,7 +54,7 @@ public class CompanyServiceImpl implements CompanyService {
         List<Map<String, Object>> region = RegionCommon.region();
         String source = MapUtils.getString(param, "source");
         for (Map<String, Object> map : region) {
-            if(map.get("code").equals(source)){
+            if (map.get("code").equals(source)) {
                 param.put("regisAddress", map.get("name"));
                 break;
             }
@@ -84,7 +83,7 @@ public class CompanyServiceImpl implements CompanyService {
         List<Map<String, Object>> region = RegionCommon.region();
         String source = MapUtils.getString(param, "source");
         for (Map<String, Object> map : region) {
-            if(map.get("code").equals(source)){
+            if (map.get("code").equals(source)) {
                 param.put("regisAddress", map.get("name"));
                 break;
             }
@@ -95,12 +94,10 @@ public class CompanyServiceImpl implements CompanyService {
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, Object>> listMap = tbCompanyMapper.queryQualCom(param);
-        //用户是否关注企业
-        Boolean attention = false;
         param.put("userId", VisitInfoHolder.getUserId());
         for (Map<String, Object> map : listMap) {
             String phones = (String) map.get("phone");
-            if(StringUtils.isNotEmpty(phones)){
+            if (StringUtils.isNotEmpty(phones)) {
                 Pattern patternPhone = Pattern.compile("((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0-9])|(18[0,5-9]))\\d{8}");
                 Pattern patternFixed = Pattern.compile("(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)");
                 // 创建匹配给定输入与此模式的匹配器。
@@ -127,30 +124,26 @@ public class CompanyServiceImpl implements CompanyService {
                         String fixedGroup = matcherFixed.group();
                         String substring = fixedGroup.substring(0, 4);
                         String substring1 = fixedGroup.substring(5);
-                        String r = substring+substring1;
+                        String r = substring + substring1;
                         String fixed = r.replaceAll("(\\d{4})\\d{4}(\\d{3})", "$1****$2");
                         String substring2 = fixed.substring(0, 4);
                         String substring3 = fixed.substring(4);
-                        String fix=substring2+"-"+substring3;
-
-
+                        String fix = substring2 + "-" + substring3;
                         b = fix + ";" + b;
                     }
                 }
                 map.put("phone", a + b);
-            }else{
-                map.put("phone","");
+            } else {
+                map.put("phone", "");
             }
             param.put("comId", map.get("comId"));
-            List<String> list1 = colleCompanyNewMapper.queryTrueFalse(param);
-
-            if (list1 != null &&list1.size() > 0) {
-                attention=true;
-                map.put("collected", attention);
+            Integer collectCount = colleCompanyNewMapper.queryTrueFalse(param);
+            //用户是否关注企业
+            if (collectCount > 0) {
+                map.put("collected", true);
             } else {
-                map.put("collected", attention);
+                map.put("collected", false);
             }
-
         }
         PageInfo pageInfo = new PageInfo(listMap);
         return pageInfo;
