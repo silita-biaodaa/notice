@@ -113,12 +113,14 @@
         FROM tb_nt_tenders_${proviceCode} tenders
         left JOIN tb_nt_mian_${proviceCode} mian
         ON mian.pkid = tenders.nt_id
-        <if test="comName != null and comName != ''">
-            join  tb_nt_regex_qua r
-            on mian.pkid=r.nt_id
-        </if>
         WHERE 1 = 1
         <if test="comName != null and comName != ''">
+            AND mian.`pkid` IN
+            (SELECT
+            r.`nt_id`
+            FROM
+            tb_nt_regex_qua r
+            WHERE 1 = 1
             <if test="aptitudeUuidList != null and aptitudeUuidList.size > 0">
                 and(
                 <foreach collection="aptitudeUuidList" item="list" separator="or">
@@ -126,8 +128,8 @@
                 </foreach>
                 )
             </if>
+            ORDER BY r.`created` DESC)
         </if>
-
        <if test="title == '' or title == null">
            AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
            AND mian.`pub_date` &lt;= NOW()

@@ -25,7 +25,6 @@ public interface TbNtRegexQuaMapper extends MyMapper<TbNtRegexQua> {
     List<String> queryQuaRegex(Map<String,Object> param);
 
 
-   // List<Map<String,Object>> queryRegexQua(Map<String,Object> param);
 
 
     /**
@@ -36,5 +35,4 @@ public interface TbNtRegexQuaMapper extends MyMapper<TbNtRegexQua> {
     List<String> queryListNoticeId(Map<String,Object> param);
 
 
-   // List<String> queryListQuaRegexNtid(String quaRegex);
 }
