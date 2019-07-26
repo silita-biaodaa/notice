@@ -93,8 +93,6 @@ public class CompanyServiceImpl implements CompanyService {
             String phone = tbCompanyMapper.queryQualComPhone(param);
             if (StringUtils.isNotEmpty(phone)) {
                 map.put("phone",PhoneCommon.phones(phone,isVip));
-            } else {
-                map.put("phone", "");
             }
             param.put("comId", map.get("comId"));
             Integer collectCount = colleCompanyNewMapper.queryTrueFalse(param);

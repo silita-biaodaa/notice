@@ -30,9 +30,11 @@
         INNER JOIN tb_nt_bids_${proviceCode} bids
         ON mian.`pkid` = bids.`nt_id`
         WHERE 1 = 1
-        AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
-        AND mian.`pub_date` &lt;= NOW()
         and mian.nt_category='2'
+        <if test="title == '' or title == null">
+            AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
+            AND mian.`pub_date` &lt;= NOW()
+        </if>
         <if test="title != null and title != ''">
             and mian.title like CONCAT('%',#{title},'%')
         </if>
@@ -124,8 +126,10 @@
                 )
             </if>
         </if>
-        AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
-        AND mian.`pub_date` &lt;= NOW()
+       <if test="title == '' or title == null">
+           AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
+           AND mian.`pub_date` &lt;= NOW()
+       </if>
         and mian.nt_category='1'
         <if test="title != null and title != ''">
             and mian.title like CONCAT('%',#{title},'%')
