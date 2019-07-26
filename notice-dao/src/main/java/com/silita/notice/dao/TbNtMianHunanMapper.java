@@ -18,7 +18,7 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
      * @return
      */
     //List<Map<String,Object>> queryBids(TbNtMianHunan nociteMian,List<String> list,String proviceCode);
-    List<Map<String,Object>> queryBids(Map<String,Object> param);
+    List<Map<String,String>> queryBids(Map<String,Object> param);
 
 
 

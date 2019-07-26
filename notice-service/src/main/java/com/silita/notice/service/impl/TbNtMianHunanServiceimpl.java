@@ -52,7 +52,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
-        List<Map<String, Object>> data = tbNtMianHunanMapper.queryBids(param);
+        List<Map<String, String>> data = tbNtMianHunanMapper.queryBids(param);
        /* if (data != null && data.size() > 0) {
             String key;
             for (Map<String, Object> map : data) {
