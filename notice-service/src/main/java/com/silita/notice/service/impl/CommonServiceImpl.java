@@ -62,11 +62,10 @@ public class CommonServiceImpl implements CommonService {
 
         List<Map<String, Object>> pbModeList = new ArrayList<>();
         List<String> list = sysAreaMapper.queryCode();
-        List<Map<String, Object>> list1 = null;
         for (String s : list) {
             Map<String, Object> map = new HashMap<>();
             param.put("pbModeType", s + "_pbmode");
-            list1 = dicCommonMapper.queryPbModes(param);
+            List<Map<String, Object>>  list1 = dicCommonMapper.queryPbModes(param);
             map.put("provice", s);
             map.put("list", list1);
             pbModeList.add(map);
