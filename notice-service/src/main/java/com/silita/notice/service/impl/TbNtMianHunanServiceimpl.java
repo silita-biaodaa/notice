@@ -81,8 +81,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
-        List<Map<String, Object>> list = tbNtMianHunanMapper.queryCompanyName(param);
-        for (Map<String, Object> map : list) {
+        List<Map<String, String>> list = tbNtMianHunanMapper.queryCompanyName(param);
+        for (Map<String, String> map : list) {
            /* String key;
             if (null != map.get("oneName")) {
                 param.put("comName", map.get("oneName"));
@@ -94,8 +94,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             typeMap.put("source", map.get("source"));
             typeMap.put("ntId", map.get("id"));
             Map<String, Object> map1 = tbNtMianHunanMapper.queryProjectTypeNoticeType(typeMap);
-            map.put("projectType", map1.get("projectType"));
-            map.put("noticeType", map1.get("noticeType"));
+            String projectType =(String) map1.get("projectType");
+            map.put("projectType", projectType);
+            String noticeType = (String)map1.get("noticeType");
+            map.put("noticeType", noticeType);
         }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
@@ -169,7 +171,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
 
         String comName = MapUtils.getString(param, "comName");
         if (StringUtils.isNotEmpty(comName)) {
-            List<String> comNameRangeQual = tbCompanyMapper.queryComNameRangeQual(param);
+            String comId = tbCompanyMapper.queryComId(param);
+            List<String> comNameRangeQual = tbCompanyMapper.queryComNameRangeQual(comId);
             if (comNameRangeQual != null && comNameRangeQual.size() > 0) {
                 param.put("aptitudeUuidList", comNameRangeQual);
             } else {

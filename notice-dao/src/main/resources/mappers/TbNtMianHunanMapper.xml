@@ -31,6 +31,7 @@
         ON mian.`pkid` = bids.`nt_id`
         WHERE 1 = 1
         and mian.nt_category='2'
+        and CAST(mian.nt_type as SIGNED) &lt; 100
         <if test="title == '' or title == null">
             AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
             AND mian.`pub_date` &lt;= NOW()
@@ -126,11 +127,13 @@
                 )
             </if>
         </if>
+
        <if test="title == '' or title == null">
            AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
            AND mian.`pub_date` &lt;= NOW()
        </if>
         and mian.nt_category='1'
+        and CAST(mian.nt_type as SIGNED) &lt; 100
         <if test="title != null and title != ''">
             and mian.title like CONCAT('%',#{title},'%')
         </if>

@@ -21,5 +21,8 @@
     <select id="queryListNoticeId" resultType="java.lang.String" parameterType="map">
       SELECT nt_id AS ntId FROM  `tb_nt_regex_qua` WHERE qua_regex=#{range}
     </select>
+ <!-- <select id="queryListQuaRegexNtid" resultType="java.lang.String" parameterType="map">
+
+  </select>-->
 
 </mapper>

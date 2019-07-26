@@ -39,7 +39,14 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
     /*
      * 根据企业名称获取企业资质
      */
-    List<String> queryComNameRangeQual(Map<String,Object> param);
+    List<String> queryComNameRangeQual(String comId);
+
+    /**
+     * 获取企业id
+     * @param param
+     * @return
+     */
+    String queryComId(Map<String,Object> param);
 
 
 

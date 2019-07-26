@@ -46,14 +46,19 @@
         where t.range like CONCAT('%',#{quaRegex},'%') and t.regis_address=#{regisAddress}
     </select>
 
+    <!--SELECT
+    b.aptitude_uuid AS aptitudeUuid
+    FROM
+    mishu.`tb_company` a
+    JOIN mishu.`tb_company_aptitude` b
+    ON a.`com_id` = b.com_id
+    WHERE a.com_name = #{comName}-->
     <select id="queryComNameRangeQual" resultType="java.lang.String" parameterType="map">
         SELECT
           b.aptitude_uuid AS aptitudeUuid
         FROM
-          mishu.`tb_company` a
-          JOIN mishu.`tb_company_aptitude` b
-            ON a.`com_id` = b.com_id
-        WHERE a.com_name = #{comName}
+          mishu.`tb_company_aptitude` b
+        WHERE b.com_id=#{comId}
     </select>
     <select id="queryQualComPhone" resultType="java.lang.String">
         SELECT
@@ -66,6 +71,9 @@
             mishu.tb_company_info_${source} c
         </if>
         WHERE c.com_name=#{comName}
+    </select>
+    <select id="queryComId" resultType="java.lang.String" parameterType="map">
+          SELECT t.com_id AS comId FROM mishu.`tb_company` t WHERE t.com_name=#{comName}
     </select>
 
 </mapper>
