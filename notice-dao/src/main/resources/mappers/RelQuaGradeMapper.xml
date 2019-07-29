@@ -11,6 +11,7 @@
         JOIN `rel_qua_grade` r
         ON c.code=r.grade_code
         WHERE r.qua_code=#{quaCode}
+        order by order_no
     </select>
 
 

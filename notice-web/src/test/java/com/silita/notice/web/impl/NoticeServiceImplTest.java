@@ -127,56 +127,42 @@ public class NoticeServiceImplTest extends BaseCastTest {
 
     @Test
     public void qx2() {
-  /*      List<Map<String, Object>> list = tbCommentInfoMapper.queryRelatedId();
-        Map<String,Object> param = new HashMap<>();
-        for (Map<String, Object> map : list) {
-            param.put("relatedId",map.get("relatedId"));
-            param.put("pkid",map.get("pkid"));
+        List<String> list1 = tbCommentInfoMapper.queryReplySource();
+        for (String source : list1) {
 
-            List<String> titleList = snatchurlMapper.queryTitle(param);
-            for (String s : titleList) {
-                param.put("title",s);
-                List<String> listPkid = tbNtMianHunanMapper.queryPkid(param);
-                for (String s1 : listPkid) {
-                    param.put("relatedId",s1);
-                    tbCommentInfoMapper.updateRelatedId(param);
+
+            List<Map<String, Object>> list = tbCommentInfoMapper.queryRelatedId2();
+            Map<String, Object> param = new HashMap<>();
+            for (Map<String, Object> map : list) {
+                param.put("relatedId", map.get("relatedId"));
+                param.put("pkid", map.get("pkid"));
+
+                List<String> titleList = snatchurlMapper.queryTitle(param);
+                for (String s : titleList) {
+                    param.put("title", s);
+                    param.put("source",source);
+                    List<String> listPkid = tbNtMianHunanMapper.queryPkid(param);
+                    for (String s1 : listPkid) {
+                        param.put("relatedId", s1);
+                        tbCommentInfoMapper.updateRelatedId2(param);
+                    }
+
                 }
 
             }
-
-        }*/
-
-
-        List<Map<String, Object>> list = tbCommentInfoMapper.queryRelatedId2();
-        Map<String, Object> param = new HashMap<>();
-        for (Map<String, Object> map : list) {
-            param.put("relatedId", map.get("relatedId"));
-            param.put("pkid", map.get("pkid"));
-
-            List<String> titleList = snatchurlMapper.queryTitle(param);
-            for (String s : titleList) {
-                param.put("title", s);
-                List<String> listPkid = tbNtMianHunanMapper.queryPkid(param);
-                for (String s1 : listPkid) {
-                    param.put("relatedId", s1);
-                    tbCommentInfoMapper.updateRelatedId2(param);
-                }
-
-            }
-
         }
     }
 
     @Test
-    public  void query() {
+    public void query() {
 
         String phones = "0734-8236666";
-        System.out.println("ssss1:"+phones.substring(0, 4));
-        System.out.println("ssss2:"+phones.substring(5));
+        System.out.println("ssss1:" + phones.substring(0, 4));
+        System.out.println("ssss2:" + phones.substring(5));
 
         String substring = phones.substring(0, 4);
         String substring1 = phones.substring(5);
-        String r = substring+substring1;
+        String r = substring + substring1;
 
 
         String phone = phones.trim();
@@ -187,8 +173,8 @@ public class NoticeServiceImplTest extends BaseCastTest {
 
         String substring2 = s2.substring(0, 4);
         String substring3 = s2.substring(4);
-        System.out.println(substring2+"-"+substring3);
-        System.out.println("s2:"+s2);
+        System.out.println(substring2 + "-" + substring3);
+        System.out.println("s2:" + s2);
 
 
         Pattern patternPhone = Pattern.compile("((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0-9])|(18[0,5-9]))\\d{8}");
@@ -205,29 +191,26 @@ public class NoticeServiceImplTest extends BaseCastTest {
         String b = "";
 
 
-
         //查找字符串中是否有符合的子字符串
-        while(matcherPhone.find()){
-            a=matcherPhone.group()+";"+a;
+        while (matcherPhone.find()) {
+            a = matcherPhone.group() + ";" + a;
 
 
         }
 
         //查找字符串中是否有符合的子字符串
-        while(matcherFixed.find()){
-            b=matcherFixed.group()+";"+b;
+        while (matcherFixed.find()) {
+            b = matcherFixed.group() + ";" + b;
 
         }
 
-        System.out.println("a+b:"+a+b);
-
-
+        System.out.println("a+b:" + a + b);
 
 
     }
 
     @Test
-    public void quhanzi(){
+    public void quhanzi() {
      /*   Map<String, Object> region = RegionCommon.region();
         for (String s : region.keySet()) {
             System.out.println(s);
@@ -236,6 +219,38 @@ public class NoticeServiceImplTest extends BaseCastTest {
 
 
 
+
+
+
+
+
+    @Test
+    public void qx3() {
+        List<String> list2 = tbCommentInfoMapper.querySource();
+        for (String source : list2) {
+
+
+            List<Map<String, Object>> list = tbCommentInfoMapper.queryRelatedId();
+            Map<String, Object> param = new HashMap<>();
+            for (Map<String, Object> map : list) {
+                param.put("relatedId", map.get("relatedId"));
+                param.put("pkid", map.get("pkid"));
+
+                List<String> titleList = snatchurlMapper.queryTitle(param);
+                for (String s : titleList) {
+                    param.put("title", s);
+                    param.put("source",source);
+                    List<String> listPkid = tbNtMianHunanMapper.queryPkid(param);
+                    for (String s1 : listPkid) {
+                        param.put("relatedId", s1);
+                        tbCommentInfoMapper.updateRelatedId(param);
+                    }
+
+                }
+
+            }
+        }
+    }
 
 
 }

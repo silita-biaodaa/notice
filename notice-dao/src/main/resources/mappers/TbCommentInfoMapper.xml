@@ -9,6 +9,8 @@
         update mishu.`tb_reply_comment` set related_id=#{relatedId} where pkid=#{pkid}
     </update>
 
+
+
     <select id="queryCountComment" resultType="java.lang.Integer" parameterType="map">
       select ifnull(count(0),0) from mishu.`tb_comment_info` where related_id=#{id} and source=#{source}
     </select>
@@ -21,4 +23,8 @@
     <select id="queryRelatedId2" resultType="java.util.Map" parameterType="map">
         SELECT related_id as relatedId,pkid FROM mishu.`tb_reply_comment`
     </select>
+    <select id="queryReplySource" resultType="java.lang.String" parameterType="map">
+        SELECT source FROM mishu.`tb_reply_comment` GROUP BY source
+    </select>
+
 </mapper>
