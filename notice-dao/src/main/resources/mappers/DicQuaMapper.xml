@@ -15,6 +15,7 @@
         WHERE d.level = '1'
         and (d.biz_type = '0'
         or d.biz_type = #{bizType})
+        order by order_no
     </select>
     <!--获取二级资质-->
     <select id="queryQuaTwo" resultType="java.util.Map" parameterType="map">
