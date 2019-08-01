@@ -8,7 +8,9 @@
     <update id="updateRelatedId2" parameterType="map">
         update mishu.`tb_reply_comment` set related_id=#{relatedId} where pkid=#{pkid}
     </update>
-
+    <update id="updateCommentInfo" parameterType="map">
+        update mishu_write.collec_notice set noticeId=#{snatchurlId} where id=#{collecId}
+    </update>
 
 
     <select id="queryCountComment" resultType="java.lang.Integer" parameterType="map">
@@ -25,6 +27,18 @@
     </select>
     <select id="queryReplySource" resultType="java.lang.String" parameterType="map">
         SELECT source FROM mishu.`tb_reply_comment` GROUP BY source
+    </select>
+    <select id="queryCommentInfo" resultType="java.util.Map" parameterType="string">
+        SELECT a.title,a.pkid AS mianPkid,b.id,c.`pkid` AS commentPkid FROM mishu.tb_reply_comment c
+        JOIN biaodaa_admin.tb_nt_mian_${source} a
+        ON c.`related_id`=a.`pkid`
+        JOIN mishu.`snatchurl` b
+        ON a.`title`=b.`title`
+    </select>
+    <select id="queryCommentInfo2" resultType="java.util.Map" parameterType="string">
+        SELECT a.id AS snatchurlId,b.`id` AS collecId FROM mishu.snatchurl a
+        JOIN mishu_write.collec_notice b
+        ON a.`title`=b.`title`
     </select>
 
 </mapper>

@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface CollecNoticeMapper extends MyMapper<CollecNotice> {
 
+
+
 }

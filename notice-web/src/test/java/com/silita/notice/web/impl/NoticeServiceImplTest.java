@@ -127,29 +127,20 @@ public class NoticeServiceImplTest extends BaseCastTest {
 
     @Test
     public void qx2() {
+        Map<String,Object> param = new HashMap<>();
+
         List<String> list1 = tbCommentInfoMapper.queryReplySource();
         for (String source : list1) {
-
-
-            List<Map<String, Object>> list = tbCommentInfoMapper.queryRelatedId2();
-            Map<String, Object> param = new HashMap<>();
+            param.put("source",source);
+            List<Map<String, Object>> list = tbCommentInfoMapper.queryCommentInfo(param);
             for (Map<String, Object> map : list) {
-                param.put("relatedId", map.get("relatedId"));
-                param.put("pkid", map.get("pkid"));
-
-                List<String> titleList = snatchurlMapper.queryTitle(param);
-                for (String s : titleList) {
-                    param.put("title", s);
-                    param.put("source",source);
-                    List<String> listPkid = tbNtMianHunanMapper.queryPkid(param);
-                    for (String s1 : listPkid) {
-                        param.put("relatedId", s1);
-                        tbCommentInfoMapper.updateRelatedId2(param);
-                    }
-
-                }
-
+                Integer commentPkid = (Integer) map.get("commentPkid");
+                Integer id = (Integer) map.get("id");
+                param.put("pkid",commentPkid);
+                param.put("relatedId",id);
+                tbCommentInfoMapper.updateCommentInfo(param);
             }
+
         }
     }
 
@@ -218,15 +209,27 @@ public class NoticeServiceImplTest extends BaseCastTest {
     }
 
 
-
-
-
-
-
-
     @Test
     public void qx3() {
+        Map<String,Object> param = new HashMap<>();
         List<String> list2 = tbCommentInfoMapper.querySource();
+        for (String source : list2) {
+            param.put("source",source);
+            List<Map<String, Object>> list = tbCommentInfoMapper.queryCommentInfo2();
+            for (Map<String, Object> map : list) {
+                Integer commentPkid = (Integer) map.get("commentPkid");
+                Integer id = (Integer) map.get("id");
+                param.put("pkid",commentPkid);
+                param.put("relatedId",id);
+                tbCommentInfoMapper.updateRelatedId(param);
+            }
+
+
+        }
+
+
+
+/*        List<String> list2 = tbCommentInfoMapper.querySource();
         for (String source : list2) {
 
 
@@ -239,7 +242,7 @@ public class NoticeServiceImplTest extends BaseCastTest {
                 List<String> titleList = snatchurlMapper.queryTitle(param);
                 for (String s : titleList) {
                     param.put("title", s);
-                    param.put("source",source);
+                    param.put("source", source);
                     List<String> listPkid = tbNtMianHunanMapper.queryPkid(param);
                     for (String s1 : listPkid) {
                         param.put("relatedId", s1);
@@ -249,6 +252,19 @@ public class NoticeServiceImplTest extends BaseCastTest {
                 }
 
             }
+        }*/
+    }
+
+    @Test
+    public void aa(){
+        Map<String,Object> param = new HashMap<>();
+        List<Map<String, Object>> list = tbCommentInfoMapper.queryCommentInfo2();
+        for (Map<String, Object> map : list) {
+            Integer snatchurlId =(Integer) map.get("snatchurlId");
+            Integer collecId =(Integer) map.get("collecId");
+            param.put("snatchurlId",snatchurlId);
+            param.put("collecId",collecId);
+            tbCommentInfoMapper.updateCommentInfo(param);
         }
     }
 

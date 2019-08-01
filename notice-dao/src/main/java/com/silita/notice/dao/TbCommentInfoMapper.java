@@ -11,6 +11,12 @@ public interface TbCommentInfoMapper extends MyMapper<TbCommentInfo> {
 
     Integer queryCountComment(Map<String,Object> param);
 
+    void updateCommentInfo(Map<String,Object> param);
+
+    List<Map<String,Object>> queryCommentInfo(Map<String,Object> param);
+
+    List<Map<String,Object>> queryCommentInfo2();
+
     /**
      * 洗评论id
      * @param param
