@@ -55,5 +55,4 @@ public class HBaseConfig {
         configuration.set("hbase.rootdir", hbaseRootdir);
         return configuration;
     }
-
 }

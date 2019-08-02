@@ -31,6 +31,7 @@
         ON mian.`pkid` = bids.`nt_id`
         WHERE 1 = 1
         and mian.nt_category='2'
+        and mian.is_enable='1'
         and CAST(mian.nt_type as SIGNED) &lt; 100
         <if test="title == '' or title == null">
             AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
@@ -114,6 +115,7 @@
         left JOIN tb_nt_mian_${proviceCode} mian
         ON mian.pkid = tenders.nt_id
         WHERE 1 = 1
+        and mian.is_enable='1'
         <if test="comName != null and comName != ''">
             AND mian.`pkid` IN
             (SELECT
