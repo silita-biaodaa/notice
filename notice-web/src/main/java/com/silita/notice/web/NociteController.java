@@ -27,8 +27,6 @@ public class NociteController extends BaseController {
     @Autowired
     private CompanyService companyService;
 
-    @Value("${hbase.notice-table-name}")
-    private String hBaseTableName;
     /**
      * 查询公告  -  中标
      *

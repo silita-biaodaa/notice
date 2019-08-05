@@ -186,6 +186,13 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, Object>> list = tbNtMianHunanMapper.queryTenders(param);
+        for (Map<String, Object> map : list) {
+            String zzRank =(String) map.get("certificate");
+            if(StringUtils.isNotEmpty(zzRank)){
+                zzRank=zzRank.replaceAll("(?:和|或)", ",");
+                map.put("certificate",zzRank);
+            }
+        }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
@@ -222,8 +229,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     public Map<String, Object> queryTendersNociteDetails(Map<String, Object> param) {
         Map<String, Object> map = tbNtMianHunanMapper.queryTendersNociteDetails(param);
         String zzRank =(String) map.get("zzRank");
-        zzRank=zzRank.replaceAll("(?:和|或)", ",");
-        map.put("zzRank",zzRank);
+        if(StringUtils.isNotEmpty(zzRank)){
+            zzRank=zzRank.replaceAll("(?:和|或)", ",");
+            map.put("zzRank",zzRank);
+        }
         Integer commentCount = tbCommentInfoMapper.queryCountComment(param);
         map.put("commentCount", commentCount);
         return map;
