@@ -65,8 +65,8 @@ public class NociteController extends BaseController {
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryCompanyName(param);
             seccussMap(resultMap, pageInfo);
-        }catch (Exception e){
-            logger.info("企业中标",e);
+        } catch (Exception e) {
+            logger.info("企业中标", e);
             errorMsg(resultMap, e.getMessage());
         }
         return resultMap;
@@ -100,7 +100,7 @@ public class NociteController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/nociteDetails/{id}", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map queryNociteDetails(@PathVariable String id, @RequestBody Map<String, Object> param) throws IOException {
+    public Map queryNociteDetails(@PathVariable String id, @RequestBody Map<String, Object> param){
         param.put("id", id);
         Map<String, Object> resultMap = new HashMap<String, Object>();
         Map<String, Object> proviceCity = tbNtMianHunanService.queryProviceCity(param);
@@ -156,7 +156,12 @@ public class NociteController extends BaseController {
         //获取招标原文
         String content = "";
         if (StringUtils.isNotEmpty(snatchId)) {
-            content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
+            try {
+                content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
+            }catch (Exception e){
+                errorMsg(resultMap, e.getMessage());
+            }
+
         }
         // type = 1  招标详情   ||  type = 2  中标详情
         String type = MapUtils.getString(param, "type");
@@ -164,32 +169,33 @@ public class NociteController extends BaseController {
             try {
                 //获取招标详情
                 Map<String, Object> map = tbNtMianHunanService.queryTendersNociteDetails(param);
-                if(StringUtils.isNotEmpty(content)){
-                    map.put("content", content);
+                if (null != map && map.size() >0) {
+                    if (StringUtils.isNotEmpty(content)) {
+                        map.put("content", content);
+                    }
+                    map.put("projDq", proviceCode + "-" + cityCode);
+                    map.put("collected", attention);
+                    resultMap.put("clickCount", count);
+                    Integer relCompanySize = companyService.relCompanySize(param);
+                    resultMap.put("relCompanySize", relCompanySize);
                 }
-                map.put("projDq", proviceCode + "-" + cityCode);
-                map.put("collected", attention);
-                resultMap.put("clickCount", count);
-                Integer relCompanySize = companyService.relCompanySize(param);
-                resultMap.put("relCompanySize", relCompanySize);
                 seccussMap(resultMap, map);
-            } catch (NullPointerException e) {
+            } catch (Exception e) {
                 errorMsg(resultMap, e.getMessage());
             }
             return resultMap;
-
-
         }
         try {
             Map<String, Object> map = tbNtMianHunanService.queryBidsNociteDetails(param);
-            if(StringUtils.isNotEmpty(content)){
+            if (StringUtils.isNotEmpty(content)) {
                 map.put("content", content);
             }
             map.put("collected", attention);
             resultMap.put("clickCount", count);
             seccussMap(resultMap, map);
-        } catch (NullPointerException e) {
-            errorMsg(resultMap, e.getMessage());
+        } catch (Exception e) {
+            logger.error("查询详情失败", e);
+            errorMsg(resultMap, "查询详情失败!");
         }
         return resultMap;
     }
