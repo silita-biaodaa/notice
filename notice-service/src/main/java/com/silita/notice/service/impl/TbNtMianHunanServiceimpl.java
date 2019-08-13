@@ -94,10 +94,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             typeMap.put("source", map.get("source"));
             typeMap.put("ntId", map.get("id"));
             Map<String, Object> map1 = tbNtMianHunanMapper.queryProjectTypeNoticeType(typeMap);
-            String projectType =(String) map1.get("projectType");
-            map.put("projectType", projectType);
-            String noticeType = (String)map1.get("noticeType");
-            map.put("noticeType", noticeType);
+            map.put("projectType", MapUtils.getString(map1,"projectType"));
+            map.put("noticeType", MapUtils.getString(map1,"noticeType"));
         }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;

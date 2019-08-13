@@ -65,7 +65,8 @@ public class NociteController extends BaseController {
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryCompanyName(param);
             seccussMap(resultMap, pageInfo);
-        } catch (NullPointerException e) {
+        }catch (Exception e){
+            logger.info("企业中标",e);
             errorMsg(resultMap, e.getMessage());
         }
         return resultMap;
