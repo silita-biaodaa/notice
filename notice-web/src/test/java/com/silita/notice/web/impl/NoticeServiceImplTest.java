@@ -10,6 +10,7 @@ import com.silita.notice.service.TbNtMianHunanService;
 import com.silita.notice.utils.PropertyUtil;
 import com.silita.notice.utils.RedisShardedPoolUtil;
 import com.silita.notice.web.BaseCastTest;
+import org.apache.commons.collections.MapUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -134,11 +135,9 @@ public class NoticeServiceImplTest extends BaseCastTest {
             param.put("source",source);
             List<Map<String, Object>> list = tbCommentInfoMapper.queryCommentInfo(param);
             for (Map<String, Object> map : list) {
-                Integer commentPkid = (Integer) map.get("commentPkid");
-                Integer id = (Integer) map.get("id");
-                param.put("pkid",commentPkid);
-                param.put("relatedId",id);
-                tbCommentInfoMapper.updateCommentInfo(param);
+                param.put("pkid",MapUtils.getString(map,"commentPkid"));
+                param.put("relatedId",MapUtils.getInteger(map,"mianPkid"));
+                tbCommentInfoMapper.updateCommInfo(param);
             }
 
         }
@@ -221,7 +220,7 @@ public class NoticeServiceImplTest extends BaseCastTest {
                 Integer id = (Integer) map.get("id");
                 param.put("pkid",commentPkid);
                 param.put("relatedId",id);
-                tbCommentInfoMapper.updateRelatedId(param);
+                tbCommentInfoMapper.updateRelatedId2(param);
             }
 
 
@@ -265,6 +264,42 @@ public class NoticeServiceImplTest extends BaseCastTest {
             param.put("snatchurlId",snatchurlId);
             param.put("collecId",collecId);
             tbCommentInfoMapper.updateCommentInfo(param);
+        }
+    }
+
+    /**
+     * 修改评论表
+     */
+    @Test
+    public void update(){
+        Map<String,Object> param = new HashMap<>();
+        List<String> list = tbCommentInfoMapper.querySource();
+        for (String s : list) {
+            param.put("source",s);
+            List<Map<String, Object>> list1 = tbCommentInfoMapper.queryCommentInfo(param);
+            for (Map<String, Object> map : list1) {
+                param.put("pkid",MapUtils.getString(map,"commentPkid"));
+                param.put("relatedId",MapUtils.getInteger(map,"mianPkid"));
+                tbCommentInfoMapper.updateCommInfo(param);
+            }
+        }
+    }
+
+    /**
+     * 修改评论回复表
+     */
+    @Test
+    public void  update2(){
+        Map<String,Object> param = new HashMap<>();
+        List<String> list = tbCommentInfoMapper.queryReplySource();
+        for (String s : list) {
+            param.put("source",s);
+            List<Map<String, Object>> list1 = tbCommentInfoMapper.queryReplyComment(param);
+            for (Map<String, Object> map : list1) {
+                param.put("pkid",MapUtils.getString(map,"commentPkid"));
+                param.put("relatedId",MapUtils.getInteger(map,"mianPkid"));
+                tbCommentInfoMapper.updateRelatedId2(param);
+            }
         }
     }
 

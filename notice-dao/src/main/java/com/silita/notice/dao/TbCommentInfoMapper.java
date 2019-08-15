@@ -15,13 +15,15 @@ public interface TbCommentInfoMapper extends MyMapper<TbCommentInfo> {
 
     List<Map<String,Object>> queryCommentInfo(Map<String,Object> param);
 
+    List<Map<String,Object>> queryReplyComment(Map<String,Object> param);
+
     List<Map<String,Object>> queryCommentInfo2();
 
     /**
      * 洗评论id
      * @param param
      */
-    void updateRelatedId(Map<String,Object> param);
+    void updateCommInfo(Map<String,Object> param);
 
     void updateRelatedId2(Map<String,Object> param);
 
@@ -35,6 +37,8 @@ public interface TbCommentInfoMapper extends MyMapper<TbCommentInfo> {
 
 
     List<Map<String,Object>> queryRelatedId();
+
+
 
 
     List<Map<String,Object>> queryRelatedId2();

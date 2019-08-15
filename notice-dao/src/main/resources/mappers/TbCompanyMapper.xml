@@ -26,10 +26,10 @@
         FROM
         mishu.`tb_company` t
         where t.regis_address = #{regisAddress}
-        <if test="list != null and list.size > 0">
+        <if test="rangeListMap != null and rangeListMap.size > 0">
             and (
-            <foreach collection="list" item="list" separator="or">
-                t.range like CONCAT('%',#{list},'%')
+            <foreach collection="rangeListMap" item="list" separator="or">
+                t.range like CONCAT('%',#{list.id},'%')
             </foreach>
             )
 
@@ -42,8 +42,19 @@
     </select>
     <!--获取符合该公告资质的企业数量-->
     <select id="queryRelCompanySize" resultType="java.lang.Integer">
-        select count(0) from mishu.`tb_company` t
-        where t.range like CONCAT('%',#{quaRegex},'%') and t.regis_address=#{regisAddress}
+        select ifnull(count(0),0) from mishu.`tb_company` t
+        where  t.regis_address=#{regisAddress}
+        <if test="rangeListMap != null and rangeListMap.size > 0">
+            and (
+            <foreach collection="rangeListMap" item="list" separator="or">
+                t.range like CONCAT('%',#{list.id},'%')
+            </foreach>
+            )
+
+        </if>
+        <if test="list == null or list.size == 0">
+            and t.range = null
+        </if>
     </select>
 
     <!--SELECT

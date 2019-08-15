@@ -16,6 +16,17 @@ public interface RelQuaGradeMapper extends MyMapper<RelQuaGrade> {
      */
     List<Map<String,Object>> queryRelQuaGrade(String quaCode);
 
+    /**
+     * 获取资质的quaCode和gradeCode
+     * @return
+     */
+    List<Map<String,Object>> queryQuaCodeGradeCode(Map<String,Object> param);
 
+    /**
+     * 根据quaCode和gradeCode获取id
+     * @param param
+     * @return
+     */
+    String queryId(Map<String,Object> param);
 
 }

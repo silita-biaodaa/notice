@@ -6,5 +6,8 @@
     <select id="queryPbModes" resultType="java.util.Map" parameterType="map">
       SELECT common.name,common.code FROM `dic_common` common WHERE common.type=#{pbModeType}
     </select>
+    <select id="queryRank" resultType="java.lang.String" parameterType="map">
+        SELECT t.name FROM `dic_common` t WHERE t.type='qua_grade' and t.code=#{gradeCode}
+    </select>
 
 </mapper>

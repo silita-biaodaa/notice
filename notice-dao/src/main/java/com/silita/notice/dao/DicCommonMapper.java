@@ -17,5 +17,12 @@ public interface DicCommonMapper extends MyMapper<DicCommon> {
      */
     List<Map<String,Object>> queryPbModes(Map<String,Object> param);
 
+    /**
+     * 获取级别
+     * @param gradeCode
+     * @return
+     */
+    String queryRank(String gradeCode);
+
 
 }

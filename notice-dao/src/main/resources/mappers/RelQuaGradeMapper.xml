@@ -13,7 +13,27 @@
         WHERE r.qua_code=#{quaCode}
         order by order_no
     </select>
-
+    <select id="queryQuaCodeGradeCode" resultType="java.util.Map" parameterType="map">
+        SELECT
+          id,
+          qua_code AS quaCode,
+          grade_code AS gradeCode
+        FROM
+          `rel_qua_grade`
+        WHERE 1 = 1
+          <if test="list != null and list.size >0">
+              and
+              <foreach collection="list" item="list" separator="or">
+                  id=#{list}
+              </foreach>
+          </if>
+          <if test="list == null and list.size == 0">
+              and id=''
+          </if>
+    </select>
+    <select id="queryId" resultType="java.lang.String" parameterType="map">
+        SELECT id FROM `rel_qua_grade` WHERE qua_code=#{quaCode} and grade_code=#{gradeCode}
+    </select>
 
 
 </mapper>
