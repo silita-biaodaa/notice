@@ -75,12 +75,14 @@
         SELECT
           c.phone
         FROM
-        <if test="source == 'hunan' or source != 'liaon' or source != 'chongq'">
-            mishu.tb_company_info c
-        </if>
-        <if test="source != null and source != '' and source != 'hunan' and source != 'liaon' and source != 'chongq'">
-            mishu.tb_company_info_${source} c
-        </if>
+        <choose>
+            <when test="source == 'hunan' or source == 'liaon' or source == 'chongq'">
+                mishu.tb_company_info c
+            </when>
+            <otherwise>
+                mishu.tb_company_info_${source} c
+            </otherwise>
+        </choose>
         WHERE c.com_name=#{comName}
     </select>
     <select id="queryComId" resultType="java.lang.String" parameterType="map">

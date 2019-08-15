@@ -59,7 +59,7 @@ public class CompanyServiceImpl implements CompanyService {
         //获取资质关系表达式的列quaRegex
         List<String> list = tbNtRegexQuaMapper.queryQuaRegex(param);
         if (list.size() > 0 && null != list) {
-            param.put("list",list);
+            param.put("list", list);
             List<Map<String, Object>> list1 = relQuaGradeMapper.queryQuaCodeGradeCode(param);
             List<Map<String, Object>> rangeListMap = new ArrayList<>();
             for (Map<String, Object> map : list1) {
@@ -67,21 +67,24 @@ public class CompanyServiceImpl implements CompanyService {
                 String quaCode = MapUtils.getString(map, "quaCode");
                 String gradeCode = MapUtils.getString(map, "gradeCode");
                 String rankName = dicCommonMapper.queryRank(gradeCode);
-                String rangeNameCode = (String) RangeCommon.rangeCode.get(rankName);
-                String[] split = rangeNameCode.split(",");
-                for (int i = 0; i < split.length; i++) {
-                    Map<String, Object> relMap = new HashMap<>();
-                    param.put("quaCode", quaCode);
-                    param.put("gradeCode", split[i]);
-                    String relId = relQuaGradeMapper.queryId(param);
-                    relMap.put("id", relId);
-                    rangeListMap.add(relMap);
+                String rangeNameCode="";
+                if(StringUtils.isNotEmpty(rankName)) {
+                    rangeNameCode = (String) RangeCommon.rangeCode.get(rankName);
+                    String[] split = rangeNameCode.split(",");
+                    for (int i = 0; i < split.length; i++) {
+                        Map<String, Object> relMap = new HashMap<>();
+                        param.put("quaCode", quaCode);
+                        param.put("gradeCode", split[i]);
+                        String relId = relQuaGradeMapper.queryId(param);
+                        relMap.put("id", relId);
+                        rangeListMap.add(relMap);
+                    }
                 }
             }
             param.put("rangeListMap", rangeListMap);
             //获取符合数量
             Integer relCompanySize = tbCompanyMapper.queryRelCompanySize(param);
-            count=relCompanySize;
+            count = relCompanySize;
         }
         return count;
     }
@@ -100,49 +103,54 @@ public class CompanyServiceImpl implements CompanyService {
         param.put("regisAddress", RegionCommon.regionSource.get(source));
         //根据
         List<String> list = tbNtRegexQuaMapper.queryQuaRegex(param);
-        param.put("list", list);
-
-        List<Map<String, Object>> list1 = relQuaGradeMapper.queryQuaCodeGradeCode(param);
         List<Map<String, Object>> rangeListMap = new ArrayList<>();
-        for (Map<String, Object> map : list1) {
-            Map<String, Object> rankMap = new HashMap<>();
-            String quaCode = MapUtils.getString(map, "quaCode");
-            String gradeCode = MapUtils.getString(map, "gradeCode");
-            String rankName = dicCommonMapper.queryRank(gradeCode);
-            String rangeNameCode = (String) RangeCommon.rangeCode.get(rankName);
-            String[] split = rangeNameCode.split(",");
-            for (int i = 0; i < split.length; i++) {
-                Map<String, Object> relMap = new HashMap<>();
-                param.put("quaCode", quaCode);
-                param.put("gradeCode", split[i]);
-                String relId = relQuaGradeMapper.queryId(param);
-                relMap.put("id", relId);
-                rangeListMap.add(relMap);
+        if (list != null && list.size() > 0) {
+            param.put("list", list);
+            List<Map<String, Object>> list1 = relQuaGradeMapper.queryQuaCodeGradeCode(param);
+            if (list1 != null && list1.size() > 0) {
+                for (Map<String, Object> map : list1) {
+                    Map<String, Object> rankMap = new HashMap<>();
+                    String quaCode = MapUtils.getString(map, "quaCode");
+                    String gradeCode = MapUtils.getString(map, "gradeCode");
+                    String rankName = dicCommonMapper.queryRank(gradeCode);
+                    String rangeNameCode = (String) RangeCommon.rangeCode.get(rankName);
+                    String[] split = rangeNameCode.split(",");
+                    for (int i = 0; i < split.length; i++) {
+                        Map<String, Object> relMap = new HashMap<>();
+                        param.put("quaCode", quaCode);
+                        param.put("gradeCode", split[i]);
+                        String relId = relQuaGradeMapper.queryId(param);
+                        relMap.put("id", relId);
+                        rangeListMap.add(relMap);
 
+                    }
+
+                }
             }
-
         }
         param.put("rangeListMap", rangeListMap);
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, Object>> listMap = tbCompanyMapper.queryQualCom(param);
-        param.put("userId", VisitInfoHolder.getUserId());
-        Integer isVip = MapUtils.getInteger(param, "isVip");
-        for (Map<String, Object> map : listMap) {
-            String comName = (String) map.get("comName");
-            param.put("comName", comName);
-            String phone = tbCompanyMapper.queryQualComPhone(param);
-            if (StringUtils.isNotEmpty(phone)) {
-                map.put("phone", PhoneCommon.phones(phone, isVip));
-            }
-            param.put("comId", map.get("comId"));
-            Integer collectCount = colleCompanyNewMapper.queryTrueFalse(param);
-            //用户是否关注企业
-            if (collectCount > 0) {
-                map.put("collected", true);
-            } else {
-                map.put("collected", false);
+        if (listMap != null && listMap.size() >0) {
+            param.put("userId", VisitInfoHolder.getUserId());
+            Integer isVip = MapUtils.getInteger(param, "isVip");
+            for (Map<String, Object> map : listMap) {
+                String comName = (String) map.get("comName");
+                param.put("comName", comName);
+                String phone = tbCompanyMapper.queryQualComPhone(param);
+                if (StringUtils.isNotEmpty(phone)) {
+                    map.put("phone", PhoneCommon.phones(phone, isVip));
+                }
+                param.put("comId", map.get("comId"));
+                Integer collectCount = colleCompanyNewMapper.queryTrueFalse(param);
+                //用户是否关注企业
+                if (collectCount > 0) {
+                    map.put("collected", true);
+                } else {
+                    map.put("collected", false);
+                }
             }
         }
         PageInfo pageInfo = new PageInfo(listMap);

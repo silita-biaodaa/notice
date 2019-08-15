@@ -226,13 +226,15 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Override
     public Map<String, Object> queryTendersNociteDetails(Map<String, Object> param) {
         Map<String, Object> map = tbNtMianHunanMapper.queryTendersNociteDetails(param);
-        String zzRank =(String) map.get("zzRank");
+        String zzRank =MapUtils.getString(map,"zzRank");
         if(StringUtils.isNotEmpty(zzRank)){
             zzRank=zzRank.replaceAll("(?:和|或)", ",");
             map.put("zzRank",zzRank);
         }
         Integer commentCount = tbCommentInfoMapper.queryCountComment(param);
-        map.put("commentCount", commentCount);
+        if(map != null && map.size()>0){
+            map.put("commentCount", commentCount);
+        }
         return map;
     }
 

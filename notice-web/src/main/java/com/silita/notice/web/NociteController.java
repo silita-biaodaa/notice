@@ -178,8 +178,11 @@ public class NociteController extends BaseController {
                     resultMap.put("clickCount", count);
                     Integer relCompanySize = companyService.relCompanySize(param);
                     resultMap.put("relCompanySize", relCompanySize);
+                    seccussMap(resultMap, map);
+                }else{
+                    seccussMap(resultMap, map);
                 }
-                seccussMap(resultMap, map);
+
             } catch (Exception e) {
                 errorMsg(resultMap, e.getMessage());
             }
