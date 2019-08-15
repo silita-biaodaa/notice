@@ -35,7 +35,7 @@
 
         </if>
         <if test="list == null or list.size == 0">
-            and t.range = null
+            and 1=2
         </if>
         order by t.px desc
 
@@ -53,7 +53,7 @@
 
         </if>
         <if test="list == null or list.size == 0">
-            and t.range = null
+            and 1=2
         </if>
     </select>
 

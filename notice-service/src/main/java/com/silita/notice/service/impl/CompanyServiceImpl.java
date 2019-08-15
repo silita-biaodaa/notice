@@ -62,24 +62,28 @@ public class CompanyServiceImpl implements CompanyService {
             param.put("list", list);
             List<Map<String, Object>> list1 = relQuaGradeMapper.queryQuaCodeGradeCode(param);
             List<Map<String, Object>> rangeListMap = new ArrayList<>();
-            for (Map<String, Object> map : list1) {
-                Map<String, Object> rankMap = new HashMap<>();
-                String quaCode = MapUtils.getString(map, "quaCode");
-                String gradeCode = MapUtils.getString(map, "gradeCode");
-                String rankName = dicCommonMapper.queryRank(gradeCode);
-                String rangeNameCode="";
-                if(StringUtils.isNotEmpty(rankName)) {
-                    rangeNameCode = (String) RangeCommon.rangeCode.get(rankName);
-                    String[] split = rangeNameCode.split(",");
-                    for (int i = 0; i < split.length; i++) {
-                        Map<String, Object> relMap = new HashMap<>();
-                        param.put("quaCode", quaCode);
-                        param.put("gradeCode", split[i]);
-                        String relId = relQuaGradeMapper.queryId(param);
-                        relMap.put("id", relId);
-                        rangeListMap.add(relMap);
+            if (list1 != null && list1.size() >0) {
+                for (Map<String, Object> map : list1) {
+                    String quaCode = MapUtils.getString(map, "quaCode");
+                    String gradeCode = MapUtils.getString(map, "gradeCode");
+                    String rankName = dicCommonMapper.queryRank(gradeCode);
+                    String rangeNameCode = "";
+                    if (StringUtils.isNotEmpty(rankName)) {
+                        rangeNameCode = (String) RangeCommon.rangeCode.get(rankName);
+                        String[] split = rangeNameCode.split(",");
+                        for (int i = 0; i < split.length; i++) {
+                            Map<String, Object> relMap = new HashMap<>();
+                            param.put("quaCode", quaCode);
+                            param.put("gradeCode", split[i]);
+                            String relId = relQuaGradeMapper.queryId(param);
+                            relMap.put("id", relId);
+                            rangeListMap.add(relMap);
+                        }
                     }
                 }
+            }
+            if (rangeListMap == null && rangeListMap.size() <= 0) {
+                return count;
             }
             param.put("rangeListMap", rangeListMap);
             //获取符合数量
@@ -109,7 +113,6 @@ public class CompanyServiceImpl implements CompanyService {
             List<Map<String, Object>> list1 = relQuaGradeMapper.queryQuaCodeGradeCode(param);
             if (list1 != null && list1.size() > 0) {
                 for (Map<String, Object> map : list1) {
-                    Map<String, Object> rankMap = new HashMap<>();
                     String quaCode = MapUtils.getString(map, "quaCode");
                     String gradeCode = MapUtils.getString(map, "gradeCode");
                     String rankName = dicCommonMapper.queryRank(gradeCode);
@@ -122,9 +125,7 @@ public class CompanyServiceImpl implements CompanyService {
                         String relId = relQuaGradeMapper.queryId(param);
                         relMap.put("id", relId);
                         rangeListMap.add(relMap);
-
                     }
-
                 }
             }
         }
@@ -133,7 +134,7 @@ public class CompanyServiceImpl implements CompanyService {
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, Object>> listMap = tbCompanyMapper.queryQualCom(param);
-        if (listMap != null && listMap.size() >0) {
+        if (listMap != null && listMap.size() > 0) {
             param.put("userId", VisitInfoHolder.getUserId());
             Integer isVip = MapUtils.getInteger(param, "isVip");
             for (Map<String, Object> map : listMap) {
