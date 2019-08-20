@@ -340,5 +340,13 @@
         SELECT pkid FROM tb_nt_mian_${source} WHERE title=#{title}
     </select>
 
+    <!--查询某一天的爬取id-->
+    <select id="querySnatchId" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT
+          t.`snatch_id`
+        FROM
+          tb_nt_mian_${source} t
+        WHERE t.`pub_date` = #{date}
+    </select>
 
 </mapper>

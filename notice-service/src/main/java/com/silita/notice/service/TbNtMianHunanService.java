@@ -143,6 +143,11 @@ public interface TbNtMianHunanService {
     Map<String, Object> queryCityName(Map<String, Object> param);
 
 
-
+    /**
+     * 查询某个日期的爬取id
+     * @param param
+     * @return
+     */
+    List<String> getNoticeCountList(Map<String,Object> param);
 
 }

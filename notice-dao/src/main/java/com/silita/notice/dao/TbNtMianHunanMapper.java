@@ -130,4 +130,10 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
 
     List<String> queryPkid(Map<String,Object> param);
 
+    /**
+     * 查询某一天的爬取id
+     * @param param
+     * @return
+     */
+    List<String> querySnatchId(Map<String,Object> param);
 }

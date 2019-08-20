@@ -9,12 +9,11 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -100,7 +99,7 @@ public class NociteController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/nociteDetails/{id}", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map queryNociteDetails(@PathVariable String id, @RequestBody Map<String, Object> param){
+    public Map queryNociteDetails(@PathVariable String id, @RequestBody Map<String, Object> param) {
         param.put("id", id);
         Map<String, Object> resultMap = new HashMap<String, Object>();
         Map<String, Object> proviceCity = tbNtMianHunanService.queryProviceCity(param);
@@ -158,7 +157,7 @@ public class NociteController extends BaseController {
         if (StringUtils.isNotEmpty(snatchId)) {
             try {
                 content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
-            }catch (Exception e){
+            } catch (Exception e) {
                 errorMsg(resultMap, e.getMessage());
             }
 
@@ -169,7 +168,7 @@ public class NociteController extends BaseController {
             try {
                 //获取招标详情
                 Map<String, Object> map = tbNtMianHunanService.queryTendersNociteDetails(param);
-                if (null != map && map.size() >0) {
+                if (null != map && map.size() > 0) {
                     if (StringUtils.isNotEmpty(content)) {
                         map.put("content", content);
                     }
@@ -179,7 +178,7 @@ public class NociteController extends BaseController {
                     Integer relCompanySize = companyService.relCompanySize(param);
                     resultMap.put("relCompanySize", relCompanySize);
                     seccussMap(resultMap, map);
-                }else{
+                } else {
                     seccussMap(resultMap, map);
                 }
 
@@ -202,4 +201,25 @@ public class NociteController extends BaseController {
         }
         return resultMap;
     }
+
+    /**
+     * 查询某一日期的爬取id
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/count/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map listNoticeCount(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        try {
+            List<String> list = tbNtMianHunanService.getNoticeCountList(param);
+            seccussMap(resultMap, list);
+            return resultMap;
+        } catch (Exception e) {
+            logger.error("查询失败！", e);
+            errorMsg(resultMap, e.getMessage());
+            return resultMap;
+        }
+    }
+
 }

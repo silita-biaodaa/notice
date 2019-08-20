@@ -3,6 +3,7 @@ package com.silita.notice.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.notice.common.IsNullCommon;
+import com.silita.notice.common.RegionCommon;
 import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.TbCommentInfoMapper;
 import com.silita.notice.dao.TbCompanyMapper;
@@ -94,8 +95,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             typeMap.put("source", map.get("source"));
             typeMap.put("ntId", map.get("id"));
             Map<String, Object> map1 = tbNtMianHunanMapper.queryProjectTypeNoticeType(typeMap);
-            map.put("projectType", MapUtils.getString(map1,"projectType"));
-            map.put("noticeType", MapUtils.getString(map1,"noticeType"));
+            map.put("projectType", MapUtils.getString(map1, "projectType"));
+            map.put("noticeType", MapUtils.getString(map1, "noticeType"));
         }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
@@ -185,10 +186,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, Object>> list = tbNtMianHunanMapper.queryTenders(param);
         for (Map<String, Object> map : list) {
-            String zzRank =(String) map.get("certificate");
-            if(StringUtils.isNotEmpty(zzRank)){
-                zzRank=zzRank.replaceAll("(?:和|或)", ",");
-                map.put("certificate",zzRank);
+            String zzRank = (String) map.get("certificate");
+            if (StringUtils.isNotEmpty(zzRank)) {
+                zzRank = zzRank.replaceAll("(?:和|或)", ",");
+                map.put("certificate", zzRank);
             }
         }
         PageInfo pageInfo = new PageInfo(list);
@@ -226,19 +227,17 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Override
     public Map<String, Object> queryTendersNociteDetails(Map<String, Object> param) {
         Map<String, Object> map = tbNtMianHunanMapper.queryTendersNociteDetails(param);
-        String zzRank =MapUtils.getString(map,"zzRank");
-        if(StringUtils.isNotEmpty(zzRank)){
-            zzRank=zzRank.replaceAll("(?:和|或)", ",");
-            map.put("zzRank",zzRank);
+        String zzRank = MapUtils.getString(map, "zzRank");
+        if (StringUtils.isNotEmpty(zzRank)) {
+            zzRank = zzRank.replaceAll("(?:和|或)", ",");
+            map.put("zzRank", zzRank);
         }
         Integer commentCount = tbCommentInfoMapper.queryCountComment(param);
-        if(map != null && map.size()>0){
+        if (map != null && map.size() > 0) {
             map.put("commentCount", commentCount);
         }
         return map;
     }
-
-
 
 
     /**
@@ -435,6 +434,20 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Override
     public Map<String, Object> queryCityName(Map<String, Object> param) {
         return tbNtMianHunanMapper.queryCityName(param);
+    }
+
+    @Override
+    public List<String> getNoticeCountList(Map<String, Object> param) {
+        if (null == param.get("source")) {
+            param.put("source", "湖南省");
+        }
+        Object source = RegionCommon.regionSourcePinYin.get(MapUtils.getString(param, "source"));
+        if (null == source) {
+            source = "hunan";
+        }
+        //格式化地区
+        param.put("source", source);
+        return tbNtMianHunanMapper.querySnatchId(param);
     }
 
 
