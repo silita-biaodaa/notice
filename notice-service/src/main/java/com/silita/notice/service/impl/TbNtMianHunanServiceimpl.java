@@ -174,10 +174,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             List<String> comNameRangeQual = tbCompanyMapper.queryComNameRangeQual(comId);
             if (comNameRangeQual != null && comNameRangeQual.size() > 0) {
                 param.put("aptitudeUuidList", comNameRangeQual);
-            } else {
-                List<Map<String, Object>> list = new ArrayList<>();
-                PageInfo pageInfo = new PageInfo(list);
-                return pageInfo;
             }
         }
 

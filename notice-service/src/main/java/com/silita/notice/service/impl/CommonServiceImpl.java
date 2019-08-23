@@ -341,7 +341,7 @@ public class CommonServiceImpl implements CommonService {
         }
         List<Map<String, Object>> resultList = new ArrayList<>(benchQuals.size());
         for (Map<String, Object> map : benchQuals) {
-            if (MapUtils.getString(map, "benchName").indexOf(keyWords) > 0) {
+            if (MapUtils.getString(map, "benchName").indexOf(keyWords) > -1) {
                 resultList.add(map);
                 continue;
             }

@@ -116,7 +116,7 @@
         ON mian.pkid = tenders.nt_id
         WHERE 1 = 1
         and mian.is_enable='1'
-        <if test="comName != null and comName != ''">
+        <if test="aptitudeUuidList != null and aptitudeUuidList.size > 0">
             AND mian.`pkid` IN
             (SELECT
             r.`nt_id`
