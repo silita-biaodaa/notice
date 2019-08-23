@@ -61,7 +61,6 @@ public class RedisShardedPool {
         jedisShardInfoList.add(jedis1);
         jedisShardInfoList.add(jedis2);
 
-
         //一致性Hash分片算法 基于一个圆圈~~
         pool = new ShardedJedisPool(config,jedisShardInfoList, Hashing.MURMUR_HASH, Sharded.DEFAULT_KEY_TAG_PATTERN);
     }
@@ -83,8 +82,7 @@ public class RedisShardedPool {
      * @param jedis
      */
     public static void returnBrokenResource(ShardedJedis jedis){
-        pool.returnBrokenResource(jedis); //3.0被弃用
-//        jedis.close();
+        jedis.close();
     }
 
     /**
@@ -92,11 +90,6 @@ public class RedisShardedPool {
      * @param jedis
      */
     public static void returnResource(ShardedJedis jedis){
-        pool.returnResource(jedis);
-    }
-
-
-    public static void main(String[] args) {
-        System.out.println(maxTotal);
+        jedis.close();
     }
 }

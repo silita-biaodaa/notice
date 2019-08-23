@@ -3,7 +3,6 @@
 <mapper namespace="com.silita.notice.dao.DicQuaMapper">
 
 
-
     <!--获取一级资质-->
     <select id="queryQuaOne" resultType="java.util.Map" parameterType="map">
         SELECT
@@ -31,5 +30,38 @@
         order by order_no
     </select>
 
+    <!--查询非标准名称的资质-->
+    <select id="queryQual" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+            id,
+            parent_id AS parentId,
+            qua_name AS quaName,
+            qua_code AS quaCode
+        FROM
+        dic_qua
+        WHERE `level` = #{level}
+        AND bench_name IS NULL
+        AND qua_name &lt;&gt; '地质灾害防治工程'
+        AND (biz_type = 0
+        OR biz_type = #{bizType})
+        ORDER BY order_no
+    </select>
 
+    <!--查询所有的标准名称资质-->
+    <select id="queryBenchQual" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT
+            id,
+            parent_id AS parentId,
+            qua_name AS quaName,
+            qua_code AS quaCode,
+            `level` AS quaLevel,
+            bench_name AS benchName
+        FROM
+        dic_qua
+        WHERE  bench_name IS NOT NULL
+        AND qua_name &lt;&gt; '地质灾害防治工程'
+        AND (biz_type = 0
+        OR biz_type = #{bizType})
+        ORDER BY order_no
+    </select>
 </mapper>

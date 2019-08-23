@@ -1,15 +1,19 @@
 package com.silita.notice.service.impl;
 
-import com.silita.notice.dao.*;
+import com.silita.notice.dao.DicCommonMapper;
+import com.silita.notice.dao.DicQuaMapper;
+import com.silita.notice.dao.RelQuaGradeMapper;
+import com.silita.notice.dao.SysAreaMapper;
 import com.silita.notice.service.CommonService;
+import com.silita.notice.utils.ObjectUtils;
+import com.silita.notice.utils.RedisShardedPoolUtil;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CommonServiceImpl implements CommonService {
@@ -65,7 +69,7 @@ public class CommonServiceImpl implements CommonService {
         for (String s : list) {
             Map<String, Object> map = new HashMap<>();
             param.put("pbModeType", s + "_pbmode");
-            List<Map<String, Object>>  list1 = dicCommonMapper.queryPbModes(param);
+            List<Map<String, Object>> list1 = dicCommonMapper.queryPbModes(param);
             map.put("provice", s);
             map.put("list", list1);
             pbModeList.add(map);
@@ -229,9 +233,136 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public void proviceCitySid(Map<String, Object> proviceCity) {
-
+    public List<Map<String, Object>> getFilterQual(Map<String, Object> param) {
+        String bizType = MapUtils.getString(param, "bizType");
+        List<Map<String, Object>> benchQualList = this.getBenchQual(bizType);
+        //查找符合条件资质
+        List<Map<String, Object>> filterQual = this.indexOfKeyWord(benchQualList, MapUtils.getString(param, "keyWord"));
+        if (null == filterQual || filterQual.size() == 0) {
+            return filterQual;
+        }
+        //一级资质
+        Map<String, Object> valMap = new HashedMap(1);
+        valMap.put("level", 1);
+        valMap.put("bizType", bizType);
+        Map<String, Map<String, Object>> cateQual = this.getQual(valMap);
+        valMap.put("level", 2);
+        Map<String, Map<String, Object>> levelTwoQual = this.getQual(valMap);
+        valMap.put("level", 3);
+        Map<String, Map<String, Object>> levelThreeQual = this.getQual(valMap);
+        //二级资质
+        Map<String, List<Map<String, Object>>> quals = new HashedMap(cateQual.size());
+        StringBuffer level;
+        StringBuffer parentId;
+        //将标准资质分类
+        for (Map<String, Object> map : filterQual) {
+            level = new StringBuffer(MapUtils.getString(map, "quaLevel"));
+            parentId = new StringBuffer(MapUtils.getString(map, "parentId"));
+            if ("2".equals(level.toString())) {
+                setQualMap(parentId.toString(), quals, map);
+            } else if ("3".equals(level.toString())) {
+                Map<String, Object> twoQual = levelTwoQual.get(parentId.toString());
+                Map<String, Object> oneQual = cateQual.get(MapUtils.getString(twoQual, "parentId"));
+                setQualMap(MapUtils.getString(oneQual, "id"), quals, map);
+            } else if ("4".equals(level.toString())) {
+                Map<String, Object> threeQual = levelThreeQual.get(parentId.toString());
+                Map<String, Object> twoQual = levelTwoQual.get(MapUtils.getString(threeQual, "parentId"));
+                Map<String, Object> oneQual = cateQual.get(MapUtils.getString(twoQual, "parentId"));
+                setQualMap(MapUtils.getString(oneQual, "id"), quals, map);
+            }
+        }
+        List<Map<String, Object>> list = new ArrayList<>(quals.size());
+        Map<String, Object> qualMap;
+        Map<String, Object> value;
+        //格式化资质
+        for (Map.Entry<String, List<Map<String, Object>>> entry : quals.entrySet()) {
+            if (null != cateQual.get(entry.getKey()) && null != entry.getValue() && entry.getValue().size() > 0) {
+                value = cateQual.get(entry.getKey());
+                for (Map<String, Object> map : entry.getValue()) {
+                    qualMap = new HashedMap(2);
+                    qualMap.put("quaCode", value.get("quaCode") + "-" + map.get("quaCode"));
+                    qualMap.put("quaName", value.get("quaName") + "-" + map.get("benchName"));
+                    list.add(qualMap);
+                }
+            }
+        }
+        return list;
     }
 
+    /**
+     * 获取资质
+     *
+     * @param param
+     * @return
+     */
+    private Map<String, Map<String, Object>> getQual(Map<String, Object> param) {
+        String key = "qual_" + ObjectUtils.buildMapParamHash(param);
+        Object resultQua = RedisShardedPoolUtil.get(key);
+        if (null != resultQua) {
+            return (Map<String, Map<String, Object>>) resultQua;
+        }
+        List<Map<String, Object>> list = dicQuaMapper.queryQual(param);
+        Map<String, Map<String, Object>> valMap = new LinkedHashMap(list.size());
+        for (Map<String, Object> map : list) {
+            valMap.put(MapUtils.getString(map, "id"), map);
+        }
+        if (MapUtils.isNotEmpty(valMap)) {
+            RedisShardedPoolUtil.setEx(key, valMap, 3600);
+        }
+        return valMap;
+    }
 
+    /**
+     * 获取标准名称资质
+     *
+     * @return
+     */
+    private List<Map<String, Object>> getBenchQual(String bizType) {
+        String key = "bench_qual_" + bizType;
+        Object resultQua = RedisShardedPoolUtil.get(key);
+        if (null != resultQua) {
+            return (List<Map<String, Object>>) resultQua;
+        }
+        List<Map<String, Object>> list = dicQuaMapper.queryBenchQual(bizType);
+        RedisShardedPoolUtil.setEx(key, list, 3600);
+        return list;
+    }
+
+    /**
+     * 筛选出符合关键字的资质
+     *
+     * @param benchQuals
+     * @param keyWords
+     * @return
+     */
+    private List<Map<String, Object>> indexOfKeyWord(List<Map<String, Object>> benchQuals, String keyWords) {
+        if (StringUtils.isEmpty(keyWords)) {
+            return benchQuals;
+        }
+        List<Map<String, Object>> resultList = new ArrayList<>(benchQuals.size());
+        for (Map<String, Object> map : benchQuals) {
+            if (MapUtils.getString(map, "benchName").indexOf(keyWords) > 0) {
+                resultList.add(map);
+                continue;
+            }
+        }
+        benchQuals = null;
+        return resultList;
+    }
+
+    /**
+     * 设置资质map
+     */
+    private void setQualMap(String key, Map<String, List<Map<String, Object>>> quals, Map<String, Object> value) {
+        List<Map<String, Object>> list;
+        if (null != quals.get(key)) {
+            list = quals.get(key);
+            list.add(value);
+        } else {
+            list = new ArrayList<>(1);
+            list.add(value);
+        }
+        quals.put(key, list);
+        list = null;
+    }
 }

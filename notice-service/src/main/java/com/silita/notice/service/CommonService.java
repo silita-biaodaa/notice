@@ -5,8 +5,6 @@ import java.util.Map;
 
 public interface CommonService {
 
-
-
     /**
      * 获取省市
      * @return
@@ -35,12 +33,10 @@ public interface CommonService {
      */
     List<Map<String,Object>> queryQua(Map<String,Object> param);
 
-
-
-    void proviceCitySid(Map<String,Object> proviceCity);
-
-
-
-
-
+    /**
+     * 根据关键字查询资质
+     * @param param
+     * @return
+     */
+    List<Map<String,Object>> getFilterQual(Map<String,Object> param);
 }
