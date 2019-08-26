@@ -5,11 +5,10 @@ import com.github.pagehelper.PageInfo;
 import com.silita.notice.common.IsNullCommon;
 import com.silita.notice.common.RegionCommon;
 import com.silita.notice.common.VisitInfoHolder;
-import com.silita.notice.dao.TbCommentInfoMapper;
-import com.silita.notice.dao.TbCompanyMapper;
-import com.silita.notice.dao.TbNtMianHunanMapper;
+import com.silita.notice.dao.*;
 import com.silita.notice.service.TbNtMianHunanService;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
@@ -38,6 +37,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     private String hBaseTableName;
     @Autowired
     private Connection connection;
+    @Autowired
+    private RelQuaGradeMapper relQuaGradeMapper;
 
     /**
      * 查询中标公告
@@ -173,7 +174,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             String comId = tbCompanyMapper.queryComId(param);
             List<String> comNameRangeQual = tbCompanyMapper.queryComNameRangeQual(comId);
             if (comNameRangeQual != null && comNameRangeQual.size() > 0) {
-                param.put("aptitudeUuidList", comNameRangeQual);
+                //处理企业资质问题
+                param.put("aptitudeUuidList", setQualCondition(comNameRangeQual));
+            } else {
+                param.put("title", comName);
             }
         }
 
@@ -282,8 +286,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     /**
      * 公共地区
      */
-
-    public void queryRegions(Map<String, Object> param) {
+    private void queryRegions(Map<String, Object> param) {
         //获取地区
         String regions = MapUtils.getString(param, "regions");
         if (null != regions && !"".equals(regions)) {
@@ -444,6 +447,162 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         //格式化地区
         param.put("source", source);
         return tbNtMianHunanMapper.querySnatchId(param);
+    }
+
+    /**
+     * 符合企业资质的招标公告（资质处理）
+     */
+    private List<String> setQualCondition(List<String> comQual) {
+        List<String> newQuals = new ArrayList<>();
+        List<Map<String, Object>> qualGradeList = relQuaGradeMapper.queryQuaCodeGradeCode(new HashedMap(1) {{
+            put("list", comQual);
+        }});
+        StringBuffer qual;
+        StringBuffer grade;
+        Map<String, Object> valMap = new HashedMap(2);
+        for (Map<String, Object> qualGrade : qualGradeList) {
+            qual = new StringBuffer(MapUtils.getString(qualGrade, "quaCode"));
+            grade = new StringBuffer(MapUtils.getString(qualGrade, "gradeCode"));
+            valMap.put("quaCode", qual.toString());
+            if ("grade_tj_1553497710814".equals(grade.toString())) {
+                valMap.put("gradeCode", "grade_tj_1553497710814");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_yj_1553245789202");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_yjjys_1554256688540");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_ej_1553245789219");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_ejjys_1554256688469");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sj_1553245789236");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sjjys_1554256688485");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sj_1553476160640");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sjjys_1554256688494");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_wj_1553476160663");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_wjjys_1554256688504");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+            } else if ("grade_yj_1553245789202".equals(grade.toString())) {
+                valMap.put("gradeCode", "grade_yj_1553245789202");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_yjjys_1554256688540");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_ej_1553245789219");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_ejjys_1554256688469");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sj_1553245789236");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sjjys_1554256688485");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sj_1553476160640");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sjjys_1554256688494");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_wj_1553476160663");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_wjjys_1554256688504");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+            } else if ("grade_ej_1553245789219".equals(grade.toString())) {
+                valMap.put("gradeCode", "grade_ej_1553245789219");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_ejjys_1554256688469");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sj_1553245789236");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sjjys_1554256688485");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sj_1553476160640");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sjjys_1554256688494");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_wj_1553476160663");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_wjjys_1554256688504");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+            } else if ("grade_sj_1553245789236".equals(grade.toString())) {
+                valMap.put("gradeCode", "grade_sj_1553245789236");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sjjys_1554256688485");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sj_1553476160640");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sjjys_1554256688494");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_wj_1553476160663");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_wjjys_1554256688504");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+            } else if ("grade_sj_1553476160640".equals(grade.toString())) {
+                valMap.put("gradeCode", "grade_sj_1553476160640");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_sjjys_1554256688494");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_wj_1553476160663");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_wjjys_1554256688504");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+            } else if ("grade_wj_1553476160663".equals(grade.toString())) {
+                valMap.put("gradeCode", "grade_wj_1553476160663");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_wjjys_1554256688504");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+            } else if ("grade_jj_1553245789116".equals(grade.toString())) {
+                valMap.put("gradeCode", "grade_jj_1553245789116");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_yj_1553245789137");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_yjjys_1554256688513");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_bj_1553245789155");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_bjjys_1554256688521");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_dj_1553245789183");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_djjys_1554256688530");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+            } else if ("grade_yj_1553245789137".equals(grade.toString())) {
+                valMap.put("gradeCode", "grade_yj_1553245789137");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_yjjys_1554256688513");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_bj_1553245789155");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_bjjys_1554256688521");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_dj_1553245789183");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_djjys_1554256688530");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+            } else if ("grade_bj_1553245789155".equals(grade.toString())) {
+                valMap.put("gradeCode", "grade_bj_1553245789155");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_bjjys_1554256688521");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_dj_1553245789183");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_djjys_1554256688530");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+            } else if ("grade_dj_1553245789183".equals(grade.toString())) {
+                valMap.put("gradeCode", "grade_dj_1553245789183");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+                valMap.put("gradeCode", "grade_djjys_1554256688530");
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
+            }
+        }
+        List<String> resultQuals = new ArrayList<>();
+        for (String str : newQuals) {
+            if (StringUtils.isNotEmpty(str)) {
+                resultQuals.add(str);
+            }
+        }
+        return resultQuals;
     }
 
 

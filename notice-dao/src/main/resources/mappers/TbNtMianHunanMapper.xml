@@ -123,13 +123,11 @@
             FROM
             tb_nt_regex_qua r
             WHERE 1 = 1
-            <if test="aptitudeUuidList != null and aptitudeUuidList.size > 0">
                 and(
                 <foreach collection="aptitudeUuidList" item="list" separator="or">
                     r.qua_regex like CONCAT('%',#{list},'%')
                 </foreach>
                 )
-            </if>
             ORDER BY r.`created` DESC)
         </if>
        <if test="title == '' or title == null">
