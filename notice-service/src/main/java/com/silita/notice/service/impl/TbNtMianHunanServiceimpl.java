@@ -594,6 +594,9 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 newQuals.add(relQuaGradeMapper.queryId(valMap));
                 valMap.put("gradeCode", "grade_djjys_1554256688530");
                 newQuals.add(relQuaGradeMapper.queryId(valMap));
+            } else {
+                valMap.put("gradeCode", grade.toString());
+                newQuals.add(relQuaGradeMapper.queryId(valMap));
             }
         }
         List<String> resultQuals = new ArrayList<>();
