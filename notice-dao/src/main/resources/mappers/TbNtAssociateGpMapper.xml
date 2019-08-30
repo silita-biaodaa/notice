@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.notice.dao.TbNtAssociateGpMapper">
+
+    <!--查询公告的相关公告-->
+    <select id="queryNoticeCorrelationList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          t1.`pkid` AS id,
+          t1.`title` AS title,
+          t1.`nt_category` AS `type`,
+          t1.`source`
+        FROM
+          tb_nt_associate_gp_${source} t
+          JOIN tb_nt_mian_${source} t1
+            ON t.`nt_id` = t1.`pkid`
+        WHERE t.`rel_gp` =
+          (SELECT
+            t3.`rel_gp`
+          FROM
+            tb_nt_associate_gp_hunan t3
+          WHERE t3.`nt_id` = #{ntId})
+          AND t1.`pkid` != #{ntId}
+    </select>
+</mapper>

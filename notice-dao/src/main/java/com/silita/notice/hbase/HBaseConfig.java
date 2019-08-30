@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.IOException;
-
 /**
  * hbase配置类
  * Create by IntelliJ Idea 2018.1
@@ -38,16 +36,14 @@ public class HBaseConfig {
         try {
             connection = ConnectionFactory.createConnection(configuration());
             logger.info("#####连接hbase成功#####");
-        } catch (IOException e) {
-            e.printStackTrace();
-//            logger.error("连接hbase失败!!!");
+        } catch (Exception e) {
+            logger.error("连接hbase失败!!!", e);
         }
         return connection;
     }
 
     @Bean
     public org.apache.hadoop.conf.Configuration configuration() {
-
         org.apache.hadoop.conf.Configuration configuration = HBaseConfiguration.create();
         configuration.set("hbase.zookeeper.quorum", hbaseZookeeperQuorum);
         configuration.set("hbase.zookeeper.property.clientPort", hbaseZookeeperclientPort);

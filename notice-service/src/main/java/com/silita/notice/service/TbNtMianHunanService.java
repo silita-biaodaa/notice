@@ -150,4 +150,11 @@ public interface TbNtMianHunanService {
      */
     List<String> getNoticeCountList(Map<String,Object> param);
 
+    /**
+     * 查询公告的相关公告
+     * @param param
+     * @return
+     */
+    List<Map<String,Object>> listNoticeCorrelation(Map<String,Object> param);
+
 }

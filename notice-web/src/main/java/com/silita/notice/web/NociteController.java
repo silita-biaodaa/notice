@@ -202,6 +202,24 @@ public class NociteController extends BaseController {
         return resultMap;
     }
 
+
+    /**
+     * 查询相关公告
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/correlation/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map listCorrelation(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        try {
+            seccussMap(resultMap, tbNtMianHunanService.listNoticeCorrelation(param));
+        } catch (Exception e) {
+            errorMsg(resultMap, e.getMessage());
+        }
+        return resultMap;
+    }
+
     /**
      * 查询某一日期的爬取id
      *

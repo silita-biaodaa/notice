@@ -3,6 +3,7 @@ package com.silita.notice.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.notice.common.IsNullCommon;
+import com.silita.notice.common.RangeCommon;
 import com.silita.notice.common.RegionCommon;
 import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.*;
@@ -39,6 +40,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     private Connection connection;
     @Autowired
     private RelQuaGradeMapper relQuaGradeMapper;
+    @Autowired
+    TbNtAssociateGpMapper tbNtAssociateGpMapper;
 
     /**
      * 查询中标公告
@@ -136,18 +139,30 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 rangeType = "or";
                 param.put("rangeType", rangeType);
             }
-            String[] zz = zzType.split("\\,");
+            String[] zz = zzType.split(",");
+            Map<String, Object> maps;
             for (String z : zz) {
-                Map<String, Object> maps = new HashMap<String, Object>();
-                String[] split1 = z.split("\\/");
+                maps = new HashMap<>();
+                String[] split1 = z.split("/");
                 if (split1.length >= 2) {
-                    maps.put("quaCode", split1[0]);
-                    maps.put("gradeCode", split1[1]);
+                    if (null != RangeCommon.splitRange.get(split1[1])) {
+                        String[] grades = RangeCommon.splitRange.get(split1[1]).split(",");
+                        for (String str : grades) {
+                            maps = new HashedMap();
+                            maps.put("quaCode", split1[0]);
+                            maps.put("gradeCode", str);
+                            group.add(maps);
+                        }
+                    } else {
+                        maps.put("quaCode", split1[0]);
+                        maps.put("gradeCode", split1[1]);
+                        group.add(maps);
+                    }
                 } else {
                     maps.put("quaCode", split1[0]);
-                    maps.put("gradeCode", "");
+                    maps.put("gradeCode", "0");
+                    group.add(maps);
                 }
-                group.add(maps);
             }
             param.put("groupList", group);
 
@@ -447,6 +462,11 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         //格式化地区
         param.put("source", source);
         return tbNtMianHunanMapper.querySnatchId(param);
+    }
+
+    @Override
+    public List<Map<String, Object>> listNoticeCorrelation(Map<String, Object> param) {
+        return tbNtAssociateGpMapper.queryNoticeCorrelationList(param);
     }
 
     /**
