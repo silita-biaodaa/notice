@@ -24,9 +24,6 @@ public interface TbNtRegexQuaMapper extends MyMapper<TbNtRegexQua> {
      */
     List<String> queryQuaRegex(Map<String,Object> param);
 
-
-
-
     /**
      * 根据资质关系表达式表中的资质和pkid获取公告id
      * @param param
@@ -34,5 +31,11 @@ public interface TbNtRegexQuaMapper extends MyMapper<TbNtRegexQua> {
      */
     List<String> queryListNoticeId(Map<String,Object> param);
 
-
+    /**
+     * 根据公告id查询资质id
+     *
+     * @param noticeId
+     * @return
+     */
+    String queryCateQuaId(String noticeId);
 }

@@ -5,6 +5,7 @@ import com.silita.notice.base.BaseController;
 import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.service.CompanyService;
 import com.silita.notice.service.TbNtMianHunanService;
+import com.silita.notice.service.impl.ElasticsearchService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ public class NociteController extends BaseController {
 
     @Autowired
     private CompanyService companyService;
+    @Autowired
+    ElasticsearchService elasticsearchService;
 
     /**
      * 查询公告  -  中标
@@ -235,6 +238,46 @@ public class NociteController extends BaseController {
             return resultMap;
         } catch (Exception e) {
             logger.error("查询失败！", e);
+            errorMsg(resultMap, e.getMessage());
+            return resultMap;
+        }
+    }
+
+    /**
+     * 查询订阅结果页
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/subscribe/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map listsubscribe(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        try {
+            resultMap = elasticsearchService.getSubscribe(param);
+            seccussMap(resultMap);
+            return resultMap;
+        } catch (Exception e) {
+            logger.error("查询失败！", e);
+            errorMsg(resultMap, e.getMessage());
+            return resultMap;
+        }
+    }
+
+    /**
+     * es导入
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/es/import", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map esImport() {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        try {
+            tbNtMianHunanService.importNoticeForEs();
+            seccussMap(resultMap);
+            return resultMap;
+        } catch (Exception e) {
+            logger.error("插入失败！", e);
             errorMsg(resultMap, e.getMessage());
             return resultMap;
         }

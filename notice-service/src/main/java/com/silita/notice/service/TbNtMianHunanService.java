@@ -157,4 +157,24 @@ public interface TbNtMianHunanService {
      */
     List<Map<String,Object>> listNoticeCorrelation(Map<String,Object> param);
 
+    /**
+     * 订阅结果列表
+     *
+     * @param param
+     * @return
+     */
+    Map<String, Object> getSubscribeList(Map<String, Object> param);
+
+    /**
+     * 导入公告入ES
+     */
+    void importNoticeForEs() throws IOException;
+
+    /**
+     * 设置招标资质
+     *
+     * @param zzType
+     * @return
+     */
+    List<String> setNoticeQual(String zzType);
 }

@@ -15,6 +15,11 @@ public class BaseController {
 
     public String MSG_FLAG = "msg";
 
+    public void seccussMap(Map resultMap) {
+        resultMap.put("code", ResponseCode.SUCCESS_CODE);
+        resultMap.put("msg", ResponseCode.SUCCESS_MSG);
+    }
+
     public void seccussMap(Map resultMap,Object data){
         resultMap.put("code", ResponseCode.SUCCESS_CODE);
         resultMap.put("msg",ResponseCode.SUCCESS_MSG);

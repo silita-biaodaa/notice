@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.silita.notice.dao.TbNtRegexQuaMapper" >
+<mapper namespace="com.silita.notice.dao.TbNtRegexQuaMapper">
 
-  <select id="queryNoticeId" resultType="java.lang.String" parameterType="map">
+    <select id="queryNoticeId" resultType="java.lang.String" parameterType="map">
     SELECT
       qua_regex AS quaRegex
     FROM
       tb_nt_regex_qua
     WHERE nt_id = #{id}
   </select>
-  <select id="queryQuaRegex" resultType="java.lang.String" parameterType="map">
+    <select id="queryQuaRegex" resultType="java.lang.String" parameterType="map">
     SELECT
       qua_regex AS quaRegex
     FROM
@@ -17,10 +17,19 @@
     WHERE nt_id = #{id}
   </select>
 
-  <!--根据资质关系表达式表中的资质和pkid获取公告id-->
+    <!--根据资质关系表达式表中的资质和pkid获取公告id-->
     <select id="queryListNoticeId" resultType="java.lang.String" parameterType="map">
       SELECT nt_id AS ntId FROM  `tb_nt_regex_qua` WHERE qua_regex=#{range}
     </select>
 
+    <!--根据公告id查询资质id-->
+    <select id="queryCateQuaId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+        GROUP_CONCAT(qua_regex) AS quaRegex
+        FROM
+        tb_nt_regex_qua
+        WHERE nt_id = #{noticeId}
+        GROUP BY nt_id
+    </select>
 
 </mapper>

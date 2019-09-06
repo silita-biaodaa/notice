@@ -7,6 +7,8 @@ import com.silita.notice.common.RangeCommon;
 import com.silita.notice.common.RegionCommon;
 import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.*;
+import com.silita.notice.elasticsearch.ElasticsearchFactory;
+import com.silita.notice.model.es.NoticeElasticsearch;
 import com.silita.notice.service.TbNtMianHunanService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -42,6 +44,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     private RelQuaGradeMapper relQuaGradeMapper;
     @Autowired
     TbNtAssociateGpMapper tbNtAssociateGpMapper;
+    @Autowired
+    TbNtRegexQuaMapper tbNtRegexQuaMapper;
+    @Autowired
+    ElasticsearchFactory elasticsearchFactory;
 
     /**
      * 查询中标公告
@@ -131,7 +137,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             param.put("pbModeList", pbModeList);
         }
         //获取资质
-        List<Map<String, Object>> group = new ArrayList<Map<String, Object>>();
         String zzType = MapUtils.getString(param, "zzType");
         if (StringUtils.isNotEmpty(zzType)) {
             String rangeType = MapUtils.getString(param, "rangeType");
@@ -139,35 +144,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 rangeType = "or";
                 param.put("rangeType", rangeType);
             }
-            String[] zz = zzType.split(",");
-            Map<String, Object> maps;
-            for (String z : zz) {
-                maps = new HashMap<>();
-                String[] split1 = z.split("/");
-                if (split1.length >= 2) {
-                    if (null != RangeCommon.splitRange.get(split1[1])) {
-                        String[] grades = RangeCommon.splitRange.get(split1[1]).split(",");
-                        for (String str : grades) {
-                            maps = new HashedMap();
-                            maps.put("quaCode", split1[0]);
-                            maps.put("gradeCode", str);
-                            group.add(maps);
-                        }
-                    } else {
-                        maps.put("quaCode", split1[0]);
-                        maps.put("gradeCode", split1[1]);
-                        group.add(maps);
-                    }
-                } else {
-                    maps.put("quaCode", split1[0]);
-                    maps.put("gradeCode", "0");
-                    group.add(maps);
-                }
-            }
-            param.put("groupList", group);
 
-            //获取资质id
-            List<String> regexList = tbNtMianHunanMapper.queryQuaId(param);
+            List<String> regexList = setNoticeQual(zzType);
             //如果rangeType为空则给他赋默认值为or
             if (rangeType.equals("or")) {
                 param.put("regexList", regexList);
@@ -469,6 +447,30 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         return tbNtAssociateGpMapper.queryNoticeCorrelationList(param);
     }
 
+    @Override
+    public Map<String, Object> getSubscribeList(Map<String, Object> param) {
+        return null;
+    }
+
+    @Override
+    public void importNoticeForEs() throws IOException {
+        Map<String, Object> param = new HashMap<>();
+        for (Object val : RegionCommon.regionSourcePinYin.values()) {
+            param.put("source", val);
+            param.put("pdModeType", val);
+            List<NoticeElasticsearch> list = tbNtMianHunanMapper.queryNotice(param);
+            if (null != list && list.size() > 0) {
+                for (NoticeElasticsearch noce : list) {
+                    param = new HashMap<>();
+                    param.put("snatchId", noce.getSnatchId());
+                    noce.setQuaId(tbNtRegexQuaMapper.queryCateQuaId(noce.getNtId()));
+                    noce.setContent(queryBidsDetailsCentendString(param));
+                }
+                elasticsearchFactory.saveAll(list);
+            }
+        }
+    }
+
     /**
      * 符合企业资质的招标公告（资质处理）
      */
@@ -628,5 +630,37 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         return resultQuals;
     }
 
-
+    @Override
+    public List<String> setNoticeQual(String zzType) {
+        List<Map<String, Object>> group = new ArrayList<Map<String, Object>>();
+        String[] zz = zzType.split(",");
+        Map<String, Object> maps;
+        for (String z : zz) {
+            maps = new HashMap<>();
+            String[] split1 = z.split("/");
+            if (split1.length >= 2) {
+                if (null != RangeCommon.splitRange.get(split1[1])) {
+                    String[] grades = RangeCommon.splitRange.get(split1[1]).split(",");
+                    for (String str : grades) {
+                        maps = new HashedMap();
+                        maps.put("quaCode", split1[0]);
+                        maps.put("gradeCode", str);
+                        group.add(maps);
+                    }
+                } else {
+                    maps.put("quaCode", split1[0]);
+                    maps.put("gradeCode", split1[1]);
+                    group.add(maps);
+                }
+            } else {
+                maps.put("quaCode", split1[0]);
+                maps.put("gradeCode", "0");
+                group.add(maps);
+            }
+        }
+        Map val = new HashedMap(1) {{
+            put("groupList", group);
+        }};
+        return tbNtMianHunanMapper.queryQuaId(val);
+    }
 }

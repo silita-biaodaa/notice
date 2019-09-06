@@ -1,6 +1,7 @@
 package com.silita.notice.dao;
 
 import com.silita.notice.model.TbNtMianHunan;
+import com.silita.notice.model.es.NoticeElasticsearch;
 import com.silita.notice.utils.MyMapper;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +10,6 @@ import java.util.Map;
 @Repository
 public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
 
-
     /**
      *
      * 查询中标公告
@@ -17,11 +17,7 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
      * @param param
      * @return
      */
-    //List<Map<String,Object>> queryBids(TbNtMianHunan nociteMian,List<String> list,String proviceCode);
     List<Map<String,String>> queryBids(Map<String,Object> param);
-
-
-
 
     /**
      *通过公司名称模糊查询公司中标记录
@@ -30,7 +26,6 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
      * @param param
      * @return
      */
-
     List<Map<String,String>> queryCompanyName(Map<String,Object> param);
 
     /**
@@ -86,7 +81,6 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
 
     void addClickCount(Map<String,Object> param);
 
-
     /**
      * 通过接收的资质 找到 资质等级表的id
      * @param param
@@ -94,11 +88,9 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
      */
     List<String> queryQuaId(Map<String,Object> param);
 
-
     /**
      * 查省级编号和市级编号和爬取id
      */
-
     Map<String,Object> queryProviceCity(Map<String,Object> param);
 
     /**
@@ -127,7 +119,6 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
      */
     Map<String,Object> queryProjectTypeNoticeType(Map<String,Object> param);
 
-
     List<String> queryPkid(Map<String,Object> param);
 
     /**
@@ -136,4 +127,27 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
      * @return
      */
     List<String> querySnatchId(Map<String,Object> param);
+
+ /**
+  * 查询公告
+  *
+  * @return
+  */
+ List<NoticeElasticsearch> queryNotice(Map<String, Object> param);
+
+ /**
+  * 根据爬取id查询主键id
+  *
+  * @param param
+  * @return
+  */
+ String queryPkidBySnatchId(Map<String, Object> param);
+
+ /**
+  * 查询公告已读状态
+  *
+  * @param param
+  * @return
+  */
+ int queryNoticeReadStatus(Map<String, Object> param);
 }

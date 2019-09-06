@@ -347,4 +347,44 @@
         WHERE t.`pub_date` = #{date}
     </select>
 
+    <select id="queryNotice" parameterType="java.util.Map" resultType="com.silita.notice.model.es.NoticeElasticsearch">
+        SELECT
+        mian.pkid AS ntId,
+        mian.`title`,
+        mian.snatch_id AS snatchId,
+        mian.`pub_date` AS pubDate,
+        tenders.qua_name AS quaName,
+        mian.source,
+        mian.city_code AS city,
+        <include refid="noticeType"/>,
+        <include refid="noticeTypeConvert"/>,
+        mian.nt_category AS `type`,
+        (SELECT
+        t.`name`
+        FROM
+        dic_common t
+        WHERE t.`code` = tenders.`pb_mode`
+        AND t.`type` = '${pdModeType}'
+        GROUP BY t.`code`) AS pbMode
+        FROM tb_nt_mian_${source} mian
+        JOIN tb_nt_tenders_${source} tenders
+        ON mian.pkid = tenders.nt_id AND mian.`nt_category` = 1
+        WHERE 1 = 1
+        AND mian.is_enable = '1'
+        AND mian.`pub_date` &gt;= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        AND mian.`pub_date` &lt;= NOW()
+        AND CAST(mian.nt_type AS SIGNED) &lt;100
+        ORDER BY mian.`pub_date` DESC
+    </select>
+
+    <!--根据爬取id查询主键id-->
+    <select id="queryPkidBySnatchId" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT mian.pkid FROM tb_nt_mian_${source} mian WHERE mian.snatch_id = #{snatchId}
+    </select>
+
+    <!--查询公告已读状态-->
+    <select id="queryNoticeReadStatus" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM tb_subscribe_result t
+        WHERE t.`user_id` = #{userId} AND t.`sub_type` = 'zhaobiao' AND t.`nt_id` = #{pkid} AND t.`source` = #{source}
+    </select>
 </mapper>

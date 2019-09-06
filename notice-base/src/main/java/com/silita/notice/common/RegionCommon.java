@@ -9,7 +9,7 @@ public class RegionCommon {
 
     public static Map<String,String> regionSource = new HashMap<>();
 
-    public static Map<String,Object> regionSourcePinYin = new HashMap<>();
+    public static Map<String, String> regionSourcePinYin = new HashMap<>();
 
     static {
         regionSourcePinYin.put("安徽省","anh");
