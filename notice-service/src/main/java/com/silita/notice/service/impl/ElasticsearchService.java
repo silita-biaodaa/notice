@@ -123,7 +123,7 @@ public class ElasticsearchService {
         searchRequestBuilder.setQuery(query);
         String[] filed = new String[]{"snatchId", "title", "pubDate", "quaName", "source", "noticeType", "projectType", "type", "pbMode"};
         searchRequestBuilder.setFetchSource(filed, null);
-        searchRequestBuilder.setFrom(page.getPageNo()).setSize(1);
+        searchRequestBuilder.setFrom(page.getPageNo()).setSize(page.getPageSize());
         // 设置是否按查询匹配度排序
         searchRequestBuilder.setExplain(true);
         // 执行搜索,返回搜索响应信息
