@@ -177,4 +177,11 @@ public interface TbNtMianHunanService {
      * @return
      */
     List<String> setNoticeQual(String zzType);
+
+    /**
+     * 设置公告已读
+     *
+     * @param param
+     */
+    void setNoticeReadStatus(Map<String, Object> param);
 }

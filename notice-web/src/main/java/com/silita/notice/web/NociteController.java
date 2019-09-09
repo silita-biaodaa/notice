@@ -264,6 +264,26 @@ public class NociteController extends BaseController {
     }
 
     /**
+     * 公告已读
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/read", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map read(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>(2);
+        try {
+            tbNtMianHunanService.setNoticeReadStatus(param);
+            seccussMap(resultMap);
+            return resultMap;
+        } catch (Exception e) {
+            logger.error("设置失败！", e);
+            errorMsg(resultMap, e.getMessage());
+            return resultMap;
+        }
+    }
+
+    /**
      * es导入
      *
      * @return

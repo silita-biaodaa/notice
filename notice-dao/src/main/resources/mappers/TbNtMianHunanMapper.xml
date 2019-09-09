@@ -385,6 +385,17 @@
     <!--查询公告已读状态-->
     <select id="queryNoticeReadStatus" parameterType="java.util.Map" resultType="java.lang.Integer">
         SELECT COUNT(1) FROM tb_subscribe_result t
-        WHERE t.`user_id` = #{userId} AND t.`sub_type` = 'zhaobiao' AND t.`nt_id` = #{pkid} AND t.`source` = #{source}
+        WHERE t.`user_id` = #{userId} AND t.`sub_type` = #{subType} AND t.`nt_id` = #{pkid} AND t.`source` = #{source}
     </select>
+
+    <!--添加公告已读状态-->
+    <insert id="insertNoticeRead" parameterType="java.util.Map">
+        INSERT INTO `tb_subscribe_result` (
+          `user_id`,
+          `nt_id`,
+          `sub_type`,
+          `source`,
+          `created`
+        )VALUES(#{userId},#{ntId},#{subType},#{source},now())
+    </insert>
 </mapper>

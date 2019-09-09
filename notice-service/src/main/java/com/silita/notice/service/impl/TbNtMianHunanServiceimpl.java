@@ -21,6 +21,7 @@ import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -457,14 +458,14 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Map<String, Object> param = new HashMap<>();
         for (Object val : RegionCommon.regionSourcePinYin.values()) {
             param.put("source", val);
-            param.put("pdModeType", val);
+            param.put("pdModeType", val + "_pbmode");
             List<NoticeElasticsearch> list = tbNtMianHunanMapper.queryNotice(param);
             if (null != list && list.size() > 0) {
                 for (NoticeElasticsearch noce : list) {
                     param = new HashMap<>();
                     param.put("snatchId", noce.getSnatchId());
                     noce.setQuaId(tbNtRegexQuaMapper.queryCateQuaId(noce.getNtId()));
-                    noce.setContent(queryBidsDetailsCentendString(param));
+                    noce.setContent(Jsoup.parse(queryBidsDetailsCentendString(param)).text());
                 }
                 elasticsearchFactory.saveAll(list);
             }
@@ -662,5 +663,19 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             put("groupList", group);
         }};
         return tbNtMianHunanMapper.queryQuaId(val);
+    }
+
+    @Override
+    public void setNoticeReadStatus(Map<String, Object> param) {
+        String userId = VisitInfoHolder.getUserId();
+        if (StringUtils.isEmpty(userId)) {
+            return;
+        }
+        param.put("userId", userId);
+        int count = tbNtMianHunanMapper.queryNoticeReadStatus(param);
+        if (count > 0) {
+            return;
+        }
+        tbNtMianHunanMapper.insertNoticeRead(param);
     }
 }

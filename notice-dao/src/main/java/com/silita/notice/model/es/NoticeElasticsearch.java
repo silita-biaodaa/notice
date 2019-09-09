@@ -43,6 +43,8 @@ public class NoticeElasticsearch implements Serializable {
     private String projectType;
     @Field(type = FieldType.Keyword)
     private String type;
+    @Field(type = FieldType.Keyword)
+    private String pbMode;
     @Field(type = FieldType.Date)
     private Date created = new Date();
 }

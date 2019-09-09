@@ -93,7 +93,7 @@ public class ElasticsearchService {
             String[] keywords = MapUtils.getString(param, "keywords").split(",");
             int keywordsLeng = keywords.length;
             for (int i = 0; i < keywordsLeng; i++) {
-                keywordsQuery.should(new QueryStringQueryBuilder("\"" + keywords[i] + "\"").field("title"));
+                keywordsQuery.should(new QueryStringQueryBuilder("\"" + keywords[i] + "\"").field("title").field("content"));
             }
             query.must(keywordsQuery);
             // 设置高亮显示
@@ -121,7 +121,7 @@ public class ElasticsearchService {
         date.must(QueryBuilders.rangeQuery("pubDate").from(DateUtils.beforeDate(now, 7)).to(now));
         query.must(date);
         searchRequestBuilder.setQuery(query);
-        String[] filed = new String[]{"snatchId", "title", "pubDate", "quaName", "source", "noticeType", "projectType", "type"};
+        String[] filed = new String[]{"snatchId", "title", "pubDate", "quaName", "source", "noticeType", "projectType", "type", "pbMode"};
         searchRequestBuilder.setFetchSource(filed, null);
         searchRequestBuilder.setFrom(page.getPageNo()).setSize(1);
         // 设置是否按查询匹配度排序
@@ -152,8 +152,16 @@ public class ElasticsearchService {
         List<Map<String, Object>> list = new ArrayList<>(length);
         Map<String, Object> valMap;
         int count;
+        StringBuffer content = new StringBuffer("");
+        StringBuffer title = new StringBuffer("");
+        List<Map<String, Object>> keywordsMap = new ArrayList<>(1);
+        Map<String, Object> keyMap;
+        String[] words;
         for (int i = 0; i < length; i++) {
             if (StringUtils.isNotEmpty(keywords)) {
+                words = keywords.split(",");
+                int wordsLength = words.length;
+                keywordsMap = new ArrayList<>(wordsLength);
                 // 获取对应的高亮域
                 Map<String, HighlightField> result = res[i].getHighlightFields();
                 // 从设定的高亮域中取得指定域
@@ -162,33 +170,44 @@ public class ElasticsearchService {
                     // 取得定义的高亮标签
                     Text[] titleTexts = titleField.fragments();
                     // 为title串值增加自定义的高亮标签
-                    StringBuffer title = new StringBuffer("");
                     for (Text text : titleTexts) {
                         title.append(text);
                     }
-                    System.out.println("title：" + Jsoup.parse(title.toString()).text());
+                }
+                if (StringUtils.isNotEmpty(title.toString())) {
+                    title = new StringBuffer(Jsoup.parse(title.toString()).text());
+                    for (int key = 0; key < wordsLength; key++) {
+                        keyMap = new HashedMap(1);
+                        keyMap.put("word", words[key]);
+                        keyMap.put("isExist", 0);
+                        if (title.toString().indexOf(words[key]) > -1) {
+                            keyMap.put("isExist", 1);
+                        }
+                        keywordsMap.add(keyMap);
+                    }
                 }
                 HighlightField contentField = result.get("content");
                 if (contentField != null) {
                     // 取得定义的高亮标签
-                    Text[] titleTexts = contentField.fragments();
-                    // 为title串值增加自定义的高亮标签
-                    StringBuffer content = new StringBuffer("");
-                    for (Text text : titleTexts) {
-                        content.append(text);
-                    }
-                    System.out.println("content：" + content);
+                    Text[] contentTexts = contentField.fragments();
+                    // 为content串值增加自定义的高亮标签
+                    content.append(contentTexts[0]);
                 }
             }
             valMap = JSONObject.parseObject(res[i].getSourceAsString());
             valMap.put("pkid", tbNtMianHunanMapper.queryPkidBySnatchId(valMap));
             valMap.put("isRead", 0);
             valMap.put("userId", VisitInfoHolder.getUserId());
+            valMap.put("subType", "zhaobiao");
+            if (StringUtils.isNotEmpty(content.toString())) {
+                valMap.put("content", "..." + content.toString() + "...");
+            }
+            valMap.put("keywords", keywordsMap);
             count = tbNtMianHunanMapper.queryNoticeReadStatus(valMap);
             if (count > 0) {
                 valMap.put("isRead", 1);
-                valMap.remove("userId");
             }
+            valMap.remove("userId");
             list.add(valMap);
         }
         return list;

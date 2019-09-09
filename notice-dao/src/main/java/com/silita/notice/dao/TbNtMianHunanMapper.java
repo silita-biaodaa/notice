@@ -150,4 +150,12 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
   * @return
   */
  int queryNoticeReadStatus(Map<String, Object> param);
+
+ /**
+  * 添加公告已读状态
+  *
+  * @param param
+  * @return
+  */
+ int insertNoticeRead(Map<String, Object> param);
 }
