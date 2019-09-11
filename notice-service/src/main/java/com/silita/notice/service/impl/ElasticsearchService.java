@@ -102,6 +102,7 @@ public class ElasticsearchService {
             highlightBuilder.field("content");
             highlightBuilder.preTags("<span style=\"color:red\">");
             highlightBuilder.postTags("</span>");
+            highlightBuilder.fragmentSize(15);
             searchRequestBuilder.highlighter(highlightBuilder);
         }
         //资质
