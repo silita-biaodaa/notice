@@ -44,7 +44,7 @@ public class ElasticsearchService {
     @Autowired
     TbNtMianHunanMapper tbNtMianHunanMapper;
 
-    public Map<String, Object> getSubscribe(Map<String, Object> param) {
+    public Map<String, Object> getSubscribe(Map<String, Object> param, String opt) {
         Map<String, Object> resultMap = new HashedMap() {{
             put("pages", 0);
             put("total", 0);
@@ -116,12 +116,21 @@ public class ElasticsearchService {
                 query.must(qualQuery);
             }
         }
-        String now = DateUtils.dateToStr(new Date(), "yyyy-MM-dd");
         BoolQueryBuilder date = QueryBuilders.boolQuery();
-        date.must(QueryBuilders.rangeQuery("pubDate").from(DateUtils.beforeDate(now, 7)).to(now));
-        query.must(date);
+        if ("show".equals(opt)) {
+            //查询公示日期
+            String now = DateUtils.dateToStr(new Date(), "yyyy-MM-dd");
+            date.must(QueryBuilders.rangeQuery("pubDate").from(DateUtils.beforeDate(now, 7)).to(now));
+            query.must(date);
+        } else {
+            //查询入es时间
+            Date start = (Date) MapUtils.getObject(param, "start");
+            Date end = (Date) MapUtils.getObject(param, "end");
+            date.must(QueryBuilders.rangeQuery("created").from(start).to(end));
+            query.must(date);
+        }
         searchRequestBuilder.setQuery(query);
-        String[] filed = new String[]{"snatchId", "title", "pubDate", "quaName", "source", "noticeType", "projectType", "type", "pbMode"};
+        String[] filed = new String[]{"ntId", "snatchId", "title", "pubDate", "quaName", "source", "noticeType", "projectType", "type", "pbMode", "regions"};
         searchRequestBuilder.setFetchSource(filed, null);
         searchRequestBuilder.setFrom(page.getPageNo()).setSize(page.getPageSize());
         // 设置是否按查询匹配度排序
@@ -136,7 +145,7 @@ public class ElasticsearchService {
         resultMap.put("total", page.getTotal());
         resultMap.put("pageNo", pageNo);
         resultMap.put("pageSize", pageSize);
-        resultMap.put("data", formatResult(res, param));
+        resultMap.put("data", formatResult(res, param, opt));
         return resultMap;
     }
 
@@ -146,7 +155,7 @@ public class ElasticsearchService {
      * @param res
      * @return
      */
-    private List formatResult(SearchHit[] res, Map<String, Object> param) {
+    private List formatResult(SearchHit[] res, Map<String, Object> param, String opt) {
         String keywords = MapUtils.getString(param, "keywords");
         int length = res.length;
         List<Map<String, Object>> list = new ArrayList<>(length);
@@ -195,19 +204,21 @@ public class ElasticsearchService {
                 }
             }
             valMap = JSONObject.parseObject(res[i].getSourceAsString());
-            valMap.put("pkid", tbNtMianHunanMapper.queryPkidBySnatchId(valMap));
-            valMap.put("isRead", 0);
-            valMap.put("userId", VisitInfoHolder.getUserId());
+            valMap.put("pkid", valMap.get("ntId"));
+            if ("show".equals(opt)) {
+                valMap.put("isRead", 0);
+                valMap.put("userId", VisitInfoHolder.getUserId());
+                count = tbNtMianHunanMapper.queryNoticeReadStatus(valMap);
+                if (count > 0) {
+                    valMap.put("isRead", 1);
+                }
+                valMap.remove("userId");
+            }
             valMap.put("subType", "zhaobiao");
             if (StringUtils.isNotEmpty(content.toString())) {
                 valMap.put("content", "..." + content.toString() + "...");
             }
             valMap.put("keywords", keywordsMap);
-            count = tbNtMianHunanMapper.queryNoticeReadStatus(valMap);
-            if (count > 0) {
-                valMap.put("isRead", 1);
-            }
-            valMap.remove("userId");
             list.add(valMap);
         }
         return list;

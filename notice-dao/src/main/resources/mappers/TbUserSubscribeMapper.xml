@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.notice.dao.TbUserSubscribeMapper">
+
+    <!--查询需要推送的用户数量-->
+    <select id="queryUserSubscibe" resultType="java.lang.Integer">
+        SELECT
+          COUNT(1)
+        FROM
+          tb_user_subscribe t
+        WHERE t.`is_push` = 1
+        ORDER BY t.`created`
+    </select>
+
+    <!--查询需要推送的用户和条件-->
+    <select id="queryListUserSubscibe" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          t.pkid,
+          t.`user_id` AS userId,
+          t.`condition` AS `condition`
+        FROM
+          tb_user_subscribe t
+        WHERE t.`is_push` = 1
+        ORDER BY t.`created`
+        LIMIT #{start},#{end}
+    </select>
+</mapper>

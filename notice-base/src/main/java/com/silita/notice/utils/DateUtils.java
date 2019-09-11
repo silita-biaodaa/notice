@@ -68,4 +68,8 @@ public class DateUtils {
         calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) - days);
         return sbf.format(calendar.getTime());
     }
+
+    public static void main(String[] args) {
+        System.out.println(dateToStr(new Date(), "H"));
+    }
 }

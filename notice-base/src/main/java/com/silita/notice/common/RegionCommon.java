@@ -43,9 +43,6 @@ public class RegionCommon {
         regionSourcePinYin.put("西藏自治区","xizang");
         regionSourcePinYin.put("云南省","yunn");
         regionSourcePinYin.put("浙江省","zhej");
-    }
-
-    static {
         regionSource.put("anh","安徽省");
         regionSource.put("beij","北京市");
         regionSource.put("chongq","重庆市");

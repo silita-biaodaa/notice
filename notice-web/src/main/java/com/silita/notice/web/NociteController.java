@@ -253,7 +253,7 @@ public class NociteController extends BaseController {
     public Map listsubscribe(@RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         try {
-            resultMap = elasticsearchService.getSubscribe(param);
+            resultMap = elasticsearchService.getSubscribe(param, "show");
             seccussMap(resultMap);
             return resultMap;
         } catch (Exception e) {

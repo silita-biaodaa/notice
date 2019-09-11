@@ -466,6 +466,13 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                     param.put("snatchId", noce.getSnatchId());
                     noce.setQuaId(tbNtRegexQuaMapper.queryCateQuaId(noce.getNtId()));
                     noce.setContent(Jsoup.parse(queryBidsDetailsCentendString(param)).text());
+                    if (StringUtils.isNotEmpty(noce.getSource()) && StringUtils.isNotEmpty(noce.getCity())) {
+                        noce.setRegions(RegionCommon.regionSource.get(noce.getSource()) + "-" + tbNtMianHunanMapper.queryCityName(new HashedMap(1) {{
+                            put("city", noce.getCity());
+                        }}));
+                    } else {
+                        noce.setRegions(RegionCommon.regionSource.get(noce.getSource()));
+                    }
                 }
                 elasticsearchFactory.saveAll(list);
             }
