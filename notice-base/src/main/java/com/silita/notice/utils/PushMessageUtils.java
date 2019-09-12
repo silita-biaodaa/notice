@@ -2,7 +2,6 @@ package com.silita.notice.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.DefaultAcsClient;
-import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.http.ProtocolType;
 import com.aliyuncs.profile.DefaultProfile;
@@ -22,6 +21,7 @@ public class PushMessageUtils {
 
     private static Logger logger = LoggerFactory.getLogger(PushMessageUtils.class);
 
+    private static String env = PropertyUtil.getProperty("push.env");
     /**
      * 推送App消息
      *
@@ -42,7 +42,7 @@ public class PushMessageUtils {
         pushRequest.setDeviceType("ALL");
         pushRequest.setTitle(title);
         pushRequest.setBody(body);
-        pushRequest.setIOSApnsEnv(PropertyUtils.getProperty("push.env"));
+        pushRequest.setIOSApnsEnv(env);
         param.put("noticeType", noticeType);
         Map<String, Object> paramters = new HashMap() {{
             put("data", param);
@@ -51,9 +51,9 @@ public class PushMessageUtils {
         pushRequest.setAndroidExtParameters(JSONObject.toJSONString(paramters));
         try {
             PushResponse pushResponse = client.getAcsResponse(pushRequest);
-            logger.info(String.format("消息推送成功--RequestId: %s, MessageID: %s"),
-                    pushResponse.getRequestId(), pushResponse.getMessageId());
-        } catch (ClientException e) {
+            logger.info(String.format("消息推送成功--RequestId: %s, MessageID: %s",
+                    pushResponse.getRequestId(), pushResponse.getMessageId()));
+        } catch (Exception e) {
             logger.error("消息推送失败！", e);
         }
     }

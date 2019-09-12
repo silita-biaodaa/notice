@@ -100,8 +100,8 @@ public class ElasticsearchService {
             HighlightBuilder highlightBuilder = new HighlightBuilder();
             highlightBuilder.field("title");
             highlightBuilder.field("content");
-            highlightBuilder.preTags("<span style=\"color:red\">");
-            highlightBuilder.postTags("</span>");
+            highlightBuilder.preTags("<font style=\"color:red\">");
+            highlightBuilder.postTags("</font>");
             highlightBuilder.fragmentSize(15);
             searchRequestBuilder.highlighter(highlightBuilder);
         }
@@ -125,8 +125,8 @@ public class ElasticsearchService {
             query.must(date);
         } else {
             //查询入es时间
-            Date start = (Date) MapUtils.getObject(param, "start");
-            Date end = (Date) MapUtils.getObject(param, "end");
+            long start = MapUtils.getLong(param, "start");
+            long end = MapUtils.getLong(param, "end");
             date.must(QueryBuilders.rangeQuery("created").from(start).to(end));
             query.must(date);
         }
@@ -205,6 +205,7 @@ public class ElasticsearchService {
                 }
             }
             valMap = JSONObject.parseObject(res[i].getSourceAsString());
+            valMap.put("subType", "zhaobiao");
             valMap.put("pkid", valMap.get("ntId"));
             if ("show".equals(opt)) {
                 valMap.put("isRead", 0);
@@ -215,7 +216,6 @@ public class ElasticsearchService {
                 }
                 valMap.remove("userId");
             }
-            valMap.put("subType", "zhaobiao");
             if (StringUtils.isNotEmpty(content.toString())) {
                 valMap.put("content", "..." + content.toString() + "...");
             }

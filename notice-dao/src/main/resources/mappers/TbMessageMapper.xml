@@ -4,7 +4,7 @@
 
     <!--添加消息-->
     <insert id="insert" parameterType="com.silita.notice.model.TbMessage" useGeneratedKeys="true" keyProperty="pkid">
-        INSERT INTO `tb_message` (
+        INSERT INTO mishu.`tb_message` (
         <if test="replyId != null and replyId != ''">
             `reply_id`,
         </if>
@@ -20,7 +20,7 @@
         <if test="msgType != null and msgType != ''">
             `msg_type`,
         </if>
-        <if test="pushd != null and pushd != ''">
+        <if test="pushd != null">
             `pushd`,
         </if>
         <if test="isRead != null">
@@ -45,7 +45,7 @@
         <if test="msgType != null and msgType != ''">
             #{msgType},
         </if>
-        <if test="pushd != null and pushd != ''">
+        <if test="pushd != null">
             #{pushd},
         </if>
         <if test="isRead != null">

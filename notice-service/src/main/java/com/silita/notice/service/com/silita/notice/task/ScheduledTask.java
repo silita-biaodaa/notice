@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -31,17 +32,19 @@ public class ScheduledTask {
     @Autowired
     private TbMessageMapper tbMessageMapper;
 
-    //    @Scheduled(cron = "")
+    @Scheduled(cron = "0 0/5 * * * ?")
     private void moringScheduld() {
-        scheduld();
+        Date end = new Date();
+        Date start = DateUtils.beforeDateHour(end, 10);
+        scheduld(start, end);
     }
 
     //    @Scheduled(cron = "")
     private void afternoonScheduld() {
-        scheduld();
+        scheduld(new Date(), new Date());
     }
 
-    private void scheduld() {
+    private void scheduld(Date start, Date end) {
         logger.info("定时任务执行开始,时间:" + DateUtils.dateToStr(new Date(), "yyyy-MM-dd HH:mm:ss"));
         int total = tbUserSubscribeMapper.queryUserSubscibe();
         if (total <= 0) {
@@ -53,12 +56,10 @@ public class ScheduledTask {
         try {
             for (int i = 1; i <= threadCount; i++) {
                 int page = (i - 1) * pageSize;
-                pool.execute(new SendSubscriptionTask(page, pageSize, elasticsearchService, tbUserSubscribeMapper, tbMessageMapper, new Date(), new Date()));
+                pool.execute(new SendSubscriptionTask(page, pageSize, elasticsearchService, tbUserSubscribeMapper, tbMessageMapper, start.getTime(), end.getTime()));
             }
-            pool.shutdown();
         } catch (Exception e) {
             logger.error("定时任务执行失败！", e);
-            pool.shutdown();
         }
     }
 

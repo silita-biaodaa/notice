@@ -3,6 +3,7 @@ package com.silita.notice.web;
 import com.silita.notice.common.RegionCommon;
 import com.silita.notice.dao.TbNtMianHunanMapper;
 import com.silita.notice.model.es.NoticeElasticsearch;
+import com.silita.notice.utils.DateUtils;
 import com.silita.notice.web.impl.TestService;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -17,6 +18,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,5 +104,24 @@ public class ESTest extends BaseCastTest {
         }
     }
 
+    @Test
+    public void queryCreated() {
+        Date end = new Date();
+        Date start = DateUtils.beforeDateHour(end, 3);
+        SearchRequestBuilder searchRequestBuilder = template.getClient().prepareSearch("notice").setTypes("subscribe");
+        BoolQueryBuilder query = QueryBuilders.boolQuery();
+        BoolQueryBuilder date = QueryBuilders.boolQuery();
+        date.must(QueryBuilders.rangeQuery("created").from(start.getTime()).to(end.getTime()));
+        query.must(date);
+        // 执行搜索,返回搜索响应信息
+        SearchResponse response = searchRequestBuilder.addSort("pubDate", SortOrder.DESC).execute().actionGet();
+        // 获取搜索的文档结果
+        SearchHits searchHits = response.getHits();
+        SearchHit[] res = searchHits.getHits();
+        System.out.println("总条数:" + searchHits.totalHits);
+        for (int i = 0; i < res.length; i++) {
+            System.out.println(res[i].getSourceAsString());
+        }
+    }
 
 }

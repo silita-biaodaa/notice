@@ -7,7 +7,7 @@
         SELECT
           COUNT(1)
         FROM
-          tb_user_subscribe t
+        mishu.tb_user_subscribe t
         WHERE t.`is_push` = 1
         ORDER BY t.`created`
     </select>
@@ -19,7 +19,7 @@
           t.`user_id` AS userId,
           t.`condition` AS `condition`
         FROM
-          tb_user_subscribe t
+        mishu.tb_user_subscribe t
         WHERE t.`is_push` = 1
         ORDER BY t.`created`
         LIMIT #{start},#{end}
