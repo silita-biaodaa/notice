@@ -22,4 +22,12 @@ public interface TbUserSubscribeMapper {
      * @return
      */
     List<Map<String, Object>> queryListUserSubscibe(Map<String, Object> param);
+
+    /**
+     * 查询是否关注公众号
+     *
+     * @param userId
+     * @return
+     */
+    Map<String, Object> queryRelUserInfo(String userId);
 }

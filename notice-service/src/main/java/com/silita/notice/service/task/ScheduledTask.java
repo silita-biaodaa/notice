@@ -1,10 +1,12 @@
-package com.silita.notice.service.com.silita.notice.task;
+package com.silita.notice.service.task;
 
+import com.alibaba.fastjson.JSONObject;
 import com.silita.notice.dao.TbMessageMapper;
 import com.silita.notice.dao.TbUserSubscribeMapper;
 import com.silita.notice.service.impl.ElasticsearchService;
 import com.silita.notice.utils.DateUtils;
 import com.silita.notice.utils.ExecutorProcessPool;
+import com.silita.notice.utils.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by zhushuai on 2019/9/11.
@@ -53,10 +57,11 @@ public class ScheduledTask {
         ExecutorProcessPool pool = ExecutorProcessPool.getInstance();
         int threadCount = 10;
         int pageSize = this.getPage(total, threadCount);
+        String token = fetchAccessToken();
         try {
             for (int i = 1; i <= threadCount; i++) {
                 int page = (i - 1) * pageSize;
-                pool.execute(new SendSubscriptionTask(page, pageSize, elasticsearchService, tbUserSubscribeMapper, tbMessageMapper, start.getTime(), end.getTime()));
+                pool.execute(new SendSubscriptionTask(page, pageSize, elasticsearchService, tbUserSubscribeMapper, tbMessageMapper, start.getTime(), end.getTime(), token));
             }
         } catch (Exception e) {
             logger.error("定时任务执行失败！", e);
@@ -73,4 +78,24 @@ public class ScheduledTask {
         return pages;
     }
 
+    private String fetchAccessToken() {
+        String token = null;
+        String appid = "wx393124fdad606b1d";
+        String requestUrl = "http://wx.biaodaa.com/weixin/fetchAccessToken";
+        Map<String, Object> parameter = new HashMap<>();
+        parameter.put("appid", appid);
+        String parameterJson = JSONObject.toJSONString(parameter);
+        logger.info("==调用fetchAccessToken入参[" + parameterJson + "]");
+        String result = HttpUtils.connectURL(requestUrl, parameterJson, "POST");
+        logger.info("==调用fetchAccessToken返回[" + result + "]");
+        JSONObject jsonObject = (JSONObject) JSONObject.parse(result);
+        Integer status = jsonObject.getInteger("status");
+        if (status != null && status.intValue() == 1) {
+            JSONObject accessToken = (JSONObject) jsonObject.get("accessToken");
+            if (accessToken != null && accessToken.getString("accessToken") != null) {
+                token = accessToken.getString("accessToken");
+            }
+        }
+        return token;
+    }
 }

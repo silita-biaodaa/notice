@@ -24,4 +24,14 @@
         ORDER BY t.`created`
         LIMIT #{start},#{end}
     </select>
+
+    <!--查询是否关注公众号-->
+    <select id="queryRelUserInfo" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT
+        *
+        FROM
+        mishu_write.`rel_user_info` t
+        WHERE t.`user_id` = #{userId}
+        AND t.`state` = 1
+    </select>
 </mapper>
