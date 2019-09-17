@@ -100,7 +100,7 @@ public class ElasticsearchService {
             HighlightBuilder highlightBuilder = new HighlightBuilder();
             highlightBuilder.field("title");
             highlightBuilder.field("content");
-            highlightBuilder.preTags("<font style=\"color:red\">");
+            highlightBuilder.preTags("<font color='red'>");
             highlightBuilder.postTags("</font>");
             highlightBuilder.fragmentSize(15);
             searchRequestBuilder.highlighter(highlightBuilder);

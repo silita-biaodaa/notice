@@ -33,7 +33,7 @@
         and mian.nt_category='2'
         and mian.is_enable='1'
         and CAST(mian.nt_type as SIGNED) &lt; 100
-        <if test="title == '' or title == null">
+        <if test="(title == '' or title == null) and (comName == '' or comName == null)">
             AND mian.`pub_date` &gt;= DATE_SUB(NOW(),INTERVAL 100 DAY)
             AND mian.`pub_date` &lt;= NOW()
         </if>
