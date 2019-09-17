@@ -105,6 +105,6 @@ public class DateUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println(longToStr(new Date().getTime(), "yyyy-MM-dd HH:mm:ss"));
+        System.out.println(beforeDateHour(new Date(), 6));
     }
 }

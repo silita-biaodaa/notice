@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.silita</groupId>
     <artifactId>notice-web</artifactId>
-    <version>1.3.18</version>
+    <version>1.3.21</version>
     <packaging>jar</packaging>
 
     <name>notice-web</name>

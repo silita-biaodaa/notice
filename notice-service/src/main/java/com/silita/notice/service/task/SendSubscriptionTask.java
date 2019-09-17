@@ -84,8 +84,8 @@ public class SendSubscriptionTask implements Runnable {
         Map<String, Object> weChatUser = tbUserSubscribeMapper.queryRelUserInfo(userId);
         //判断是否关注公告号
         if (MapUtils.isNotEmpty(weChatUser)) {
-            sendUserPushMsg(token, MapUtils.getString(weChatUser, "open_id"), DateUtils.dateToStr(new Date(startTime), "MM-dd HH:ss"),
-                    DateUtils.dateToStr(new Date(endTime), "MM-dd HH:ss"), total, MapUtils.getString(param, "keywords"), pkid);
+            sendUserPushMsg(token, MapUtils.getString(weChatUser, "open_id"), DateUtils.dateToStr(new Date(startTime), "MM-dd HH:mm"),
+                    DateUtils.dateToStr(new Date(endTime), "MM-dd HH:mm"), total, MapUtils.getString(param, "keywords"), pkid);
         } else {
             StringBuffer content = new StringBuffer("您所订阅的招标项目已更新" + total + "条，点击查看详情！");
             StringBuffer title = new StringBuffer("招标订阅项目更新通知！");
