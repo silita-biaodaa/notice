@@ -112,12 +112,12 @@ public class SendSubscriptionTask implements Runnable {
             content = new StringBuffer("业务所在地：" + MapUtils.getString(param, "regionName") + "\n")
                     .append("订阅关键词：" + MapUtils.getString(param, "keywords") + "\n")
                     .append("资质：" + MapUtils.getString(param, "qualName") + "\n")
-                    .append("更新时间：" + DateUtils.longToStr(startTime, "yyyy-MM-dd HH:mm:ss") + "-" + DateUtils.longToStr(endTime, "yyyy-MM-dd HH:mm:ss") + "\n")
+                    .append("更新时间：" + DateUtils.longToStr(startTime, "MM-dd HH:mm") + "至" + DateUtils.longToStr(endTime, "MM-dd HH:mm") + "\n")
                     .append("您所订阅的招标项目已更新" + total + "条，点击查看详情！");
         } else {
             content = new StringBuffer("业务所在地：" + MapUtils.getString(param, "regionName") + "\n")
                     .append("订阅关键词：" + MapUtils.getString(param, "keywords") + "\n")
-                    .append("更新时间：" + DateUtils.longToStr(startTime, "yyyy-MM-dd HH:mm:ss") + "-" + DateUtils.longToStr(endTime, "yyyy-MM-dd HH:mm:ss") + "\n")
+                    .append("更新时间：" + DateUtils.longToStr(startTime, "MM-dd HH:mm") + "-" + DateUtils.longToStr(endTime, "MM-dd HH:mm") + "\n")
                     .append("您所订阅的招标项目已更新" + total + "条，点击查看详情！");
         }
         //系统消息发送

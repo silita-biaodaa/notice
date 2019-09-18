@@ -6,6 +6,7 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -29,7 +30,7 @@ public class HBaseConfig {
     @Value("${hbase.rootdir}")
     private String hbaseRootdir;
 
-    //    @Bean
+    @Bean
     public Connection hBaseConnection() {
         Connection connection = null;
         try {
@@ -41,7 +42,7 @@ public class HBaseConfig {
         return connection;
     }
 
-    //    @Bean
+    @Bean
     public org.apache.hadoop.conf.Configuration configuration() {
         org.apache.hadoop.conf.Configuration configuration = HBaseConfiguration.create();
         configuration.set("hbase.zookeeper.quorum", hbaseZookeeperQuorum);

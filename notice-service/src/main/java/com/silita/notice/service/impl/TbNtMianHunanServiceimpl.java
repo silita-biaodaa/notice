@@ -39,7 +39,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     private TbCommentInfoMapper tbCommentInfoMapper;
     @Value("${hbase.notice-table-name}")
     private String hBaseTableName;
-    //    @Autowired
+    @Autowired
     private Connection connection;
     @Autowired
     private RelQuaGradeMapper relQuaGradeMapper;
