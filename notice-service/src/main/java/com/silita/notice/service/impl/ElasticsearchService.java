@@ -162,12 +162,14 @@ public class ElasticsearchService {
         List<Map<String, Object>> list = new ArrayList<>(length);
         Map<String, Object> valMap;
         int count;
-        StringBuffer content = new StringBuffer("");
-        StringBuffer title = new StringBuffer("");
+        StringBuffer content;
+        StringBuffer title;
         List<Map<String, Object>> keywordsMap = new ArrayList<>(1);
         Map<String, Object> keyMap;
         String[] words;
         for (int i = 0; i < length; i++) {
+            content = new StringBuffer("");
+            title = new StringBuffer("");
             if (StringUtils.isNotEmpty(keywords)) {
                 words = keywords.split(",");
                 int wordsLength = words.length;

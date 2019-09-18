@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -44,7 +45,7 @@ public class ScheduledTask {
         scheduld(start, end);
     }
 
-    //    @Scheduled(cron = "0 0 15 * * ?")
+    @Scheduled(cron = "0 0 15 * * ?")
     private void afternoonScheduld() {
         Date end = new Date();
         StringBuffer today = new StringBuffer(DateUtils.dateToStr(end, "yyyy-MM-dd"));
