@@ -102,7 +102,7 @@ public class ElasticsearchService {
             highlightBuilder.field("content");
             highlightBuilder.preTags("<font color='red'>");
             highlightBuilder.postTags("</font>");
-            highlightBuilder.fragmentSize(15);
+            highlightBuilder.fragmentSize(5);
             searchRequestBuilder.highlighter(highlightBuilder);
         }
         //资质
@@ -217,11 +217,24 @@ public class ElasticsearchService {
                 valMap.remove("userId");
             }
             if (StringUtils.isNotEmpty(content.toString())) {
-                valMap.put("content", "..." + content.toString() + "...");
+                valMap.put("content", "..." + handleContent(content.toString(), "<font color='red'>") + "...");
             }
             valMap.put("keywords", keywordsMap);
             list.add(valMap);
         }
         return list;
     }
+
+    /**
+     * 截取内容
+     *
+     * @param content
+     * @param tags
+     * @return
+     */
+    private String handleContent(String content, String tags) {
+        int index = content.indexOf(tags);
+        return content.substring(index, content.length());
+    }
+
 }
