@@ -28,9 +28,14 @@
     <!--查询是否关注公众号-->
     <select id="queryRelUserInfo" parameterType="java.lang.String" resultType="java.util.Map">
         SELECT
-        *
+        t.`pkid`,
+        t.`user_id`,
+        t.`union_id`,
+        t.`state`,
+        t.`created`,
+        t.`open_id`
         FROM
-        mishu_write.`rel_user_info` t
+        mishu_write.rel_user_info t
         WHERE t.`user_id` = #{userId}
         AND t.`state` = 1
     </select>
