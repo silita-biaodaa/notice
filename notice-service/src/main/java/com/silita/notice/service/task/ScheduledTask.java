@@ -7,6 +7,7 @@ import com.silita.notice.service.impl.ElasticsearchService;
 import com.silita.notice.utils.DateUtils;
 import com.silita.notice.utils.ExecutorProcessPool;
 import com.silita.notice.utils.HttpUtils;
+import com.silita.notice.utils.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class ScheduledTask {
     @Autowired
     private TbMessageMapper tbMessageMapper;
 
-    //    @Scheduled(cron = "0 0 9 * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     private void moringScheduld() {
         Date end = new Date();
         StringBuffer last = new StringBuffer(DateUtils.beforeDate(DateUtils.dateToStr(end, "yyyy-MM-dd"), 1));
@@ -45,7 +46,7 @@ public class ScheduledTask {
         scheduld(start, end);
     }
 
-    @Scheduled(cron = "0 0 15 * * ?")
+    //    @Scheduled(cron = "0 0 15 * * ?")
     private void afternoonScheduld() {
         Date end = new Date();
         StringBuffer today = new StringBuffer(DateUtils.dateToStr(end, "yyyy-MM-dd"));
@@ -86,7 +87,7 @@ public class ScheduledTask {
 
     private String fetchAccessToken() {
         String token = null;
-        String appid = "wx393124fdad606b1d";
+        String appid = PropertyUtil.getProperty("app_id");
         String requestUrl = "http://wx.biaodaa.com/weixin/fetchAccessToken";
         Map<String, Object> parameter = new HashMap<>();
         parameter.put("appid", appid);
