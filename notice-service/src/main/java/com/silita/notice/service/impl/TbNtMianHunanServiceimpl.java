@@ -662,7 +662,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 }
             } else {
                 maps.put("quaCode", split1[0]);
-                maps.put("gradeCode", "0");
                 group.add(maps);
             }
         }
