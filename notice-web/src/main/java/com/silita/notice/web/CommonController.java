@@ -42,6 +42,7 @@ public class CommonController extends BaseController {
         notice.put("bizType", "1");
         Map<String, Object> com = new HashMap<>();
         com.put("bizType", "2");
+        com.put("quaType", "company");
         List<Map<String, Object>> area = commonService.getArea();
         List<Map<String, Object>> type = commonService.type();
         List<Map<String, Object>> pbMode = commonService.queryPbModes(param);

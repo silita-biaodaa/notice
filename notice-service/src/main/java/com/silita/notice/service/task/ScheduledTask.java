@@ -38,7 +38,7 @@ public class ScheduledTask {
     private TbMessageMapper tbMessageMapper;
 
     //    @Scheduled(cron = "0 0/5 * * * ?")
-//    @Scheduled(cron = "0 0 9 * * ?")
+    @Scheduled(cron = "0 0 9 * * ?")
     private void moringScheduld() {
         Date end = new Date();
         StringBuffer last = new StringBuffer(DateUtils.beforeDate(DateUtils.dateToStr(end, "yyyy-MM-dd"), 1));
@@ -47,7 +47,7 @@ public class ScheduledTask {
         scheduld(start, end);
     }
 
-    @Scheduled(cron = "0 0 15 * * ?")
+    //    @Scheduled(cron = "0 0 15 * * ?")
     private void afternoonScheduld() {
         Date end = new Date();
         StringBuffer today = new StringBuffer(DateUtils.dateToStr(end, "yyyy-MM-dd"));
