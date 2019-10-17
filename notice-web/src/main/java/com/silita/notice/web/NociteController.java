@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +103,7 @@ public class NociteController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/nociteDetails/{id}", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map queryNociteDetails(@PathVariable String id, @RequestBody Map<String, Object> param) {
+    public Map queryNociteDetails(HttpServletRequest request, @PathVariable String id, @RequestBody Map<String, Object> param) {
         param.put("id", id);
         Map<String, Object> resultMap = new HashMap<String, Object>();
         Map<String, Object> proviceCity = tbNtMianHunanService.queryProviceCity(param);
@@ -149,7 +150,7 @@ public class NociteController extends BaseController {
             }
         }
         //获取userId
-        String userId = VisitInfoHolder.getUserId();
+        String userId = VisitInfoHolder.getUserId(request);
         param.put("userId", userId);
         //获取点击量
         Integer count = tbNtMianHunanService.count(param);
@@ -250,9 +251,10 @@ public class NociteController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/subscribe/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map listsubscribe(@RequestBody Map<String, Object> param) {
+    public Map listsubscribe(HttpServletRequest request, @RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         try {
+            param.put("userId", VisitInfoHolder.getUserId(request));
             resultMap = elasticsearchService.getSubscribe(param, "show");
             seccussMap(resultMap);
             return resultMap;
@@ -270,9 +272,10 @@ public class NociteController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/read", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map read(@RequestBody Map<String, Object> param) {
+    public Map read(HttpServletRequest request, @RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>(2);
         try {
+            param.put("userId", VisitInfoHolder.getUserId(request));
             tbNtMianHunanService.setNoticeReadStatus(param);
             seccussMap(resultMap);
             return resultMap;

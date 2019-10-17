@@ -63,7 +63,7 @@ public class LoginFilter implements Filter {
         logger.info("-----requesturi:" + requestUrl + "-------------------");
         try {
             String phone = null;
-            String userId = null;
+//            String userId = null;
             boolean tokenValid = false;
             if (StringUtils.isNotEmpty(xToken)) {
                 String[] token = xToken.split("\\.");
@@ -76,7 +76,7 @@ public class LoginFilter implements Filter {
                         Map<String, String> paramMap = parseJsonString(paramJson);
                         VisitInfoHolder.setPermissions(paramMap.get("permissions"));
                         VisitInfoHolder.setRoleCode(paramMap.get("roleCode"));
-                        userId = paramMap.get("pkid");
+//                        userId = paramMap.get("pkid");
                         phone = paramMap.get("phoneNo");
                         //验证签名
                         tokenValid = SecurityCheck.checkSigner(paramMap, sign);
@@ -114,9 +114,9 @@ public class LoginFilter implements Filter {
             }
 
             //设置userid
-            if (StringUtils.isNotEmpty(userId)) {
-                VisitInfoHolder.setUserId(userId);
-            }
+//            if (StringUtils.isNotEmpty(userId)) {
+//                VisitInfoHolder.setUserId(userId);
+//            }
             if (tokenValid) {
                 filterChain.doFilter(servletRequest, servletResponse);
             } else {

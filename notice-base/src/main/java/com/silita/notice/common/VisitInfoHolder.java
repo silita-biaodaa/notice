@@ -1,7 +1,12 @@
 package com.silita.notice.common;
 
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
 
 /**
  * Created by zhangxiahui on 17/7/26.
@@ -33,8 +38,23 @@ public class VisitInfoHolder {
     }
 
 
-    public static String getUserId() {
-        return VisitInfoHolder.userId.get();
+    public static String getUserId(HttpServletRequest request) {
+        String userId = null;
+        String xToken = request.getHeader("X-TOKEN");
+        if (StringUtils.isEmpty(xToken)) {
+            return null;
+        }
+        String[] token = xToken.split("\\.");
+        String[] sArray = xToken.split(Constant.TOKEN_SPLIT);
+        String paramJson = sArray[1];
+        try {
+            paramJson = new String(Base64.getDecoder().decode(paramJson), Constant.STR_ENCODING);
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(paramJson);
+            userId = jsonObject.getString("pkid");
+            return userId;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static void setUserId(String userId) {

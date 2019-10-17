@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.silita.notice.common.IsNullCommon;
 import com.silita.notice.common.RangeCommon;
 import com.silita.notice.common.RegionCommon;
-import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.*;
 import com.silita.notice.elasticsearch.ElasticsearchFactory;
 import com.silita.notice.model.es.NoticeElasticsearch;
@@ -372,7 +371,6 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      */
     @Override
     public Boolean attention(Map<String, Object> param) {
-        param.put("userId", VisitInfoHolder.getUserId());
         boolean collected = false;
         Map<String, Object> queryattention = tbNtMianHunanMapper.queryAttention(param);
         if (null != queryattention) {
@@ -673,11 +671,9 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
 
     @Override
     public void setNoticeReadStatus(Map<String, Object> param) {
-        String userId = VisitInfoHolder.getUserId();
-        if (StringUtils.isEmpty(userId)) {
+        if (StringUtils.isEmpty(MapUtils.getString(param, "userId"))) {
             return;
         }
-        param.put("userId", userId);
         int count = tbNtMianHunanMapper.queryNoticeReadStatus(param);
         if (count > 0) {
             return;

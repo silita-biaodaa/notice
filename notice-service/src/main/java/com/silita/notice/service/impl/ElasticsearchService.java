@@ -1,7 +1,6 @@
 package com.silita.notice.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.TbNtMianHunanMapper;
 import com.silita.notice.service.TbNtMianHunanService;
 import com.silita.notice.utils.DateUtils;
@@ -211,7 +210,7 @@ public class ElasticsearchService {
             valMap.put("pkid", valMap.get("ntId"));
             if ("show".equals(opt)) {
                 valMap.put("isRead", 0);
-                valMap.put("userId", VisitInfoHolder.getUserId());
+                valMap.put("userId", param.get("userId"));
                 count = tbNtMianHunanMapper.queryNoticeReadStatus(valMap);
                 if (count > 0) {
                     valMap.put("isRead", 1);

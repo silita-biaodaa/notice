@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.silita.notice.common.PhoneCommon;
 import com.silita.notice.common.RangeCommon;
 import com.silita.notice.common.RegionCommon;
-import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.dao.*;
 import com.silita.notice.service.CompanyService;
 import org.apache.commons.collections.MapUtils;
@@ -17,8 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -135,7 +132,6 @@ public class CompanyServiceImpl implements CompanyService {
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, Object>> listMap = tbCompanyMapper.queryQualCom(param);
         if (listMap != null && listMap.size() > 0) {
-            param.put("userId", VisitInfoHolder.getUserId());
             Integer isVip = MapUtils.getInteger(param, "isVip");
             for (Map<String, Object> map : listMap) {
                 String comName = (String) map.get("comName");
