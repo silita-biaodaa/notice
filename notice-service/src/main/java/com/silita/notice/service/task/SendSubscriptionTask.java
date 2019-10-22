@@ -133,17 +133,19 @@ public class SendSubscriptionTask implements Runnable {
     }
 
     /**
-     * 发送用户未打卡消息
+     * 查询结果通知
      *
      * @param accessToken
      */
     public void sendUserPushMsg(String accessToken, String openId, String start, String end, int total, String keyWords, Integer pkid) {
         String url = PropertyUtil.getProperty("send_template_message");
         String redirectUrl = PropertyUtil.getProperty("redirect_url");
+        String templateId = PropertyUtil.getProperty("template_id");
         redirectUrl = redirectUrl.replace("SUBSCRIBE_ID", pkid.toString());
         Map<String, Object> sendMap = new HashMap<>();
         sendMap.put("touser", openId);
-        sendMap.put("template_id", "w0m4dLwV4NLN6VxzO7Bun5duOVuX2IkFbqhMmMYd-5U");
+        //sendMap.put("template_id", "w0m4dLwV4NLN6VxzO7Bun5duOVuX2IkFbqhMmMYd-5U");
+        sendMap.put("template_id", templateId);
         sendMap.put("url", redirectUrl);
         Map<String, Object> data = new HashMap<>();
         Map<String, String> firstMap = new HashMap<String, String>(1) {{
