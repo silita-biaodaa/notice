@@ -64,6 +64,15 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, String>> data = tbNtMianHunanMapper.queryBids(param);
+        String userId = MapUtils.getString(param, "userId");
+        if (StringUtils.isNotEmpty(userId)) {
+            for (Map<String, String> datum : data) {
+                param.put("id", MapUtils.getString(datum, "id"));
+                //获取是否关注
+                Boolean attention = attention(param);
+                datum.put("collected", attention.toString());
+            }
+        }
        /* if (data != null && data.size() > 0) {
             String key;
             for (Map<String, Object> map : data) {
@@ -178,7 +187,14 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, Object>> list = tbNtMianHunanMapper.queryTenders(param);
+        String userId = MapUtils.getString(param, "userId");
         for (Map<String, Object> map : list) {
+            if (StringUtils.isNotEmpty(userId)) {
+                param.put("id", MapUtils.getString(map, "id"));
+                //获取是否关注
+                Boolean attention = attention(param);
+                map.put("collected", attention);
+            }
             String zzRank = (String) map.get("certificate");
             if (StringUtils.isNotEmpty(zzRank)) {
                 zzRank = zzRank.replaceAll("(?:和|或)", ",");

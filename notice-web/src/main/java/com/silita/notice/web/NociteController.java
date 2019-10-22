@@ -24,12 +24,10 @@ public class NociteController extends BaseController {
     private org.slf4j.Logger logger = LoggerFactory.getLogger(NociteController.class);
     @Autowired
     private TbNtMianHunanService tbNtMianHunanService;
-
     @Autowired
     private CompanyService companyService;
     @Autowired
     ElasticsearchService elasticsearchService;
-
     /**
      * 查询公告  -  中标
      *
@@ -38,10 +36,15 @@ public class NociteController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/zhongbiao/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map queryBids(@RequestBody Map<String, Object> param) {
+    public Map queryBids(@RequestBody Map<String, Object> param,HttpServletRequest request) {
         logger.info("-------------------进入该方法:zhongbiao----------------------");
         Map<String, Object> resultMap = new HashMap<String, Object>();
         try {
+            //获取userId
+            String userId = VisitInfoHolder.getUserId(request);
+            if(StringUtils.isNotEmpty(userId)){
+                param.put("userId",userId);
+            }
             //分页限制 最多到30页  每页20条记录
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryBids(param);
@@ -52,7 +55,6 @@ public class NociteController extends BaseController {
         }
         return resultMap;
     }
-
     /**
      * 前端：精确企业名称
      * 后台：通过获取企业名称 模糊匹配中标的公告
@@ -74,7 +76,6 @@ public class NociteController extends BaseController {
         }
         return resultMap;
     }
-
     /**
      * 查询招标信息
      *
@@ -82,10 +83,15 @@ public class NociteController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/zhaobiao/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map queryTenders(@RequestBody Map<String, Object> param) {
+    public Map queryTenders(@RequestBody Map<String, Object> param,HttpServletRequest request) {
         logger.info("-------------------进入该方法:zhaobiao----------------------");
         Map<String, Object> resultMap = new HashMap<String, Object>();
         try {
+            //获取userId
+            String userId = VisitInfoHolder.getUserId(request);
+            if(StringUtils.isNotEmpty(userId)){
+                param.put("userId",userId);
+            }
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryTenders(param);
             logger.info("-------------------查询成功----------------------");
@@ -95,7 +101,6 @@ public class NociteController extends BaseController {
         }
         return resultMap;
     }
-
     /*
      *公告详情
      * @param param
@@ -128,8 +133,6 @@ public class NociteController extends BaseController {
             param.put("provice", "");
             param.put("city", "");
         }
-
-
         //获取省级名称
         String proviceCode = "";
         if (StringUtils.isNotEmpty(provice)) {
@@ -164,7 +167,6 @@ public class NociteController extends BaseController {
             } catch (Exception e) {
                 errorMsg(resultMap, e.getMessage());
             }
-
         }
         // type = 1  招标详情   ||  type = 2  中标详情
         String type = MapUtils.getString(param, "type");
@@ -185,7 +187,6 @@ public class NociteController extends BaseController {
                 } else {
                     seccussMap(resultMap, map);
                 }
-
             } catch (Exception e) {
                 errorMsg(resultMap, e.getMessage());
             }

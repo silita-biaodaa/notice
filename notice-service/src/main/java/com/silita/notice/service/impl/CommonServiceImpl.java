@@ -63,7 +63,6 @@ public class CommonServiceImpl implements CommonService {
      */
     @Override
     public List<Map<String, Object>> queryPbModes(Map<String, Object> param) {
-
         List<Map<String, Object>> pbModeList = new ArrayList<>();
         List<String> list = sysAreaMapper.queryCode();
         for (String s : list) {
@@ -74,7 +73,6 @@ public class CommonServiceImpl implements CommonService {
             map.put("list", list1);
             pbModeList.add(map);
         }
-
         return pbModeList;
 
     }
@@ -171,21 +169,16 @@ public class CommonServiceImpl implements CommonService {
                                 }
                                 String benchName = (String) map4.get("benchName");
                                 if (StringUtils.isNotEmpty(benchName)) {
-                                    //if (null != levelFiveListMap && levelFiveListMap.size() >0) {
                                     fourQuaMap.put("code", map4.get("quaCode"));
                                     fourQuaMap.put("name", map4.get("benchName"));
                                     fourQuaMap.put("data", levelFiveListMap);
                                     towQuaListtMap.add(fourQuaMap);
-                                    //}
                                 }
                             }
 
                         } else {
-                            String quaCode = (String) map3.get("quaCode");
-                            /*List<Map<String, Object>> list10 = relQuaGradeMapper.queryRelQuaGrade(quaCode);*/
                             for (Map<String, Object> map7 : list9) {
                                 Map<String, Object> levelMap3 = new HashMap<>();
-                                String b;
                                 levelMap3.put("code", map7.get("quaCode"));
                                 levelMap3.put("name", map7.get("quaName"));
                                 levelFourListMap.add(levelMap3);
@@ -193,35 +186,28 @@ public class CommonServiceImpl implements CommonService {
                         }
                         String benchName = (String) map3.get("benchName");
                         if (StringUtils.isNotEmpty(benchName)) {
-                            //if (null != levelFourListMap && levelFourListMap.size() >0) {
                             threeQuaMap.put("code", map3.get("quaCode"));
                             threeQuaMap.put("name", map3.get("benchName"));
                             threeQuaMap.put("data", levelFourListMap);
                             towQuaListtMap.add(threeQuaMap);
-                            //}
                         }
                     }
 
                 } else {
-                    String quaCode = (String) map2.get("quaCode");
-                    /* List<Map<String, Object>> list5 = relQuaGradeMapper.queryRelQuaGrade(quaCode);*/
                     for (Map<String, Object> map6 : list8) {
                         Map<String, Object> levelMap2 = new HashMap<>();
                         levelMap2.put("code", map6.get("quaCode"));
                         levelMap2.put("name", map6.get("quaName"));
                         levelThreeListMap.add(levelMap2);
-                        String a;
                     }
 
                 }
                 String benchName = (String) map2.get("benchName");
                 if (StringUtils.isNotEmpty(benchName)) {
-                    //if (null != levelThreeListMap && levelThreeListMap.size() >0){
                     towQuaMap.put("code", map2.get("quaCode"));
                     towQuaMap.put("name", map2.get("benchName"));
                     towQuaMap.put("data", levelThreeListMap);
                     towQuaListtMap.add(towQuaMap);
-                    //}
                 }
             }
             oneQuaMap.put("code", map.get("quaCode"));
@@ -231,7 +217,11 @@ public class CommonServiceImpl implements CommonService {
         }
         return oneQuaListtMap;
     }
-
+    /**
+     * 根据关键字查询资质
+     * @param param
+     * @return
+     */
     @Override
     public List<Map<String, Object>> getFilterQual(Map<String, Object> param) {
         String bizType = MapUtils.getString(param, "bizType");

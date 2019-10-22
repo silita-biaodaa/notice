@@ -19,7 +19,6 @@ import java.util.Map;
 public class CommonController extends BaseController {
     @Autowired
     private CommonService commonService;
-
     /**
      * 获取筛选
      *
@@ -58,7 +57,6 @@ public class CommonController extends BaseController {
         return resultMap;
     }
 
-
     /**
      * 获取筛选
      *
@@ -71,6 +69,4 @@ public class CommonController extends BaseController {
         super.seccussMap(resultMap, commonService.getFilterQual(param));
         return resultMap;
     }
-
-
 }

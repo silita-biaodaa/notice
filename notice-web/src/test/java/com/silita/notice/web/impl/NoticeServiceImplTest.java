@@ -1,6 +1,7 @@
 package com.silita.notice.web.impl;
 
 import com.github.pagehelper.PageInfo;
+import com.silita.notice.common.RedisShardedPool;
 import com.silita.notice.common.RegionCommon;
 import com.silita.notice.dao.SnatchurlMapper;
 import com.silita.notice.dao.TbCommentInfoMapper;
@@ -48,7 +49,8 @@ public class NoticeServiceImplTest extends BaseCastTest {
         /*String key = "filter_company";
         System.out.println("获取的值："+RedisShardedPoolUtil.get(key));*/
         String key = "filter_company";
-        RedisShardedPoolUtil.del(key);
+        System.out.println(RedisShardedPoolUtil.get(key));
+        //RedisShardedPoolUtil.del(key);
 
 
     }
@@ -279,7 +281,7 @@ public class NoticeServiceImplTest extends BaseCastTest {
             List<Map<String, Object>> list1 = tbCommentInfoMapper.queryCommentInfo(param);
             for (Map<String, Object> map : list1) {
                 param.put("pkid",MapUtils.getString(map,"commentPkid"));
-                param.put("relatedId",MapUtils.getInteger(map,"mianPkid"));
+                param.put("relatedId",MapUtils.getString(map,"mianPkid"));
                 tbCommentInfoMapper.updateCommInfo(param);
             }
         }
@@ -297,7 +299,7 @@ public class NoticeServiceImplTest extends BaseCastTest {
             List<Map<String, Object>> list1 = tbCommentInfoMapper.queryReplyComment(param);
             for (Map<String, Object> map : list1) {
                 param.put("pkid",MapUtils.getString(map,"commentPkid"));
-                param.put("relatedId",MapUtils.getInteger(map,"mianPkid"));
+                param.put("relatedId",MapUtils.getString(map, "mianPkid"));
                 tbCommentInfoMapper.updateRelatedId2(param);
             }
         }

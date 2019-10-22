@@ -1,12 +1,15 @@
 package com.silita.notice.dao;
 
 
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Map;
 
 /**
  * 公告的相关公告 tb_nt_associate_gp
  */
+@Repository
 public interface TbNtAssociateGpMapper {
 
     /**
