@@ -45,10 +45,13 @@ public class CommonServiceImpl implements CommonService {
                 String areaCode = (String) stringObjectMap.get("areaCode");
                 cityMap.put("name", areaName);
                 cityMap.put("code", areaCode);
+                area.put("areaShortName", stringObjectMap.get("areaShortName"));
                 cityListMap.add(cityMap);
             }
             area.put("name", map.get("areaName"));
             area.put("code", map.get("areaCode"));
+            area.put("areaShortName", map.get("areaShortName"));
+            area.put("shortName", map.get("shortName"));
             area.put("data", cityListMap);
             areaList.add(area);
         }

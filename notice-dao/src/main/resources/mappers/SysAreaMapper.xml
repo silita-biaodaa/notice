@@ -4,11 +4,26 @@
 
     <!--获取省-->
     <select id="queryProvinceList" resultType="java.util.Map" parameterType="map">
-        SELECT pkid,area_name AS areaName,area_code AS areaCode  FROM sys_area WHERE area_level='1' ORDER BY area_code;
+        SELECT
+        pkid,
+        area_name AS areaName,
+        area_code AS areaCode,
+        area_short_name AS areaShortName,
+        short_name AS shortName
+        FROM
+        sys_area
+        WHERE area_level = '1'
+        ORDER BY area_code ;
     </select>
     <!--获取市-->
     <select id="queryCityList" resultType="java.util.Map" parameterType="string">
-        select area_name AS areaName,area_code AS areaCode  FROM sys_area WHERE area_parent_id=#{pkid}
+        SELECT
+        area_name AS areaName,
+        area_code AS areaCode,
+        area_short_name AS areaShortName
+        FROM
+        sys_area
+        WHERE area_parent_id = #{pkid}
     </select>
     <select id="queryCode" resultType="java.lang.String" parameterType="map">
         SELECT area_code AS areaCode FROM sys_area WHERE area_level='1' GROUP BY areaCode
