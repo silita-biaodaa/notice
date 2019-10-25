@@ -1,5 +1,6 @@
 package com.silita.notice.service.impl;
 
+import com.silita.notice.common.MapCommon;
 import com.silita.notice.dao.DicCommonMapper;
 import com.silita.notice.dao.DicQuaMapper;
 import com.silita.notice.dao.RelQuaGradeMapper;
@@ -25,7 +26,6 @@ public class CommonServiceImpl implements CommonService {
     private DicQuaMapper dicQuaMapper;
     @Autowired
     private RelQuaGradeMapper relQuaGradeMapper;
-
     /**
      * 获取省市
      *
@@ -80,46 +80,14 @@ public class CommonServiceImpl implements CommonService {
 
     }
 
-
     /**
      * 获取公告类型
      *
      * @return
      */
     public List<Map<String, Object>> type() {
-        List<Map<String, Object>> typeList = new ArrayList<>();
-
-        Map<String, Object> typeMap = new HashMap<>();
-        //01:施工  02:监理  03:设计  04:勘察  05:采购  06:其他
-
-        typeMap.put("name", "施工");
-        typeMap.put("projectType", "01");
-        typeList.add(typeMap);
-        typeMap = new HashMap<>();
-        typeMap.put("name", "监理");
-        typeMap.put("projectType", "02");
-        typeList.add(typeMap);
-        typeMap = new HashMap<>();
-        typeMap.put("name", "设计");
-        typeMap.put("projectType", "03");
-        typeList.add(typeMap);
-        typeMap = new HashMap<>();
-        typeMap.put("name", "勘察");
-        typeMap.put("projectType", "04");
-        typeList.add(typeMap);
-        typeMap = new HashMap<>();
-        typeMap.put("name", "采购");
-        typeMap.put("projectType", "05");
-        typeList.add(typeMap);
-        typeMap = new HashMap<>();
-        typeMap.put("name", "其他");
-        typeMap.put("projectType", "06");
-        typeList.add(typeMap);
-
-        return typeList;
-
+        return MapCommon.getNoticeType();//获取公告类型
     }
-
 
     /**
      * 获取资质
@@ -138,7 +106,6 @@ public class CommonServiceImpl implements CommonService {
             param.put("noticeLevel", "2");
             List<Map<String, Object>> list1 = dicQuaMapper.queryQuaTwo(param);
             List<Map<String, Object>> towQuaListtMap = new ArrayList<>();
-
             for (Map<String, Object> map2 : list1) {
                 Map<String, Object> towQuaMap = new HashMap<>();
                 String tow = (String) map2.get("id");
@@ -166,62 +133,57 @@ public class CommonServiceImpl implements CommonService {
                                 List<Map<String, Object>> levelFiveListMap = new ArrayList<>();
                                 for (Map<String, Object> map5 : list5) {
                                     Map<String, Object> levelMap = new HashMap<>();
-                                    levelMap.put("code", map5.get("quaCode"));
-                                    levelMap.put("name", map5.get("quaName"));
-                                    levelFiveListMap.add(levelMap);
+                                    getQuaMap("quaName", map5, levelMap, null, levelFiveListMap);
                                 }
                                 String benchName = (String) map4.get("benchName");
                                 if (StringUtils.isNotEmpty(benchName)) {
-                                    fourQuaMap.put("code", map4.get("quaCode"));
-                                    fourQuaMap.put("name", map4.get("benchName"));
-                                    fourQuaMap.put("data", levelFiveListMap);
-                                    towQuaListtMap.add(fourQuaMap);
+                                    getQuaMap("benchName", map4, fourQuaMap, levelFiveListMap, towQuaListtMap);
                                 }
                             }
 
                         } else {
                             for (Map<String, Object> map7 : list9) {
                                 Map<String, Object> levelMap3 = new HashMap<>();
-                                levelMap3.put("code", map7.get("quaCode"));
-                                levelMap3.put("name", map7.get("quaName"));
-                                levelFourListMap.add(levelMap3);
+                                getQuaMap("quaName", map7, levelMap3, null, levelFourListMap);
                             }
                         }
                         String benchName = (String) map3.get("benchName");
                         if (StringUtils.isNotEmpty(benchName)) {
-                            threeQuaMap.put("code", map3.get("quaCode"));
-                            threeQuaMap.put("name", map3.get("benchName"));
-                            threeQuaMap.put("data", levelFourListMap);
-                            towQuaListtMap.add(threeQuaMap);
+                            getQuaMap("benchName", map3, threeQuaMap, levelFourListMap, towQuaListtMap);
                         }
                     }
 
                 } else {
                     for (Map<String, Object> map6 : list8) {
                         Map<String, Object> levelMap2 = new HashMap<>();
-                        levelMap2.put("code", map6.get("quaCode"));
-                        levelMap2.put("name", map6.get("quaName"));
-                        levelThreeListMap.add(levelMap2);
+                        getQuaMap("quaName", map6, levelMap2, null, levelThreeListMap);
                     }
 
                 }
                 String benchName = (String) map2.get("benchName");
                 if (StringUtils.isNotEmpty(benchName)) {
-                    towQuaMap.put("code", map2.get("quaCode"));
-                    towQuaMap.put("name", map2.get("benchName"));
-                    towQuaMap.put("data", levelThreeListMap);
-                    towQuaListtMap.add(towQuaMap);
+                    getQuaMap("benchName", map2, towQuaMap, levelThreeListMap, towQuaListtMap);
                 }
             }
-            oneQuaMap.put("code", map.get("quaCode"));
-            oneQuaMap.put("name", map.get("quaName"));
-            oneQuaMap.put("data", towQuaListtMap);
-            oneQuaListtMap.add(oneQuaMap);
+            getQuaMap("quaName", map, oneQuaMap, towQuaListtMap, oneQuaListtMap);
         }
         return oneQuaListtMap;
     }
+
+    public void getQuaMap(String name, Map<String, Object> map, Map<String, Object> quaMap,
+                          List<Map<String, Object>> getListMap, List<Map<String, Object>> quaListMap) {
+        quaMap.put("code", map.get("quaCode"));
+        quaMap.put("name", map.get(name));
+        //getListMap 为空时 可以加上 getListMap.size() > 0
+        if (null != getListMap) {
+            quaMap.put("data", getListMap);
+        }
+        quaListMap.add(quaMap);
+    }
+
     /**
      * 根据关键字查询资质
+     *
      * @param param
      * @return
      */

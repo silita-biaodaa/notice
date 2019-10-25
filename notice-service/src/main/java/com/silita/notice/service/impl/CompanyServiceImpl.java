@@ -68,14 +68,7 @@ public class CompanyServiceImpl implements CompanyService {
                     if (StringUtils.isNotEmpty(rankName)) {
                         rangeNameCode = (String) RangeCommon.rangeCode.get(rankName);
                         String[] split = rangeNameCode.split(",");
-                        for (int i = 0; i < split.length; i++) {
-                            Map<String, Object> relMap = new HashMap<>();
-                            param.put("quaCode", quaCode);
-                            param.put("gradeCode", split[i]);
-                            String relId = relQuaGradeMapper.queryId(param);
-                            relMap.put("id", relId);
-                            rangeListMap.add(relMap);
-                        }
+                        getRel(param,quaCode,split,rangeListMap);
                     }
                 }
             }
@@ -115,14 +108,7 @@ public class CompanyServiceImpl implements CompanyService {
                     String rankName = dicCommonMapper.queryRank(gradeCode);
                     String rangeNameCode = (String) RangeCommon.rangeCode.get(rankName);
                     String[] split = rangeNameCode.split(",");
-                    for (int i = 0; i < split.length; i++) {
-                        Map<String, Object> relMap = new HashMap<>();
-                        param.put("quaCode", quaCode);
-                        param.put("gradeCode", split[i]);
-                        String relId = relQuaGradeMapper.queryId(param);
-                        relMap.put("id", relId);
-                        rangeListMap.add(relMap);
-                    }
+                    getRel(param,quaCode,split,rangeListMap);
                 }
             }
         }
@@ -152,6 +138,19 @@ public class CompanyServiceImpl implements CompanyService {
         }
         PageInfo pageInfo = new PageInfo(listMap);
         return pageInfo;
+    }
+
+
+    public void getRel(Map<String,Object> param,String quaCode,String[] split,
+                       List<Map<String,Object>> rangeListMap){
+        for (int i = 0; i < split.length; i++) {
+            Map<String, Object> relMap = new HashMap<>();
+            param.put("quaCode", quaCode);
+            param.put("gradeCode", split[i]);
+            String relId = relQuaGradeMapper.queryId(param);
+            relMap.put("id", relId);
+            rangeListMap.add(relMap);
+        }
     }
 
 }

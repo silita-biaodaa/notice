@@ -19,6 +19,7 @@ import java.util.Map;
 public class CommonController extends BaseController {
     @Autowired
     private CommonService commonService;
+
     /**
      * 获取筛选
      *
@@ -42,11 +43,11 @@ public class CommonController extends BaseController {
         Map<String, Object> com = new HashMap<>();
         com.put("bizType", "2");
         com.put("quaType", "company");
-        List<Map<String, Object>> area = commonService.getArea();
-        List<Map<String, Object>> type = commonService.type();
-        List<Map<String, Object>> pbMode = commonService.queryPbModes(param);
-        List<Map<String, Object>> noticeList = commonService.queryQua(notice);
-        List<Map<String, Object>> comList = commonService.queryQua(com);
+        List<Map<String, Object>> area = commonService.getArea();//获取省市
+        List<Map<String, Object>> type = commonService.type();//获取公告类型
+        List<Map<String, Object>> pbMode = commonService.queryPbModes(param);//获取评标办法
+        List<Map<String, Object>> noticeList = commonService.queryQua(notice);//获取公告资质
+        List<Map<String, Object>> comList = commonService.queryQua(com);//获取企信资质
         map.put("area", area);
         map.put("type", type);
         map.put("pbMode", pbMode);
@@ -67,6 +68,29 @@ public class CommonController extends BaseController {
     public Map conditionFilterQual(@RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         super.seccussMap(resultMap, commonService.getFilterQual(param));
+        return resultMap;
+    }
+
+    /**
+     * 获取筛选
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/noticeType", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map noticeType() {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Map<String, Object> notice = new HashMap<>();
+        notice.put("bizType", "1");
+        Map<String, Object> com = new HashMap<>();
+        com.put("bizType", "2");
+        com.put("quaType", "company");
+        List<Map<String, Object>> noticeList = commonService.queryQua(notice);//获取公告资质
+        List<Map<String, Object>> comList = commonService.queryQua(com);//获取企信资质
+        resultMap.put("noticeQua", noticeList);
+        resultMap.put("comQua", comList);
+        super.seccussMap(resultMap, commonService.type());
         return resultMap;
     }
 }
