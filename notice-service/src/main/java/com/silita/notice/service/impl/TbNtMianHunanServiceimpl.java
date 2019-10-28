@@ -36,10 +36,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     private TbCompanyMapper tbCompanyMapper;
     @Autowired
     private TbCommentInfoMapper tbCommentInfoMapper;
-    @Value("${hbase.notice-table-name}")
-    private String hBaseTableName;
-    @Autowired
-    private Connection connection;
+     @Value("${hbase.notice-table-name}")
+     private String hBaseTableName;
+     @Autowired
+     private Connection connection;
     @Autowired
     private RelQuaGradeMapper relQuaGradeMapper;
     @Autowired
@@ -65,13 +65,16 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, String>> data = tbNtMianHunanMapper.queryBids(param);
         String userId = MapUtils.getString(param, "userId");
-        if (StringUtils.isNotEmpty(userId)) {
-            for (Map<String, String> datum : data) {
+        for (Map<String, String> datum : data) {
+            if (StringUtils.isNotEmpty(userId)) {
                 param.put("id", MapUtils.getString(datum, "id"));
                 //获取是否关注
                 Boolean attention = attention(param);
                 datum.put("collected", attention.toString());
+            }else{
+                datum.put("collected", "false");
             }
+
         }
        /* if (data != null && data.size() > 0) {
             String key;
@@ -103,14 +106,14 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         PageHelper.startPage(pageNo, pageSize);
         List<Map<String, String>> list = tbNtMianHunanMapper.queryCompanyName(param);
         for (Map<String, String> map : list) {
-           /* String key;
-            if (null != map.get("oneName")) {
-                param.put("comName", map.get("oneName"));
-                key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
-                if (RedisShardedPoolUtil.keyExist(key)) {
-                    map.put("oneLaw", "1");
-                }
-            }*/
+            String userId = MapUtils.getString(param, "userId");
+            if(StringUtils.isNotEmpty(userId)){
+                param.put("id", map.get("id"));
+                Boolean attention = attention(param);
+                map.put("collected", attention.toString());
+            }else{
+                map.put("collected", "false");
+            }
             typeMap.put("source", map.get("source"));
             typeMap.put("ntId", map.get("id"));
             Map<String, Object> map1 = tbNtMianHunanMapper.queryProjectTypeNoticeType(typeMap);
@@ -194,6 +197,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 //获取是否关注
                 Boolean attention = attention(param);
                 map.put("collected", attention);
+            }else{
+                map.put("collected", false);
             }
             String zzRank = (String) map.get("certificate");
             if (StringUtils.isNotEmpty(zzRank)) {

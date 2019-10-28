@@ -63,9 +63,14 @@ public class NociteController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/company/zhongbiao/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map queryCompanyName(@RequestBody Map<String, Object> param) {
+    public Map queryCompanyName(@RequestBody Map<String, Object> param,HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         try {
+            //获取userId
+            String userId = VisitInfoHolder.getUserId(request);
+            if(StringUtils.isNotEmpty(userId)){
+                param.put("userId",userId);
+            }
             //分页限制 最多到30页  每页20条记录
             checkPage(param);
             PageInfo pageInfo = tbNtMianHunanService.queryCompanyName(param);
@@ -111,7 +116,7 @@ public class NociteController extends BaseController {
     public Map queryNociteDetails(HttpServletRequest request, @PathVariable String id, @RequestBody Map<String, Object> param) {
         param.put("id", id);
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        Map<String, Object> proviceCity = tbNtMianHunanService.queryProviceCity(param);
+        Map<String, Object> proviceCity = tbNtMianHunanService.queryProviceCity(param);//查省级编号和市级编号和爬取id
         String provice = "";
         String city = "";
         String snatchId = "";
