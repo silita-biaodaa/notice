@@ -219,16 +219,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Override
     public Map<String, Object> queryBidsNociteDetails(Map<String, Object> param) {
         Map<String, Object> map = tbNtMianHunanMapper.queryBidsNociteDetails(param);
-        /*String key;
-        if (null != map.get("oneName") && "" != map.get("oneName")) {
-            param.put("comName", map.get("oneName"));
-            key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
-            if (RedisShardedPoolUtil.keyExist(key)) {
-                map.put("oneLaw", "1");
-            }
-        }*/
-        Integer commentCount = tbCommentInfoMapper.queryCountComment(param);
-        map.put("commentCount", commentCount);
+        map.put("commentCount", tbCommentInfoMapper.queryCountComment(param));
         return map;
     }
 
@@ -433,8 +424,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * 通过编号查询省级名称和市名称
      */
     @Override
-    public Map<String, Object> queryProviceName(Map<String, Object> param) {
-        return tbNtMianHunanMapper.queryProviceName(param);
+    public String queryProviceName(String provice) {
+        return tbNtMianHunanMapper.queryProviceName(provice);
     }
 
     /**
@@ -444,7 +435,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * @return
      */
     @Override
-    public Map<String, Object> queryCityName(Map<String, Object> param) {
+    public Map<String, Object> queryCityName(Map<String,Object> param) {
         return tbNtMianHunanMapper.queryCityName(param);
     }
 

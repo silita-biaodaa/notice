@@ -50,9 +50,8 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Integer relCompanySize(Map<String, Object> param) {
         Integer count = 0;
-        String source = MapUtils.getString(param, "source");
         //获取省份的name
-        param.put("regisAddress", RegionCommon.regionSource.get(source));
+        param.put("regisAddress", RegionCommon.regionSource.get(MapUtils.getString(param, "source")));
         //获取资质关系表达式的列quaRegex
         List<String> list = tbNtRegexQuaMapper.queryQuaRegex(param);
         if (list.size() > 0 && null != list) {
@@ -61,14 +60,14 @@ public class CompanyServiceImpl implements CompanyService {
             List<Map<String, Object>> rangeListMap = new ArrayList<>();
             if (list1 != null && list1.size() >0) {
                 for (Map<String, Object> map : list1) {
-                    String quaCode = MapUtils.getString(map, "quaCode");
-                    String gradeCode = MapUtils.getString(map, "gradeCode");
-                    String rankName = dicCommonMapper.queryRank(gradeCode);
+                    //String quaCode = MapUtils.getString(map, "quaCode");
+                    //String gradeCode = MapUtils.getString(map, "gradeCode");
+                    String rankName = dicCommonMapper.queryRank(MapUtils.getString(map, "gradeCode"));
                     String rangeNameCode = "";
                     if (StringUtils.isNotEmpty(rankName)) {
                         rangeNameCode = (String) RangeCommon.rangeCode.get(rankName);
                         String[] split = rangeNameCode.split(",");
-                        getRel(param,quaCode,split,rangeListMap);
+                        getRel(param,MapUtils.getString(map, "quaCode"),split,rangeListMap);
                     }
                 }
             }

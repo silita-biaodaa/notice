@@ -140,7 +140,6 @@ public class CommonServiceImpl implements CommonService {
                                     getQuaMap("benchName", map4, fourQuaMap, levelFiveListMap, towQuaListtMap);
                                 }
                             }
-
                         } else {
                             for (Map<String, Object> map7 : list9) {
                                 Map<String, Object> levelMap3 = new HashMap<>();
@@ -152,13 +151,11 @@ public class CommonServiceImpl implements CommonService {
                             getQuaMap("benchName", map3, threeQuaMap, levelFourListMap, towQuaListtMap);
                         }
                     }
-
                 } else {
                     for (Map<String, Object> map6 : list8) {
                         Map<String, Object> levelMap2 = new HashMap<>();
                         getQuaMap("quaName", map6, levelMap2, null, levelThreeListMap);
                     }
-
                 }
                 String benchName = (String) map2.get("benchName");
                 if (StringUtils.isNotEmpty(benchName)) {
@@ -174,8 +171,8 @@ public class CommonServiceImpl implements CommonService {
                           List<Map<String, Object>> getListMap, List<Map<String, Object>> quaListMap) {
         quaMap.put("code", map.get("quaCode"));
         quaMap.put("name", map.get(name));
-        //getListMap 为空时 可以加上 getListMap.size() > 0
-        if (null != getListMap) {
+        //getListMap 为空时 需要显示date时 可以把 getListMap.size() > 0 去掉
+        if (null != getListMap && getListMap.size() > 0) {
             quaMap.put("data", getListMap);
         }
         quaListMap.add(quaMap);

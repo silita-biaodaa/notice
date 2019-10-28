@@ -105,7 +105,7 @@ public interface TbNtMianHunanMapper extends MyMapper<TbNtMianHunan> {
     /**
      * 通过编号查询省级名称和市名称
      */
-    Map<String, Object> queryProviceName(Map<String, Object> param);
+    String queryProviceName(String provice);
 
     /**
      * 通过编号查询市级名称

@@ -132,7 +132,7 @@ public interface TbNtMianHunanService {
     /**
      * 通过编号查询省级名称和市名称
      */
-    Map<String, Object> queryProviceName(Map<String, Object> param);
+    String queryProviceName(String provice);
 
     /**
      * 通过编号查询市级名称
@@ -140,7 +140,7 @@ public interface TbNtMianHunanService {
      * @param param
      * @return
      */
-    Map<String, Object> queryCityName(Map<String, Object> param);
+    Map<String, Object> queryCityName(Map<String,Object> param);
 
 
     /**
