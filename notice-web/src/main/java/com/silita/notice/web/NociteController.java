@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -122,12 +123,8 @@ public class NociteController extends BaseController {
         param.put("id", id);
         Map<String, Object> proviceCity = tbNtMianHunanService.queryProviceCity(param);//查省级编号和市级编号和爬取id
         String snatchId = "";
-        String provice = "";
-        String city = "";
-        if (proviceCity != null && proviceCity.size() > 0) {
+        if (StringUtils.isNotEmpty(MapUtils.getString(proviceCity, "snatchId"))) {
             snatchId = MapUtils.getString(proviceCity, "snatchId");
-            provice = MapUtils.getString(proviceCity, "provice");
-            city = MapUtils.getString(proviceCity, "city");
         }
         param.put("snatchId", snatchId);
         //获取userId
@@ -136,61 +133,42 @@ public class NociteController extends BaseController {
         Integer count = tbNtMianHunanService.count(param);
         //获取是否关注
         Boolean attention = tbNtMianHunanService.attention(param);
-        //获取招标原文
-        String content = "";
-        if (StringUtils.isNotEmpty(snatchId)) {
-            try {
+        try {
+            //获取招标原文
+            String content = "";
+            if (StringUtils.isNotEmpty(snatchId)) {
                 content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
-            } catch (Exception e) {
-                logger.error("获取公告原文异常", e);
-                errorMsg(resultMap, e.getMessage());
             }
-        }
-        // type = 1  招标详情   ||  type = 2  中标详情
-        String type = MapUtils.getString(param, "type");
-        if (type.equals("1") && !"".equals(type)) {
-            try {
-                //获取省级名称
-                String proviceCode = "";
-                if (StringUtils.isNotEmpty(provice)) {
-                    proviceCode = tbNtMianHunanService.queryProviceName(provice);
-                }
-                //获取市级名称
-                String cityCode = "";
-                if (StringUtils.isNotEmpty(city)) {
-                    cityCode = tbNtMianHunanService.queryProviceName(city);
-                }
+            Map<String, Object> map = new HashMap<>();
+            // type = 1  招标详情   ||  type = 2  中标详情
+            String type = MapUtils.getString(param, "type");
+            if (type.equals("1") && !"".equals(type)) {
                 //获取招标详情
-                Map<String, Object> map = tbNtMianHunanService.queryTendersNociteDetails(param);
-                if (null != map && map.size() > 0) {
-                    map.put("content", content);
-                    if(StringUtils.isNotEmpty(cityCode)){
-                        map.put("projDq", proviceCode + "-" + cityCode);
-                    }else{
-                        map.put("projDq", proviceCode);
+                map = tbNtMianHunanService.queryTendersNociteDetails(param);
+                //获取省市级名称
+                if (null != proviceCity && proviceCity.size() > 0) {
+                    if (StringUtils.isNotEmpty(MapUtils.getString(proviceCity, "provice")) && StringUtils.isNotEmpty(MapUtils.getString(proviceCity, "city"))) {
+                        map.put("projDq", MapUtils.getString(proviceCity, "provice") + "-" + MapUtils.getString(proviceCity, "city"));
+                    } else if (StringUtils.isNotEmpty(MapUtils.getString(proviceCity, "provice"))) {
+                        map.put("projDq", MapUtils.getString(proviceCity, "provice"));
                     }
-                    map.put("collected", attention);
-                    resultMap.put("clickCount", count);
+                }
+                if (null != map && map.size() > 0) {
                     resultMap.put("relCompanySize", companyService.relCompanySize(param));
-                    seccussMap(resultMap, map);
                 } else {
                     seccussMap(resultMap, map);
+                    return resultMap;
                 }
-            } catch (Exception e) {
-                logger.error("查询详情失败", e);
-                errorMsg(resultMap, e.getMessage());
+            } else {
+                map = tbNtMianHunanService.queryBidsNociteDetails(param);
             }
-            return resultMap;
-        }
-        try {
-            Map<String, Object> map = tbNtMianHunanService.queryBidsNociteDetails(param);
             map.put("content", content);
             map.put("collected", attention);
             resultMap.put("clickCount", count);
             seccussMap(resultMap, map);
         } catch (Exception e) {
             logger.error("查询详情失败", e);
-            errorMsg(resultMap, "查询详情失败!");
+            errorMsg(resultMap, e.getMessage());
         }
         return resultMap;
     }

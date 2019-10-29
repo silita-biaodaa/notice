@@ -36,10 +36,10 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     private TbCompanyMapper tbCompanyMapper;
     @Autowired
     private TbCommentInfoMapper tbCommentInfoMapper;
-     @Value("${hbase.notice-table-name}")
-     private String hBaseTableName;
-     @Autowired
-     private Connection connection;
+    @Value("${hbase.notice-table-name}")
+    private String hBaseTableName;
+    @Autowired
+    private Connection connection;
     @Autowired
     private RelQuaGradeMapper relQuaGradeMapper;
     @Autowired
@@ -71,7 +71,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 //获取是否关注
                 Boolean attention = attention(param);
                 datum.put("collected", attention.toString());
-            }else{
+            } else {
                 datum.put("collected", "false");
             }
 
@@ -107,11 +107,11 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
         List<Map<String, String>> list = tbNtMianHunanMapper.queryCompanyName(param);
         for (Map<String, String> map : list) {
             String userId = MapUtils.getString(param, "userId");
-            if(StringUtils.isNotEmpty(userId)){
+            if (StringUtils.isNotEmpty(userId)) {
                 param.put("id", map.get("id"));
                 Boolean attention = attention(param);
                 map.put("collected", attention.toString());
-            }else{
+            } else {
                 map.put("collected", "false");
             }
             typeMap.put("source", map.get("source"));
@@ -197,7 +197,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
                 //获取是否关注
                 Boolean attention = attention(param);
                 map.put("collected", attention);
-            }else{
+            } else {
                 map.put("collected", false);
             }
             String zzRank = (String) map.get("certificate");
@@ -424,8 +424,8 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * 通过编号查询省级名称和市名称
      */
     @Override
-    public String queryProviceName(String provice) {
-        return tbNtMianHunanMapper.queryProviceName(provice);
+    public List<String> queryProviceName(Map<String, Object> param) {
+        return tbNtMianHunanMapper.queryProviceName(param);
     }
 
     /**
@@ -435,7 +435,7 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * @return
      */
     @Override
-    public Map<String, Object> queryCityName(Map<String,Object> param) {
+    public Map<String, Object> queryCityName(Map<String, Object> param) {
         return tbNtMianHunanMapper.queryCityName(param);
     }
 

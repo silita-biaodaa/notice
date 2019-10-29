@@ -309,12 +309,25 @@
     </select>
     <!--查询省级编号和市级编号-->
     <select id="queryProviceCity" resultType="java.util.Map" parameterType="map">
-        select provice_code as provice,city_code as city,snatch_id as snatchId from biaodaa_admin.tb_nt_mian_${source} where pkid=#{id}
+        SELECT
+          snatch_id AS snatchId,
+          t2.`area_name` as provice,
+          t3.`area_name` as city
+        FROM
+          biaodaa_admin.tb_nt_mian_${source} t1
+        LEFT JOIN biaodaa_admin.`sys_area` t2 ON t1.`provice_code` = t2.`area_code` AND t2.`area_level` = 1
+        LEFT JOIN biaodaa_admin.`sys_area` t3 ON t1.`city_code` = t3.`area_code` AND t3.`area_level` = 2
+        WHERE t1.pkid = #{id}
     </select>
     <!--查询省级名称-->
     <select id="queryProviceName" resultType="java.lang.String" parameterType="map">
-        SELECT ifnull(sys.area_name,'') as areaName FROM
-        biaodaa_admin.sys_area sys WHERE sys.area_code=#{provice}
+        SELECT
+          area_name as areaName
+        FROM
+          `sys_area`
+        WHERE area_code = #{provice}
+          OR area_code = #{city}
+        ORDER BY area_level;
     </select>
     <!--查询市级名称-->
     <select id="queryCityName" resultType="java.util.Map" parameterType="map">

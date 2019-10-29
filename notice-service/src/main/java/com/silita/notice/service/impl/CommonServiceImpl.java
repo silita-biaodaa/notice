@@ -98,40 +98,34 @@ public class CommonServiceImpl implements CommonService {
         List<Map<String, Object>> list = dicQuaMapper.queryQuaOne(param);
         List<Map<String, Object>> oneQuaListtMap = new ArrayList<>();
         //遍历资质一级
-        for (Map<String, Object> map : list) {
+        for (Map<String, Object> map : list) {//循环一级资质
             //把一级资质放入oneQuaMap中
             Map<String, Object> oneQuaMap = new HashMap<>();
-            String one = (String) map.get("id");
-            param.put("zzIdOne", one);
+            param.put("zzIdOne",  map.get("id"));
             param.put("noticeLevel", "2");
             List<Map<String, Object>> list1 = dicQuaMapper.queryQuaTwo(param);
             List<Map<String, Object>> towQuaListtMap = new ArrayList<>();
-            for (Map<String, Object> map2 : list1) {
+            for (Map<String, Object> map2 : list1) {//二级资质
                 Map<String, Object> towQuaMap = new HashMap<>();
-                String tow = (String) map2.get("id");
-                param.put("zzIdOne", tow);
-                String towQualevel = (String) map2.get("quaCode");
-                List<Map<String, Object>> list8 = relQuaGradeMapper.queryRelQuaGrade(towQualevel);
+                param.put("zzIdOne", map2.get("id"));
+                List<Map<String, Object>> list8 = relQuaGradeMapper.queryRelQuaGrade(MapUtils.getString(map2,"quaCode"));
                 List<Map<String, Object>> levelThreeListMap = new ArrayList<>();
                 if (null == list8 || list8.size() <= 0) {
                     param.put("noticeLevel", "3");
                     List<Map<String, Object>> list2 = dicQuaMapper.queryQuaTwo(param);
-                    for (Map<String, Object> map3 : list2) {
+                    for (Map<String, Object> map3 : list2) {//三级资质
                         Map<String, Object> threeQuaMap = new HashMap<>();
-                        String three = (String) map3.get("id");
-                        param.put("zzIdOne", three);
+                        param.put("zzIdOne", map3.get("id"));
                         param.put("noticeLevel", "4");
-                        String threeQualevel = (String) map3.get("quaCode");
-                        List<Map<String, Object>> list9 = relQuaGradeMapper.queryRelQuaGrade(threeQualevel);
+                        List<Map<String, Object>> list9 = relQuaGradeMapper.queryRelQuaGrade(MapUtils.getString(map3,"quaCode"));
                         List<Map<String, Object>> levelFourListMap = new ArrayList<>();
                         if (null == list9 || list9.size() <= 0) {
                             List<Map<String, Object>> list3 = dicQuaMapper.queryQuaTwo(param);
-                            for (Map<String, Object> map4 : list3) {
+                            for (Map<String, Object> map4 : list3) {//四级资质
                                 Map<String, Object> fourQuaMap = new HashMap<>();
-                                String quaCode = (String) map4.get("quaCode");
-                                List<Map<String, Object>> list5 = relQuaGradeMapper.queryRelQuaGrade(quaCode);
+                                List<Map<String, Object>> list5 = relQuaGradeMapper.queryRelQuaGrade(MapUtils.getString(map4,"quaCode"));
                                 List<Map<String, Object>> levelFiveListMap = new ArrayList<>();
-                                for (Map<String, Object> map5 : list5) {
+                                for (Map<String, Object> map5 : list5) {//查询等级
                                     Map<String, Object> levelMap = new HashMap<>();
                                     getQuaMap("quaName", map5, levelMap, null, levelFiveListMap);
                                 }
@@ -141,7 +135,7 @@ public class CommonServiceImpl implements CommonService {
                                 }
                             }
                         } else {
-                            for (Map<String, Object> map7 : list9) {
+                            for (Map<String, Object> map7 : list9) {//查询等级
                                 Map<String, Object> levelMap3 = new HashMap<>();
                                 getQuaMap("quaName", map7, levelMap3, null, levelFourListMap);
                             }
@@ -152,13 +146,13 @@ public class CommonServiceImpl implements CommonService {
                         }
                     }
                 } else {
-                    for (Map<String, Object> map6 : list8) {
+                    for (Map<String, Object> map6 : list8) {//查询等级
                         Map<String, Object> levelMap2 = new HashMap<>();
                         getQuaMap("quaName", map6, levelMap2, null, levelThreeListMap);
                     }
                 }
-                String benchName = (String) map2.get("benchName");
-                if (StringUtils.isNotEmpty(benchName)) {
+                //String benchName = (String) map2.get("benchName");
+                if (StringUtils.isNotEmpty(MapUtils.getString(map2,"benchName"))) {
                     getQuaMap("benchName", map2, towQuaMap, levelThreeListMap, towQuaListtMap);
                 }
             }
