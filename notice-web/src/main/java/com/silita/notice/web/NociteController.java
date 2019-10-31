@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -123,28 +122,21 @@ public class NociteController extends BaseController {
         param.put("id", id);
         Map<String, Object> proviceCity = tbNtMianHunanService.queryProviceCity(param);//查省级编号和市级编号和爬取id
         String snatchId = "";
-        if (StringUtils.isNotEmpty(MapUtils.getString(proviceCity, "snatchId"))) {
+        if (null != proviceCity.get("snatchId")) {
             snatchId = MapUtils.getString(proviceCity, "snatchId");
         }
         param.put("snatchId", snatchId);
-        //获取userId
-        param.put("userId", VisitInfoHolder.getUserId(request));
-        //获取点击量
-        Integer count = tbNtMianHunanService.count(param);
-        //获取是否关注
-        Boolean attention = tbNtMianHunanService.attention(param);
         try {
-            //获取招标原文
-            String content = "";
-            if (StringUtils.isNotEmpty(snatchId)) {
-                content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
-            }
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map;
             // type = 1  招标详情   ||  type = 2  中标详情
             String type = MapUtils.getString(param, "type");
             if (type.equals("1") && !"".equals(type)) {
                 //获取招标详情
                 map = tbNtMianHunanService.queryTendersNociteDetails(param);
+                if (MapUtils.isEmpty(map)) {
+                    seccussMap(resultMap, map);
+                    return resultMap;
+                }
                 //获取省市级名称
                 if (null != proviceCity && proviceCity.size() > 0) {
                     if (StringUtils.isNotEmpty(MapUtils.getString(proviceCity, "provice")) && StringUtils.isNotEmpty(MapUtils.getString(proviceCity, "city"))) {
@@ -153,14 +145,20 @@ public class NociteController extends BaseController {
                         map.put("projDq", MapUtils.getString(proviceCity, "provice"));
                     }
                 }
-                if (null != map && map.size() > 0) {
-                    resultMap.put("relCompanySize", companyService.relCompanySize(param));
-                } else {
-                    seccussMap(resultMap, map);
-                    return resultMap;
-                }
+                resultMap.put("relCompanySize", companyService.relCompanySize(param));
             } else {
                 map = tbNtMianHunanService.queryBidsNociteDetails(param);
+            }
+            //获取userId
+            param.put("userId", VisitInfoHolder.getUserId(request));
+            //获取点击量
+            Integer count = tbNtMianHunanService.count(param);
+            //获取是否关注
+            Boolean attention = tbNtMianHunanService.attention(param);
+            //获取招标原文
+            String content = "";
+            if (StringUtils.isNotEmpty(snatchId)) {
+                content = tbNtMianHunanService.queryBidsDetailsCentendString(param);
             }
             map.put("content", content);
             map.put("collected", attention);
