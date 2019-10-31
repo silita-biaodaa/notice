@@ -38,7 +38,7 @@ public class ScheduledTask {
     private TbMessageMapper tbMessageMapper;
 
     //    @Scheduled(cron = "0 0/10 * * * ?")
-    @Scheduled(cron = "0 0 9 * * ?")
+//    @Scheduled(cron = "0 0 9 * * ?")
     private void moringScheduld() {
         Date end = new Date();
         StringBuffer last = new StringBuffer(DateUtils.beforeDate(DateUtils.dateToStr(end, "yyyy-MM-dd"), 1));
