@@ -16,10 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by zhushuai on 2019/5/31.
@@ -61,6 +58,14 @@ public class LoginFilter implements Filter {
         String xToken = request.getHeader("X-TOKEN");
         String requestUrl = request.getRequestURI();
         logger.info("-----requesturi:" + requestUrl + "-------------------");
+        logger.info("-----token:" + xToken + "-------------------");
+        logger.info("---------------参数-------------------");
+        Enumeration<String> paraNames = request.getParameterNames();
+        for (Enumeration<String> e = paraNames; e.hasMoreElements(); ) {
+            String thisName = e.nextElement().toString();
+            String thisValue = request.getParameter(thisName);
+            System.out.println("param的key:" + thisName + "--------------param的value:" + thisValue);
+        }
         try {
             String phone = null;
 //            String userId = null;
@@ -91,6 +96,7 @@ public class LoginFilter implements Filter {
                     resMap.put("msg", ResponseCode.WARN_MSG_504);
                     printInfo(response, resMap);
                 }
+                logger.info("------------------phone:" + phone + "--------------------");
                 //是否疑似爬虫
                 if (null != blacklist && null != phone && blacklist.contains(phone)) {
                     resMap.put("code", ResponseCode.WARN_CODE_502);
@@ -98,6 +104,7 @@ public class LoginFilter implements Filter {
                     printInfo(response, resMap);
                     return;
                 }
+
             } else {
                 //绿色通道检查
                 boolean greenWay = greenWayVerify(requestUrl, filterUrl, xToken);
@@ -113,10 +120,6 @@ public class LoginFilter implements Filter {
                 return;
             }
 
-            //设置userid
-//            if (StringUtils.isNotEmpty(userId)) {
-//                VisitInfoHolder.setUserId(userId);
-//            }
             if (tokenValid) {
                 filterChain.doFilter(servletRequest, servletResponse);
             } else {
