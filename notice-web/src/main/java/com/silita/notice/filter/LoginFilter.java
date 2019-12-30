@@ -59,12 +59,19 @@ public class LoginFilter implements Filter {
         String requestUrl = request.getRequestURI();
         logger.info("-----requesturi:" + requestUrl + "-------------------");
         logger.info("-----token:" + xToken + "-------------------");
-        logger.info("---------------参数-------------------");
-        Enumeration<String> paraNames = request.getParameterNames();
-        for (Enumeration<String> e = paraNames; e.hasMoreElements(); ) {
-            String thisName = e.nextElement().toString();
-            String thisValue = request.getParameter(thisName);
-            System.out.println("param的key:" + thisName + "--------------param的value:" + thisValue);
+        String baseInfo = SecurityCheck.getHeaderValue(request, "baseInfo");
+        String channel = null;
+        if (StringUtils.isNotEmpty(baseInfo)) {
+            logger.info("baseInfo:" + baseInfo);
+            String[] baseInfos = baseInfo.split("\\|");
+            channel = baseInfos[baseInfos.length - 1];
+        }
+        if (null == channel) {
+            logger.info("-----------疑似爬虫，过滤掉这个请求-------------------");
+            resMap.put("code", ResponseCode.WARN_CODE_502);
+            resMap.put("msg", ResponseCode.WARN_MSG_502);
+            printInfo(response, resMap);
+            return;
         }
         try {
             String phone = null;
@@ -138,7 +145,7 @@ public class LoginFilter implements Filter {
 
     }
 
-    private static String Base64Decode(String s) throws UnsupportedEncodingException {
+    private String Base64Decode(String s) throws UnsupportedEncodingException {
         return new String(Base64.getDecoder().decode(s), Constant.STR_ENCODING);
     }
 
