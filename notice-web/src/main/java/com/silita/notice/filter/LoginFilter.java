@@ -69,7 +69,7 @@ public class LoginFilter implements Filter {
             String[] baseInfos = baseInfo.split("\\|");
             channel = baseInfos[baseInfos.length - 1];
         }
-        if (null == channel) {
+        if (null == channel && !"/newnocite/count/list".equals(requestUrl)) {
             logger.info("-----------疑似爬虫，过滤掉这个请求-------------------");
             resMap.put("code", ResponseCode.WARN_CODE_502);
             resMap.put("msg", ResponseCode.WARN_MSG_502);
