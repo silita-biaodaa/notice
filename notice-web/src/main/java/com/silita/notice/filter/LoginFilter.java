@@ -5,9 +5,11 @@ import com.silita.notice.common.Constant;
 import com.silita.notice.common.ResponseCode;
 import com.silita.notice.common.SecurityCheck;
 import com.silita.notice.common.VisitInfoHolder;
+import com.silita.notice.service.BackListService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -25,10 +27,9 @@ public class LoginFilter implements Filter {
 
     private String tokenVersion;
     private String filterUrl;
-    private String blacklist;
-
 
     private Logger logger = LoggerFactory.getLogger(LoginFilter.class);
+    private BackListService backListService;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -44,8 +45,10 @@ public class LoginFilter implements Filter {
         if (null != properties.get("FILTER_URL")) {
             filterUrl = properties.get("FILTER_URL").toString();
         }
-        if (null != properties.get("blacklist")) {
-            blacklist = properties.get("blacklist").toString();
+        WebApplicationContext wac = (WebApplicationContext) filterConfig.getServletContext().
+                getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+        if (wac != null && wac.getBean(BackListService.class) != null && backListService == null) {
+            backListService = wac.getBean(BackListService.class);
         }
     }
 
@@ -75,7 +78,6 @@ public class LoginFilter implements Filter {
         }
         try {
             String phone = null;
-//            String userId = null;
             boolean tokenValid = false;
             if (StringUtils.isNotEmpty(xToken)) {
                 String[] token = xToken.split("\\.");
@@ -88,7 +90,6 @@ public class LoginFilter implements Filter {
                         Map<String, String> paramMap = parseJsonString(paramJson);
                         VisitInfoHolder.setPermissions(paramMap.get("permissions"));
                         VisitInfoHolder.setRoleCode(paramMap.get("roleCode"));
-//                        userId = paramMap.get("pkid");
                         phone = paramMap.get("phoneNo");
                         //验证签名
                         tokenValid = SecurityCheck.checkSigner(paramMap, sign);
@@ -105,13 +106,13 @@ public class LoginFilter implements Filter {
                 }
                 logger.info("------------------phone:" + phone + "--------------------");
                 //是否疑似爬虫
-                if (null != blacklist && null != phone && blacklist.contains(phone)) {
+                List<String> backList = backListService.getBackList();
+                if (null != backList && null != phone && backList.contains(phone)) {
                     resMap.put("code", ResponseCode.WARN_CODE_502);
                     resMap.put("msg", ResponseCode.WARN_MSG_502);
                     printInfo(response, resMap);
                     return;
                 }
-
             } else {
                 //绿色通道检查
                 boolean greenWay = greenWayVerify(requestUrl, filterUrl, xToken);
@@ -231,10 +232,5 @@ public class LoginFilter implements Filter {
         PrintWriter out = response.getWriter();
         out.print(JSONObject.toJSONString(map));
         out.close();
-    }
-
-    public static void main(String[] args) {
-        String requerUrl = "/newnocite/zhaobiao/list";
-        System.out.println(requerUrl.indexOf("/newnocite") > -1);
     }
 }
