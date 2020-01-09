@@ -46,7 +46,7 @@ public class ScheduledTask {
         scheduld(start, end);
     }
 
-    //    @Scheduled(cron = "0 0 15 * * ?")
+    //        @Scheduled(cron = "0 0 15 * * ?")
     private void afternoonScheduld() {
         Date end = new Date();
         StringBuffer today = new StringBuffer(DateUtils.dateToStr(end, "yyyy-MM-dd"));
