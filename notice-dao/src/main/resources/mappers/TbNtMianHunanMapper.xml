@@ -77,7 +77,7 @@
         cand.source
         FROM
         tb_nt_bids_cand cand
-        WHERE cand.f_candidate LIKE CONCAT('%',#{comName},'%')
+        WHERE cand.f_candidate = #{comName}
         <if test="title != null and title != ''">
             and cand.title like CONCAT('%',#{title},'%')
         </if>

@@ -64,6 +64,13 @@ public class LoginFilter implements Filter {
         logger.info("-----token:" + xToken + "-------------------");
         String baseInfo = SecurityCheck.getHeaderValue(request, "baseInfo");
         String channel = null;
+        if ("40121|6.0.1|1d615aee-20cb-30a3-b5a9-c16b22d6462e|Nexus 6P|1001".equals(baseInfo)) {
+            logger.info("-----------疑似爬虫，过滤掉这个请求-------------------");
+            resMap.put("code", ResponseCode.WARN_CODE_502);
+            resMap.put("msg", ResponseCode.WARN_MSG_502);
+            printInfo(response, resMap);
+            return;
+        }
         if (StringUtils.isNotEmpty(baseInfo)) {
             logger.info("baseInfo:" + baseInfo);
             String[] baseInfos = baseInfo.split("\\|");

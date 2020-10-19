@@ -39,6 +39,7 @@ public class NociteController extends BaseController {
     @RequestMapping(value = "/zhongbiao/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map queryBids(@RequestBody Map<String, Object> param, HttpServletRequest request) {
         logger.info("-------------------进入该方法:zhongbiao----------------------");
+        logger.info("param:" + param);
         Map<String, Object> resultMap = new HashMap<String, Object>();
         try {
             //获取userId
@@ -93,6 +94,7 @@ public class NociteController extends BaseController {
     @RequestMapping(value = "/zhaobiao/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map queryTenders(@RequestBody Map<String, Object> param, HttpServletRequest request) {
         logger.info("-------------------进入该方法:zhaobiao----------------------");
+        logger.info("param:" + param);
         Map<String, Object> resultMap = new HashMap<String, Object>();
         try {
             //获取userId
