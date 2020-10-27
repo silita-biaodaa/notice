@@ -10,4 +10,12 @@ public interface BackListService {
      * @return
      */
     List<String> getBackList();
+
+    /**
+     * 查询ip是否爬虫
+     *
+     * @param ip
+     * @return
+     */
+    int getCountBlack(String ip);
 }

@@ -13,4 +13,12 @@ public interface TbBackListMapper {
      * @return
      */
     List<String> queryBackList();
+
+    /**
+     * 查看ip是否爬虫
+     *
+     * @param ip
+     * @return
+     */
+    int queryIpBlack(String ip);
 }

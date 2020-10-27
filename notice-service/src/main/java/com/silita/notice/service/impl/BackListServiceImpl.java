@@ -20,4 +20,9 @@ public class BackListServiceImpl implements BackListService {
     public List<String> getBackList() {
         return tbBackListMapper.queryBackList();
     }
+
+    @Override
+    public int getCountBlack(String ip) {
+        return tbBackListMapper.queryIpBlack(ip);
+    }
 }

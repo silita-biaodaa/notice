@@ -6,6 +6,7 @@ import com.silita.notice.common.ResponseCode;
 import com.silita.notice.common.SecurityCheck;
 import com.silita.notice.common.VisitInfoHolder;
 import com.silita.notice.service.BackListService;
+import com.silita.notice.utils.IpUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,30 +58,30 @@ public class LoginFilter implements Filter {
         Map resMap = new HashMap();
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        String ipAddr = request.getHeader("X-real-ip");
+        String ipAddr = IpUtils.getIpAddress(request);
         String xToken = request.getHeader("X-TOKEN");
         String requestUrl = request.getRequestURI();
         logger.info("-----requesturi:" + requestUrl + "-------------------");
         logger.info("-----token:" + xToken + "-------------------");
-        String baseInfo = SecurityCheck.getHeaderValue(request, "baseInfo");
-        String channel = null;
-        if ("40121|6.0.1|1d615aee-20cb-30a3-b5a9-c16b22d6462e|Nexus 6P|1001".equals(baseInfo)) {
+        logger.info("-----------------------请求IP" + ipAddr + "-------------------------------");
+        int count = backListService.getCountBlack(ipAddr);
+        if (count > 0) {
             logger.info("-----------疑似爬虫，过滤掉这个请求-------------------");
             resMap.put("code", ResponseCode.WARN_CODE_502);
             resMap.put("msg", ResponseCode.WARN_MSG_502);
             printInfo(response, resMap);
             return;
         }
+        //判断是否是ip黑名单
+        String baseInfo = SecurityCheck.getHeaderValue(request, "baseInfo");
+        String channel = null;
         if (StringUtils.isNotEmpty(baseInfo)) {
             logger.info("baseInfo:" + baseInfo);
             String[] baseInfos = baseInfo.split("\\|");
             channel = baseInfos[baseInfos.length - 1];
         }
         if (null == channel && !"/newnocite/count/list".equals(requestUrl)) {
-            logger.info("-----------疑似爬虫，过滤掉这个请求-------------------");
-            resMap.put("code", ResponseCode.WARN_CODE_502);
-            resMap.put("msg", ResponseCode.WARN_MSG_502);
-            printInfo(response, resMap);
+            errorPrintInfo(response, resMap);
             return;
         }
         try {
@@ -115,9 +116,7 @@ public class LoginFilter implements Filter {
                 //是否疑似爬虫
                 List<String> backList = backListService.getBackList();
                 if (null != backList && null != phone && backList.contains(phone)) {
-                    resMap.put("code", ResponseCode.WARN_CODE_502);
-                    resMap.put("msg", ResponseCode.WARN_MSG_502);
-                    printInfo(response, resMap);
+                    errorPrintInfo(response, resMap);
                     return;
                 }
             } else {
@@ -239,5 +238,12 @@ public class LoginFilter implements Filter {
         PrintWriter out = response.getWriter();
         out.print(JSONObject.toJSONString(map));
         out.close();
+    }
+
+    private void errorPrintInfo(HttpServletResponse response, Map map) throws IOException {
+        logger.info("-----------疑似爬虫，过滤掉这个请求-------------------");
+        map.put("code", ResponseCode.WARN_CODE_502);
+        map.put("msg", ResponseCode.WARN_MSG_502);
+        printInfo(response, map);
     }
 }

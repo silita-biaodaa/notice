@@ -9,4 +9,13 @@
         FROM
         tb_back_list
     </select>
+
+    <!--查询所有黑名单-->
+    <select id="queryIpBlack" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT
+        COUNT(*)
+        FROM
+        tb_back_list
+        WHERE `phone` = #{ip}
+    </select>
 </mapper>
