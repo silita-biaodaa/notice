@@ -69,25 +69,14 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             if (StringUtils.isNotEmpty(userId)) {
                 param.put("id", MapUtils.getString(datum, "id"));
                 //获取是否关注
-                Boolean attention = attention(param);
-                datum.put("collected", attention.toString());
+                datum.put("collected", attention(param).toString());
             } else {
                 datum.put("collected", "false");
+                datum.put("oneName", "******公司");
+                datum.put("oneOffer", "******");
             }
 
         }
-       /* if (data != null && data.size() > 0) {
-            String key;
-            for (Map<String, Object> map : data) {
-                if (null != map.get("oneName")) {
-                    param.put("comName", map.get("oneName"));
-                    key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
-                    if (RedisShardedPoolUtil.keyExist(key)) {
-                        map.put("oneLaw", "1");
-                    }
-                }
-            }
-        }*/
         PageInfo pageInfo = new PageInfo(data);
         return pageInfo;
     }
@@ -195,14 +184,14 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             if (StringUtils.isNotEmpty(userId)) {
                 param.put("id", MapUtils.getString(map, "id"));
                 //获取是否关注
-                Boolean attention = attention(param);
-                map.put("collected", attention);
+                map.put("collected", attention(param));
             } else {
                 map.put("collected", false);
+                map.put("pbMode", "******");
             }
             String zzRank = (String) map.get("certificate");
             if (StringUtils.isNotEmpty(zzRank)) {
-                zzRank = zzRank.replaceAll("(?:和|或)", ",");
+                zzRank = zzRank.replaceAll("(?:和|或)", ",").replaceAll("(?:甲|乙|丙|丁|一|二|三|四|壹|贰|叄|肆)", "*");
                 map.put("certificate", zzRank);
             }
         }
