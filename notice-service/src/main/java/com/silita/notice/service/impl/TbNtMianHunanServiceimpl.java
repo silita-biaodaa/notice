@@ -9,37 +9,33 @@ import com.silita.notice.dao.*;
 import com.silita.notice.elasticsearch.ElasticsearchFactory;
 import com.silita.notice.model.es.NoticeElasticsearch;
 import com.silita.notice.service.TbNtMianHunanService;
+import com.silita.notice.utils.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.Table;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
 
+@Slf4j
 @Service("notice")
 public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
     @Autowired
     private TbNtMianHunanMapper tbNtMianHunanMapper;
     @Autowired
+    private TbSnatchContentMapper tbSnatchContentMapper;
+    @Autowired
     private TbCompanyMapper tbCompanyMapper;
     @Autowired
     private TbCommentInfoMapper tbCommentInfoMapper;
-    @Value("${hbase.notice-table-name}")
-    private String hBaseTableName;
-    @Autowired
-    private Connection connection;
+    //    @Value("${hbase.notice-table-name}")
+//    private String hBaseTableName;
+//    @Autowired
+//    private Connection connection;
     @Autowired
     private RelQuaGradeMapper relQuaGradeMapper;
     @Autowired
@@ -242,24 +238,25 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
      * @return
      * @throws IOException
      */
+    @Override
     public String queryBidsDetailsCentendString(Map<String, Object> param) throws IOException {
         String snatchId = MapUtils.getString(param, "snatchId");
-        String content = "";
-        Map<String, Object> map = new HashMap<String, Object>();
-        TableName tableName = TableName.valueOf(hBaseTableName);
-        Table table = connection.getTable(tableName);
-        Get g = new Get(snatchId.getBytes());
-        Result rs = table.get(g);
-        Cell[] cells = rs.rawCells();
-        for (Cell cell : cells) {
-            String key = Bytes.toString(CellUtil.cloneQualifier(cell));
-            String value = Bytes.toString(CellUtil.cloneValue(cell));
-            switch (key) {
-                case "content": //获取内容
-                    content = value;
-                    break;
-            }
-        }
+        String content = tbSnatchContentMapper.selectContent(snatchId);
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        TableName tableName = TableName.valueOf(hBaseTableName);
+//        Table table = connection.getTable(tableName);
+//        Get g = new Get(snatchId.getBytes());
+//        Result rs = table.get(g);
+//        Cell[] cells = rs.rawCells();
+//        for (Cell cell : cells) {
+//            String key = Bytes.toString(CellUtil.cloneQualifier(cell));
+//            String value = Bytes.toString(CellUtil.cloneValue(cell));
+//            switch (key) {
+//                case "content": //获取内容
+//                    content = value;
+//                    break;
+//            }
+//        }
         return content;
     }
 
@@ -680,5 +677,35 @@ public class TbNtMianHunanServiceimpl implements TbNtMianHunanService {
             return;
         }
         tbNtMianHunanMapper.insertNoticeRead(param);
+    }
+
+    @Override
+    public void saveNoticeContentForMysql() {
+        int page = 1, pages = 0, total = 0;
+        Map<String, Object> param = new HashMap(2) {{
+            put("end", 200);
+        }};
+        Page page1 = new Page(page, 200);
+        do {
+            if (page == 1) {
+                total = tbSnatchContentMapper.selectCount();
+                page1.setTotal(total);
+                pages = page1.getPages();
+            }
+            param.put("start", (page - 1) * 200);
+            List<Map<String, Object>> list = tbSnatchContentMapper.selectListId(param);
+            for (int i = 0; i < list.size(); i++) {
+                int pkid = MapUtils.getInteger(list.get(i), "pkid");
+                String snatch_id = MapUtils.getString(list.get(i), "snatchId");
+                try {
+                    String content = this.queryBidsDetailsCentendString(list.get(i));
+                    tbSnatchContentMapper.updateContent(pkid, content);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                log.info("已完成:", snatch_id);
+            }
+            page++;
+        } while (page < pages);
     }
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.notice.dao.TbSnatchContentMapper">
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM `tb_snatch_content` where `content` is null
+    </select>
+
+    <select id="selectListId" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT pkid as pkid,snatch_id as snatchId FROM `tb_snatch_content` where `content` is null limit #{start},#{end}
+    </select>
+
+    <select id="selectContent" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT `content` FROM `tb_snatch_content` where snatch_id = #{snatchId} limit 1
+    </select>
+
+    <update id="updateContent" parameterType="java.util.Map">
+        update tb_snatch_content set `content` = #{content} where pkid = #{pkid}
+    </update>
+</mapper>

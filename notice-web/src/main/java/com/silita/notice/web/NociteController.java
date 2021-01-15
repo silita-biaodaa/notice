@@ -112,7 +112,7 @@ public class NociteController extends BaseController {
         return resultMap;
     }
 
-    /*
+    /**
      *公告详情
      * @param param
      * @return
@@ -122,7 +122,8 @@ public class NociteController extends BaseController {
     public Map queryNociteDetails(HttpServletRequest request, @PathVariable String id, @RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         param.put("id", id);
-        Map<String, Object> proviceCity = tbNtMianHunanService.queryProviceCity(param);//查省级编号和市级编号和爬取id
+        //查省级编号和市级编号和爬取id
+        Map<String, Object> proviceCity = tbNtMianHunanService.queryProviceCity(param);
         String snatchId = "";
         if (null != proviceCity.get("snatchId")) {
             snatchId = MapUtils.getString(proviceCity, "snatchId");

@@ -52,6 +52,9 @@ public class BaseController {
         if (pageSize > 20){
             param.put("pageSize",20);
         }
+        if (null == param.get("userId")) {
+            param.put("pageNo", 1);
+        }
     }
 
 

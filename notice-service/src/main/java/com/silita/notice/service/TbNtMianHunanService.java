@@ -184,4 +184,9 @@ public interface TbNtMianHunanService {
      * @param param
      */
     void setNoticeReadStatus(Map<String, Object> param);
+
+    /**
+     * 将hbase中的公告内容存入mysql中
+     */
+    void saveNoticeContentForMysql();
 }
